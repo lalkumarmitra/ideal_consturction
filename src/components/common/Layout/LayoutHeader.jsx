@@ -1,14 +1,18 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeLayoutMode, changeSideBar } from "../../../features/Layout/layoutSlice";
+import { setPreloader } from "../../../features/Ui/uiSlice";
+import { authenticate } from "../../../features/Auth/authSlice";
 import SimpleBar from "simplebar-react";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 function LayoutHeader() { 
   const dispatch = useDispatch()
   const ToggleLayoutMode = () => {
     dispatch(changeLayoutMode('toggle'));
   }
-  const layoutStates = useSelector(state=>state);
+  const layoutStates = useSelector(state=>state.layout);
   const handleSidebar = () => {
     if(layoutStates.screenSize === 'md'){
       if(layoutStates.sidebarSize == 'sm') dispatch(changeSideBar('lg'))
@@ -24,31 +28,35 @@ function LayoutHeader() {
       else dispatch(changeSideBar('lg'))
     }
   }
+  const authToken = useSelector(state=>state.auth._token);
+  const userData = useSelector(state=>state.auth._user);
+  const handleLogout = () =>{
+    dispatch(setPreloader({loader:true,message:'Logging Out Please Wait ....'}))
+    axios({ 
+      url: "https://idealconstruction.online/application/api/logout", 
+      method: "GET",
+      headers: { Accept: "application/json",Authorization:'Bearer '+ authToken},
+    }).then(()=>{
+      localStorage.removeItem('_token');
+      dispatch(authenticate({_token:null,_user:{}}))
+      dispatch(setPreloader({loader:false,message:''}))
+    })
+    .catch(err=>{
+      dispatch(setPreloader({loader:false,message:''}))
+      Swal.fire({
+        title: "error",
+        text: err.response ? err.response.data.message : err.message,
+        icon: "error",
+        confirmButtonClass: "btn btn-primary w-xs mt-2",
+        showCloseButton: !0,
+      });
+    });
+  }
   return (
     <header id="page-topbar">
       <div className="layout-width">
         <div className="navbar-header">
           <div className="d-flex">
-            <div className="navbar-brand-box horizontal-logo">
-              <a href="index.html" className="logo logo-dark">
-                <span className="logo-sm">
-                  <img src="assets/images/logo-sm.png" alt="" height="22" />
-                </span>
-                <span className="logo-lg">
-                  <img src="assets/images/logo-dark.png" alt="" height="17" />
-                </span>
-              </a>
-
-              <a href="index.html" className="logo logo-light">
-                <span className="logo-sm">
-                  <img src="assets/images/logo-sm.png" alt="" height="22" />
-                </span>
-                <span className="logo-lg">
-                  <img src="assets/images/logo-light.png" alt="" height="17" />
-                </span>
-              </a>
-            </div>
-
             <button onClick={handleSidebar} type="button" className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger" id="topnav-hamburger-icon">
               <span className={(layoutStates.screenSize === 'sm' || layoutStates.sidebarSize === 'sm' ) ? `hamburger-icon open`:`hamburger-icon`}>
                 <span></span>
@@ -534,10 +542,10 @@ function LayoutHeader() {
                   <img className="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar"/>
                   <span className="text-start ms-xl-2">
                     <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
-                      Anna Adame
+                      {userData.first_name} {" "} {userData.last_name}
                     </span>
                     <span className="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">
-                      Founder
+                      {userData.role.name}
                     </span>
                   </span>
                 </span>
@@ -560,12 +568,12 @@ function LayoutHeader() {
                   <i className="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>
                   <span className="align-middle">Settings</span>
                 </a>
-                <a className="dropdown-item" href="auth-logout-basic.html">
+                <button onClick={handleLogout} className="dropdown-item">
                   <i className="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
                   <span className="align-middle" data-key="t-logout">
                     Logout
                   </span>
-                </a>
+                </button>
               </div>
             </div>
           </div>

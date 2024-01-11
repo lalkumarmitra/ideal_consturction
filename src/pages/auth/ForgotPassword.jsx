@@ -8,8 +8,8 @@ function ForgotPassword() {
         <div className="row">
           <div className="col-lg-12">
             <div className="text-center mt-sm-5 mb-4 text-white-50">
-              <div><Link to="/" className="d-inline-block auth-logo"><img src="assets/images/logo-light.png" alt="" height="20" /></Link></div>
-              <p className="mt-3 fs-15 fw-medium">{" "} Login To S.K Group Of Institutions Dashboard </p>
+              <div><Link to="/" className="d-inline-block auth-logo"><img src="assets/images/logo-light.png" alt="" height="120" /></Link></div>
+              <p className="mt-3 fs-15 fw-medium">{" "} Login To Ideal Construction Dashboard </p>
             </div>
           </div>
         </div>

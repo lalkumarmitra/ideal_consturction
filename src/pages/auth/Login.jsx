@@ -1,12 +1,41 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import { useDispatch } from "react-redux";
+import { setPreloader } from "../../features/Ui/uiSlice";
+import { authenticate } from "../../features/Auth/authSlice";
+
 
 function Login() {
-  const handleSubmit = e => {
-    e.preventDefault()
-    let formdata = new FormData(e.target);
-    console.log(formdata.entries().next()); 
-  }
+  const dispatch = useDispatch();
+  const handleSubmit = (e) => {
+    dispatch(setPreloader({loader:true,message:'Logging In please wait'}));
+    e.preventDefault();
+    let formData = new FormData(e.target);
+    axios({ 
+      url: "https://idealconstruction.online/application/api/login", 
+      method: "POST",
+      headers: { Accept: "application/json" },
+      data: formData,
+    })
+    .then((res) => {
+      console.log(res)
+      dispatch(setPreloader({loader:false,message:''}))
+      localStorage.setItem('_token',res.data._token);
+      dispatch(authenticate({_token:res.data._token,_user:res.data.data.user}))
+    })
+    .catch((err) => {
+      dispatch(setPreloader({loader:false,message:''}))
+      Swal.fire({
+        title: "error",
+        text: err.response ? err.response.data.message : err.message,
+        icon: "error",
+        confirmButtonClass: "btn btn-primary w-xs mt-2",
+        showCloseButton: !0,
+      });
+    });
+  };
   return (
     <>
       <div className="container">

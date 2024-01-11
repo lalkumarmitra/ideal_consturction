@@ -11,6 +11,8 @@ import AuthLayout from "./components/Auth/AuthLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { setLayout, changeSideBar, updateScreenSize } from "./features/Layout/layoutSlice";
+import Preloader from "./components/Preloader";
+import { AuthMiddleWare, GuestMiddleware } from "./routes/routes";
 
 
 const layoutChanger = s => {
@@ -22,11 +24,7 @@ const layoutChanger = s => {
   document.documentElement.dataset.preloader = s.preloader;
 }
 const screenSize = s => {
-  let sizes = {
-    sm:768,
-    md:992,
-    lg:1200,
-  }
+  let sizes = { sm:768, md:992, lg:1200 }
   return s>=sizes.md?'lg':(s<sizes.sm ?'sm':'md');
 }
 const setBodyClass = s =>{
@@ -36,7 +34,7 @@ const setBodyClass = s =>{
 
 function App() {
   const dispatch = useDispatch();
-  const layoutStates = useSelector(state=>state);
+  const layoutStates = useSelector(state=>state.layout);
   const handleResize = () =>{
     const s = screenSize(window.innerWidth);
     setBodyClass(s);
@@ -52,25 +50,27 @@ function App() {
   useEffect(()=>{layoutChanger(layoutStates);},[layoutStates]);
   useEffect(()=>{
     window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => { window.removeEventListener('resize', handleResize); };
   },[])
 
+  const loader = useSelector(state=>state.ui);
   return (
-    <BrowserRouter>
-      <Routes>
-        {authRoutes.map((route,idx)=>(<Route key={idx} path={route.path} element={(<AuthLayout>{route.element}</AuthLayout>)} />))}
-        {publicRoutes.map((route, idx) => ( <Route path={route.path} element={route.element} key={idx} /> ))}
+    <>
+      {loader.loader?(<Preloader title={loader.message} />):null}
+      <BrowserRouter>
+        <Routes>
+          {authRoutes.map((route,idx)=>(<Route key={idx} path={route.path} element={(<GuestMiddleware><AuthLayout>{route.element}</AuthLayout></GuestMiddleware>)} />))}
+          {publicRoutes.map((route, idx) => ( <Route path={route.path} element={(<GuestMiddleware>{route.element}</GuestMiddleware>)} key={idx} /> ))}
 
-        {authenticatedRoutes.map((route, idx) => 
-          route.children.length 
-          ? route.children.map((child,id)=>(<Route path={child.path} element={(<Layout>{child.element}</Layout>)} key={id} />))
-          : (<Route path={route.path} element={(<Layout>{route.element}</Layout>)} key={idx} />)
-        )}
-        <Route path="*" element={<AuthLayout><Error404/></AuthLayout>} />
-      </Routes>
-    </BrowserRouter>
+          {authenticatedRoutes.map((route, idx) => 
+            route.children.length 
+            ? route.children.map((child,id)=>(<Route path={child.path} element={(<AuthMiddleWare><Layout>{child.element}</Layout></AuthMiddleWare>)} key={id} />))
+            : (<Route path={route.path} element={(<AuthMiddleWare><Layout>{route.element}</Layout></AuthMiddleWare>)} key={idx} />)
+          )}
+          <Route path="*" element={<AuthLayout><Error404/></AuthLayout>} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 
