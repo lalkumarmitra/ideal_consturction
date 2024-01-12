@@ -1,4 +1,4 @@
-import {post,get, del,put, use} from './api_helper';
+import {post,get, del,put, use,API_URL} from './api_helper';
 
 export const auth={
     login: data =>post("/login",data),
@@ -6,10 +6,14 @@ export const auth={
 
 // student api url
 export const staff={
-    add: data =>post("/users/type/staff",data),
-    list: () =>get("users/role-type/student"),
-    delete: (id) =>del(`/user/${id}`),
+    add: data =>post("/user",data),
+    list: () =>get("/users/type/staff"),
+    delete: (id) =>del(`/user/${id}/destroy`),
+    changeStatus: data=>post(`/user/set-status`,data)
 }
-
-
-
+export const item = {
+    add:data=>post("/item",data),
+    list:()=>get('/items'),
+    delete:(id)=>del(`/item/${id}/destroy`)
+}
+export const baseURL=API_URL;

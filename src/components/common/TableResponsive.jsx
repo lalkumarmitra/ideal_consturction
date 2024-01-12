@@ -29,7 +29,7 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
                         {showCustomOptionPage && (
                             <div className='col-lg-2'>
                             <select className="form-select" value={pageSize} onChange={onChangeInSelect}>
-                                {[2,4,8,10, 20, 30, 40, 50].map(pageSize => (<option key={pageSize} value={pageSize}>Show {pageSize}</option> ))}
+                                {[2,4,8,10, 20, 30, 40, 50].map((pageSize,id) => (<option key={id} value={pageSize}>Show {pageSize}</option> ))}
                             </select>
                             </div>)
                         }
@@ -38,8 +38,8 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
 
                     <table {...getTableProps()} className="table table-bordered dt-responsive nowrap table-striped align-middle" style={{ width: '100%' }}>
                         <thead>
-                            {headerGroups.map((headerGroup) => (<tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>{headerGroup.headers.map((column, index) => (
-                                <th {...column.getHeaderProps()} className={columns[index].HeaderClass} key={column.id}>{column.render('Header')} </th>
+                            {headerGroups.map((headerGroup,id) => (<tr  {...headerGroup.getHeaderGroupProps()} key={id}>{headerGroup.headers.map((column, index) => (
+                                <th {...column.getHeaderProps()} className={columns[index].HeaderClass} key={index}>{column.render('Header')} </th>
                             ))}
                             </tr>
                             ))}
@@ -50,7 +50,7 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
                                 return (
                                     <tr {...row.getRowProps()} key={i}>
                                         {row.cells.map((cell, i) => (
-                                            <td {...cell.getCellProps()} className={columns[i].DataClass} key={cell.column.id}>{cell.render('Cell')}</td>
+                                            <td  {...cell.getCellProps()} className={columns[i].DataClass} key={i}>{cell.render('Cell')}</td>
                                         ))}
                                     </tr>
                                 );
@@ -60,11 +60,11 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
                     {isPagination && (
                         <div className="d-flex justify-content-between align-items-center">
                             {isShowingPageLength && (<div className="col-sm">
-                                <div className="text-muted">Showing
-                                    <span className="fw-semibold">{page.length}</span> of{' '}
-                                    <span className="fw-semibold">{data.length}</span> entries
+                                    <div className="text-muted">Showing 
+                                        <span className="fw-semibold ms-1">{page.length}</span> of{' '}
+                                        <span className="fw-semibold">{data.length}</span> entries
+                                    </div>
                                 </div>
-                            </div>
                             )}
                             <div className="col-sm-12 col-md-7">
                                 <ul className="pagination justify-content-end pagination-rounded">
@@ -105,8 +105,8 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
         );
     }
     return (
-        <div className="d-flex align-items-center justify-content-center p-5">
-            <h2>No Data Found</h2>
+        <div className="d-flex bg-soft-warning rounded align-items-center justify-content-center p-5">
+            <h3>No Data Found</h3>
         </div>
     );
 };

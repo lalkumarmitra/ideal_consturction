@@ -1,23 +1,30 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import BreadCrumb from "../../../components/common/BreadCrumb";
-import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { TableResponsive } from "../../../components/common/TableResponsive";
 import { Card, CardBody, CardHeader, Col, Row, Button } from "react-bootstrap";
 import Swal from 'sweetalert2';
-import { NewStaffModal } from './modal';
-
+import { NewStaffModal } from '../../../components/common/modal';
+import { staff } from '../../../helper/api_url';
+import { swal } from '../../../helper/swal';
+import { Switch } from 'antd';
 function Staffs() {
     const dispatch = useDispatch();
     const [userData,setUserData] = useState([]);
-    const token = useSelector(state=>state.auth._token);
+    const handleUserStateChange = function(user){
+        
+        setUserData([...userData.map(u => (u.id === user.id ? { ...u, changing: true } : u))]);
+        const formData = new FormData();
+        formData.append('user_id', user.id);
+        formData.append('status_type', 'is_active');
+       
+        staff.changeStatus(formData).then(res=>{ 
+            setUserData([...userData.map(u => (u.id === user.id ? { ...u, is_active: res.data.user.is_active } : u))]);
+        }).catch(err=>swal.error(err.response?err.response.data.message:err.message));
+    }
     useEffect(()=>{
-        axios({ 
-            url: "https://idealconstruction.online/application/api/users/type/staff", 
-            method: "GET",
-            headers: { Accept: "application/json", Authorization: 'Bearer '+token },
-        }).then(res=>setUserData(res.data.data.users)).catch(e=>console.log(e.response?e.response.data.message:e.message))
+        staff.list().then(res=>setUserData(res.data.users));
     },[]);
     const columns = useMemo(()=>[
         {
@@ -47,6 +54,20 @@ function Staffs() {
             accessor: "role.name",
             HeaderClass:'text-center',
             DataClass:'text-center',
+        },
+        {
+            Header: "Status",
+            HeaderClass:'text-center',
+            DataClass:'text-center',
+            Cell:(cell) => {
+                return (<Switch 
+                    loading={cell.row.original.changing?true:false}
+                    checkedChildren={(<span style={{fontSize:"10px"}}>Active</span>)} 
+                    unCheckedChildren={(<span style={{fontSize:"10px"}}>Deactive</span>)} 
+                    checked={cell.row.original.is_active} 
+                    onChange={()=>handleUserStateChange(cell.row.original)}
+                />)
+            }
         },
         {
             Header: "Action",
@@ -86,6 +107,13 @@ function Staffs() {
                     </div>
                     <div className="flex-shrink-0">
                         <div>
+                            <Switch 
+                                loading={row.changing?true:false}
+                                className='me-2'
+                                checkedChildren={(<span style={{fontSize:"10px"}}>Active</span>)} 
+                                unCheckedChildren={(<span style={{fontSize:"10px"}}>Dective</span>)} 
+                                checked={row.is_active} onChange={()=>handleUserStateChange(row)}
+                            />
                             <button className="btn btn-sm btn-soft-success me-1" data-id="1"> <i className="ri-pencil-fill"></i></button>
                             <button onClick={()=>handleUserDelete(row.id,row.first_name)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
                         </div>
@@ -106,32 +134,15 @@ function Staffs() {
         }).then((result)=>{
             if (result.isConfirmed) {
                 dispatch(setPreloader({loader:true,message:'Deleting Staffs please wait'}))
-                axios({
-                    url: "https://idealconstruction.online/application/api/user/"+userId+"/destroy", 
-                    method: "DELETE",
-                    headers: { Accept: "application/json", Authorization: 'Bearer '+token },
-                })
+                staff.delete(userId)
                 .then(res=>{
                     setUserData([...userData.filter(user=>user.id!=userId)])
                     dispatch(setPreloader({loader:false,message:""}))
-                    console.log(userData.length);
-                    Swal.fire({
-                        title: "success",
-                        text: res.data.message,
-                        icon: "success",
-                        confirmButtonClass: "btn btn-primary w-xs mt-2",
-                        showCloseButton: !0,
-                    });
+                    swal.success(res.data.message);
                 })
                 .catch(err=>{
                     dispatch(setPreloader({loader:false,message:""}))
-                    Swal.fire({
-                        title: "error",
-                        text: err.response ? err.response.data.message : err.message,
-                        icon: "error",
-                        confirmButtonClass: "btn btn-primary w-xs mt-2",
-                        showCloseButton: !0,
-                    });
+                    swal.error(err.response ? err.response.data.message : err.message);
                 })
             }
         })
@@ -147,7 +158,7 @@ function Staffs() {
                         <NewStaffModal userData={userData} setUserData={setUserData} />
                     </CardHeader>
                     <CardBody className="">
-                        <TableResponsive columns={columns} data={userData} />
+                        <TableResponsive columns={columns} data={userData}  />
                     </CardBody>
                 </Card>
             </Col>
