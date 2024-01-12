@@ -40,7 +40,7 @@ export const AuthMiddleWare = props =>{
         validate(dispatch,authenticate,setPreloader);
         
     },[])
-    return auth._token ? (<>{props.children}</>) : (<Navigate to={{pathname:'/login'}} />)
+    return auth._token ? (<>{props.children}</>) : (<Navigate to={{pathname:'/login', state: { from: props.location }}} />)
 }
 export const GuestMiddleware = props =>{
     const dispatch = useDispatch()
@@ -51,5 +51,5 @@ export const GuestMiddleware = props =>{
         validate(dispatch,authenticate,setPreloader);
         
     },[])
-    return auth._token ? (<Navigate to={{pathname:'/dashboard'}} />) : (<>{props.children}</>)
+    return auth._token ? (<Navigate to={{pathname:'/dashboard',state: { from: props.location }}} />) : (<>{props.children}</>)
 }

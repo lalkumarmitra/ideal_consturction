@@ -10,6 +10,9 @@ function LayoutSidebar() {
   useEffect(() => {
     ref.current.recalculate();
   });
+  const handleClickOnNavLink = () =>{
+    document.getElementsByTagName('body')[0].classList.remove('vertical-sidebar-enable');
+  }
   const generateSidebar = type =>{
     return authenticatedRoutes.map((route, idx) => {
       return route.type === type && (
@@ -23,14 +26,14 @@ function LayoutSidebar() {
               <ul className="nav nav-sm flex-column">
                 {route.children.map((child, id) => (
                   <li className="nav-item w-100" key={id}>
-                    <NavLink to={child.path} className="nav-link" data-key={`t-${child.label}`}><span className="ps-2">{child.label}</span></NavLink>
+                    <NavLink to={child.path} className="nav-link" onClick={handleClickOnNavLink} data-key={`t-${child.label}`}><span className="ps-2">{child.label}</span></NavLink>
                   </li>
                 ))}
               </ul>
             </div>
           </li>) 
         : (<li className="nav-item w-100" key={idx}>
-            <NavLink to={route.path} className="nav-link menu-link" role="button"><i className={route.icon}></i> <span data-key={`t-${route.label}`}>{route.label}</span></NavLink>
+            <NavLink to={route.path} className="nav-link menu-link" onClick={handleClickOnNavLink} role="button"><i className={route.icon}></i> <span data-key={`t-${route.label}`}>{route.label}</span></NavLink>
           </li>)
       ) 
     })

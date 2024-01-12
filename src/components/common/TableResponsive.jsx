@@ -1,66 +1,99 @@
-import React from 'react'
-import SimpleBar from "simplebar-react";
-import { useTable } from "react-table";
+import React from 'react';
+import SimpleBar from 'simplebar-react';
+import { useTable, usePagination, useFilters } from 'react-table';
+import { Link } from 'react-router-dom';
 
-export const TableResponsive = ({ columns, data }) => {
-    const { getTableProps, getTableBodyProps, headerGroups,  rows,  prepareRow } = useTable({ columns, data });
-    if(data.length)
-    return (
-        <>
-            <div className="d-none d-lg-block">
-                <table {...getTableProps()} className="table table-bordered dt-responsive nowrap table-striped align-middle" style={{ width: "100%" }}>
-                    <thead>
-                        {headerGroups.map(headerGroup => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map((column, index) => (
-                                    <th {...column.getHeaderProps()}className={columns[index].HeaderClass} >{column.render("Header")}</th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                        {rows.map((row, i) => {
-                            prepareRow(row);
-                            return (
-                                <tr {...row.getRowProps()}>
-                                    {row.cells.map((cell, i) => {
-                                        return <td {...cell.getCellProps()} className={columns[i].DataClass}>{cell.render('Cell')}</td>;
-                                    })} 
+export const TableResponsive = ({columns,data,isPagination=true,isShowingPageLength=true,customPageSize=4,}) => {
+    const {getTableProps,getTableBodyProps, headerGroups,prepareRow,page,pageOptions,canPreviousPage,previousPage,gotoPage,canNextPage,
+         nextPage,state: { pageIndex, pageSize }, setPageSize,} = useTable({ columns, data }, useFilters, usePagination);
+    React.useEffect(() => { setPageSize(customPageSize);}, [customPageSize, setPageSize]);
+    const generatePageButtons = () => {
+        const pageButtons = [];
+        for (let i = pageIndex; i <= pageIndex + 1; i++) {
+            if (i >= 0 && i < pageOptions.length) {
+                pageButtons.push(i);
+            }
+        }
+        return pageButtons;
+    };
+
+    if (data.length) {
+        return (
+            <>
+                <div className="d-none d-lg-block">
+                    <table {...getTableProps()}className="table table-bordered dt-responsive nowrap table-striped align-middle" style={{ width: '100%' }}>
+                        <thead>
+                            {headerGroups.map((headerGroup) => (<tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>{headerGroup.headers.map((column, index) => (
+                                        <th {...column.getHeaderProps()} className={columns[index].HeaderClass} key={column.id}>{column.render('Header')} </th>
+                                    ))}
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-
-            </div >
-            <div className="d-lg-none">
-                <div id="user_list_lst_container">
-                    <div className="row mb-3">
-                        <div className="col">
-                            <div>
-                                <input
-                                    className="search form-control"
-                                    id="tableAsListSearchInput"
-                                    placeholder="Type to Search"
-                                />
+                            ))}
+                        </thead>
+                        <tbody {...getTableBodyProps()}>
+                            {page.map((row, i) => {
+                                prepareRow(row);
+                                return (
+                                    <tr {...row.getRowProps()} key={i}>
+                                        {row.cells.map((cell, i) => (
+                                            <td {...cell.getCellProps()} className={columns[i].DataClass} key={cell.column.id}>{cell.render('Cell')}</td>
+                                        ))}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    {isPagination && (
+                        <div className="d-flex justify-content-between align-items-center">
+                            {isShowingPageLength && (<div className="col-sm">
+                                    <div className="text-muted">Showing 
+                                        <span className="fw-semibold">{page.length}</span> of{' '}
+                                        <span className="fw-semibold">{data.length}</span> entries
+                                    </div>
+                                </div>
+                            )}
+                            <div className="col-sm-12 col-md-7">
+                                <ul className="pagination justify-content-end pagination-rounded">
+                                    <li className={`page-item ${!canPreviousPage ? 'd-none' : 'd-block'}`}>
+                                        <Link to="#" className="page-link" onClick={() => previousPage()}><i className="mdi mdi-skip-previous-circle-outline " /></Link>
+                                    </li>
+                                    {generatePageButtons().map((item, key) => (
+                                        <li key={key} className={`page-item ${pageIndex === item ? 'active' : ''}`}>
+                                            <Link to="#" className="page-link" onClick={() => gotoPage(item)}>{item + 1}</Link>
+                                        </li>
+                                    ))}
+                                    <li className={`page-item ${!canNextPage ? 'd-none' : 'd-block'}`}>
+                                        <Link to="#" className="page-link " onClick={() => nextPage()}> <i className="mdi mdi-skip-next-circle-outline " /></Link>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                    </div>
-                    <SimpleBar style={{ height: "calc(100vh - 376px)" }}>
-                        <ul className="list list-group list-group-flush mb-0" id="table_as_list">
-                            {data.map((row,id)=>{
-                                const list_obj = columns.filter(d=>d.Header==='List')
-                                return (list_obj.length)? (<li key={id} className="list-group-item ">{list_obj[0].list(row)}</li>):'invalid list data';
-                            })}
-                        </ul>
-                    </SimpleBar>
+                    )}
                 </div>
-            </div>
-        </>
-    )
+                <div className="d-lg-none">
+                    <div id="user_list_lst_container">
+                        <div className="row mb-3">
+                            <div className="col">
+                                <div>
+                                    <input className="search form-control" id="tableAsListSearchInput" placeholder="Type to Search"/>
+                                </div>
+                            </div>
+                        </div>
+                        <SimpleBar style={{ height: "calc(100vh - 376px)" }}>
+                            <ul className="list list-group list-group-flush mb-0" id="table_as_list">
+                                {data.map((row, id) => {
+                                    const list_obj = columns.filter(d => d.Header === 'List')
+                                    return (list_obj.length) ? (<li key={id} className="list-group-item ">{list_obj[0].list(row)}</li>) : <span key={id}>invalid list data </span>;
+                                })}
+                            </ul>
+                        </SimpleBar>
+                    </div>
+                </div>
+            </>
+        );
+    }
     return (
-        <div className='d-flex align-items-center justify-content-center p-5'>
+        <div className="d-flex align-items-center justify-content-center p-5">
             <h2>No Data Found</h2>
         </div>
-    )
-}
+    );
+};

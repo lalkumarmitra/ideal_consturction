@@ -22,6 +22,7 @@ export function NewStaffModal({userData,setUserData}) {
             headers: { Accept: "application/json", Authorization: 'Bearer '+token },
             data:formData
         })
+        
         .then(res=>{
            setUserData([...userData, res.data.data.user])
            dispatch(setPreloader({loader:false,message:''}))
@@ -87,8 +88,7 @@ export function NewStaffModal({userData,setUserData}) {
 
                             <div className="col-lg-12">
                                 <label htmlFor="genderInput" className="form-label">Gender</label>
-                                <Select name='gender' options={genders}/>
-                                
+                                <Select name='gender' options={genders} />
                             </div>
                             <div className='col-lg-6'>
                                 <label htmlFor="dob" className="form-label">Date Of Birth</label>
@@ -97,7 +97,7 @@ export function NewStaffModal({userData,setUserData}) {
 
                             <div className='col-lg-6'>
                                 <label htmlFor="role" className="form-label">Staff Type</label>
-                                <Select options={staffRoles} />
+                                <Select name="role_id" options={staffRoles} />
                                 {/* <select id="role" name='role_id' defaultValue='driver' className='form-control'>
                                     {staffRoles.length?staffRoles.map((staff,idx)=>(
                                         <option key={idx} value={staff.id}>{staff.name}</option>
