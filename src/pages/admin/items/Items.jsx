@@ -1,20 +1,53 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import BreadCrumb from "../../../components/common/BreadCrumb";
 import { TableResponsive } from "../../../components/common/TableResponsive";
-import { Card, CardBody, CardHeader, Col, Row } from "react-bootstrap";
+import { Card, CardBody, CardHeader, Col, Row, Button } from "react-bootstrap";
 import { item } from '../../../helper/api_url';
+import Swal from 'sweetalert2';
 import { NewItemModal } from '../../../components/common/modal';
+import { useDispatch } from 'react-redux';
+import { setPreloader } from '../../../features/Ui/uiSlice';
+import { swal } from '../../../helper/swal';
 function Items() {
+    const dispatch = useDispatch();
     const [itemData,setItemData] = useState([]);
     useEffect(()=>{
         item.list().then(res=>setItemData(res.data.items))
     },[])
+    const handleItemDelete = itemRow => {
+        Swal.fire({
+            title: "Are you sure ?",
+            text:" You want to delete this Item/Product : " + itemRow.name,
+            icon:'warning',
+            showDenyButton: true,
+            confirmButtonText: "Delete",
+            denyButtonText: `No`
+        }).then((result)=>{
+            if (result.isConfirmed) {
+                dispatch(setPreloader({loader:true,message:'Deleting Item please wait'}))
+                item.delete(itemRow.id)
+                .then(res=>{
+                    setItemData([...itemData.filter(i=>i.id!=itemRow.id)])
+                    dispatch(setPreloader({loader:false,message:""}))
+                    swal.success(res.data.message);
+                })
+                .catch(err=>{
+                    dispatch(setPreloader({loader:false,message:""}))
+                    swal.error(err.response ? err.response.data.message : err.message);
+                })
+            }
+        })
+    }
     const columns = useMemo(()=>[
         {
             Header: "Name",
             accessor: "name",
             HeaderClass:'',
             DataClass:'',
+            Cell:(cell)=> {
+                const imageUrl = `https://idealconstruction.online/application/${cell.row.original.image}`;
+                return (<span> <img className="me-2 rounded-circle header-profile-user" src={imageUrl} alt="User Avatar" />{cell.row.original.name}</span>)
+            }
         },
         {
             Header: "Rate",
@@ -36,12 +69,54 @@ function Items() {
         },
         {
             Header: "Action",
-            HeaderClass:'',
-            DataClass:'',
-            Cell:()=>{
-                return 'action';
-            }
+            HeaderClass:'text-center',
+            DataClass:'text-center',
+            Cell: (cell) => {
+              return ( 
+                <div className="">
+                    <Button className="btn btn-sm btn-soft-primary me-1" >
+                        <i className="ri-eye-fill" /> 
+                    </Button>
+                    <Button className="btn btn-sm btn-soft-success me-1" >
+                        <i className="ri-pencil-fill" />  
+                    </Button>
+                    <Button onClick={()=>handleItemDelete(cell.row.original)} className="btn btn-sm btn-soft-danger me-1" >
+                        <i className="ri-delete-bin-fill" />  
+                    </Button>
+                </div>
+              )
+            },
         },
+        {
+            Header:'List',
+            HeaderClass:'d-none',
+            DataClass:'d-none',
+            list:(row)=>{
+                const imageUrl = `https://idealconstruction.online/application/${row.image}`;
+                let description = row.description;
+                let truncatedDescription = description.length > 20 ? description.substring(0, 20) + ' ...' : description;
+
+                return (
+                <div className="d-flex">
+                    <img className="me-2 rounded-circle header-profile-user" src={imageUrl} alt="User Avatar" />
+                    <div className="flex-grow-1" data-id="1">
+                        <h5 className="fs-13 mb-1">
+                            <a href="#" className="link text-dark"></a>
+                            <a href="#">{row.name}</a>
+                            <span className='text-muted ms-2'> <small>{truncatedDescription}</small> </span>
+                        </h5>
+                        <p className="text-muted mb-0">{row.rate} / {row.unit}</p>
+                    </div>
+                    <div className="flex-shrink-0">
+                        <div>
+                            <button className="btn btn-sm btn-soft-success me-1" data-id="1"> <i className="ri-pencil-fill"></i></button>
+                            <button onClick={()=>handleItemDelete(row)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
+                        </div>
+                    </div>
+                </div>
+                )
+            }
+        }
     ])
     return (
         <>
