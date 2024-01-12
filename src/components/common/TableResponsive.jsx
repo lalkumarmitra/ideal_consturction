@@ -23,8 +23,8 @@ export const TableResponsive = ({columns,data,isPagination=true,isShowingPageLen
                 <div className="d-none d-lg-block">
                     <table {...getTableProps()}className="table table-bordered dt-responsive nowrap table-striped align-middle" style={{ width: '100%' }}>
                         <thead>
-                            {headerGroups.map((headerGroup) => (<tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>{headerGroup.headers.map((column, index) => (
-                                        <th {...column.getHeaderProps()} className={columns[index].HeaderClass} key={column.id}>{column.render('Header')} </th>
+                            {headerGroups.map((headerGroup,idx) => (<tr {...headerGroup.getHeaderGroupProps()} key={idx}>{headerGroup.headers.map((column, index) => (
+                                        <th {...column.getHeaderProps()} className={columns[index].HeaderClass} key={index}>{column.render('Header')} </th>
                                     ))}
                                 </tr>
                             ))}
@@ -35,7 +35,7 @@ export const TableResponsive = ({columns,data,isPagination=true,isShowingPageLen
                                 return (
                                     <tr {...row.getRowProps()} key={i}>
                                         {row.cells.map((cell, i) => (
-                                            <td {...cell.getCellProps()} className={columns[i].DataClass} key={cell.column.id}>{cell.render('Cell')}</td>
+                                            <td {...cell.getCellProps()} className={columns[i].DataClass} key={i}>{cell.render('Cell')}</td>
                                         ))}
                                     </tr>
                                 );
