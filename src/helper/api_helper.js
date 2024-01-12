@@ -1,27 +1,26 @@
 import axios from "axios";
 
-export const API_URL = "https://idealconstruction.online/application/api";
+const API_URL = "https://idealconstruction.online/application/api";
 
 const axiosApi = axios.create({
   baseURL: API_URL,
 });
-const token=localStorage.getItem("_token");
-axiosApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+// axiosApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+export function setToken(token){
+  axiosApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+}
 
 axiosApi.interceptors.response.use(
   (response) => response,
   (error) => Promise.reject(error)
 );
 
-export async function get(url, config = {},callback=null) {
+export async function get(url, config = {}) {
   return await axiosApi
     .get(url, { ...config })
-    .then((response) => {
-      if(callback!=null){
-        callback(response.data)
-      }
-      return response.data
-    });
+    .then((response) => response.data);
 }
 
 export async function post(url, data, config = {}) {

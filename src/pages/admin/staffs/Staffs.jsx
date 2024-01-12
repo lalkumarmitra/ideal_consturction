@@ -7,16 +7,17 @@ import { TableResponsive } from "../../../components/common/TableResponsive";
 import { Card, CardBody, CardHeader, Col, Row, Button } from "react-bootstrap";
 import Swal from 'sweetalert2';
 import { NewStaffModal } from './modal';
-import { staff } from '../../../helper/api_url';
+
 function Staffs() {
     const dispatch = useDispatch();
     const [userData,setUserData] = useState([]);
     const token = useSelector(state=>state.auth._token);
     useEffect(()=>{
-        staff.list((res)=>{
-            console.log(res);
-        })
-        // .then(res=>setUserData(res.data.data.users)).catch(e=>console.log(e.response?e.response.data.message:e.message))
+        axios({ 
+            url: "https://idealconstruction.online/application/api/users/type/staff", 
+            method: "GET",
+            headers: { Accept: "application/json", Authorization: 'Bearer '+token },
+        }).then(res=>setUserData(res.data.data.users)).catch(e=>console.log(e.response?e.response.data.message:e.message))
     },[]);
     const columns = useMemo(()=>[
         {
@@ -146,7 +147,7 @@ function Staffs() {
                         <NewStaffModal userData={userData} setUserData={setUserData} />
                     </CardHeader>
                     <CardBody className="">
-                        <TableResponsive columns={columns} data={userData}  />
+                        <TableResponsive columns={columns} data={userData} />
                     </CardBody>
                 </Card>
             </Col>

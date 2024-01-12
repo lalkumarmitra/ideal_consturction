@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SimpleBar from 'simplebar-react';
-import { useTable, usePagination, useFilters } from 'react-table';
+import { useTable, usePagination, useFilters, useGlobalFilter } from 'react-table';
 import { Link } from 'react-router-dom';
 
-export const TableResponsive = ({columns,data,isPagination=true,isShowingPageLength=true,customPageSize=4,}) => {
-    const {getTableProps,getTableBodyProps, headerGroups,prepareRow,page,pageOptions,canPreviousPage,previousPage,gotoPage,canNextPage,
-         nextPage,state: { pageIndex, pageSize }, setPageSize,} = useTable({ columns, data }, useFilters, usePagination);
-    React.useEffect(() => { setPageSize(customPageSize);}, [customPageSize, setPageSize]);
+export const TableResponsive = ({ columns, data, isPagination = true, isShowingPageLength = true, customPageSize = 4, showFilter = true,showCustomOptionPage=true }) => {
+    const { getTableProps, getTableBodyProps, headerGroups, prepareRow, page, pageOptions, canPreviousPage, previousPage, gotoPage, canNextPage,
+        nextPage, state: { pageIndex, pageSize, globalFilter }, setPageSize, setGlobalFilter } = useTable({ columns, data }, useFilters, useGlobalFilter, usePagination);
+    React.useEffect(() => { setPageSize(customPageSize); }, [customPageSize, setPageSize]);
     const generatePageButtons = () => {
         const pageButtons = [];
         for (let i = pageIndex; i <= pageIndex + 1; i++) {
@@ -16,17 +16,32 @@ export const TableResponsive = ({columns,data,isPagination=true,isShowingPageLen
         }
         return pageButtons;
     };
-
+    const onChangeInSelect = event => {
+        setPageSize(Number(event.target.value))
+      }
+    const [searchQuery, setSearchQuery] = useState('');
+    const filteredData = data.filter(row => { return columns.some(column => String(row[column.accessor]).toLowerCase().includes(searchQuery.toLowerCase())); });
     if (data.length) {
         return (
             <>
                 <div className="d-none d-lg-block">
-                    <table {...getTableProps()}className="table table-bordered dt-responsive nowrap table-striped align-middle" style={{ width: '100%' }}>
+                    <div className='row mb-3'>
+                        {showCustomOptionPage && (
+                            <div className='col-lg-2'>
+                            <select className="form-select" value={pageSize} onChange={onChangeInSelect}>
+                                {[2,4,8,10, 20, 30, 40, 50].map(pageSize => (<option key={pageSize} value={pageSize}>Show {pageSize}</option> ))}
+                            </select>
+                            </div>)
+                        }
+                        {showFilter && (<div className='col-lg-4'><input type="text" className='form-control' placeholder="Search..." value={globalFilter || ''} onChange={(e) => setGlobalFilter(e.target.value)} /></div>)}
+                    </div>
+
+                    <table {...getTableProps()} className="table table-bordered dt-responsive nowrap table-striped align-middle" style={{ width: '100%' }}>
                         <thead>
                             {headerGroups.map((headerGroup) => (<tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>{headerGroup.headers.map((column, index) => (
-                                        <th {...column.getHeaderProps()} className={columns[index].HeaderClass} key={column.id}>{column.render('Header')} </th>
-                                    ))}
-                                </tr>
+                                <th {...column.getHeaderProps()} className={columns[index].HeaderClass} key={column.id}>{column.render('Header')} </th>
+                            ))}
+                            </tr>
                             ))}
                         </thead>
                         <tbody {...getTableBodyProps()}>
@@ -45,11 +60,11 @@ export const TableResponsive = ({columns,data,isPagination=true,isShowingPageLen
                     {isPagination && (
                         <div className="d-flex justify-content-between align-items-center">
                             {isShowingPageLength && (<div className="col-sm">
-                                    <div className="text-muted">Showing 
-                                        <span className="fw-semibold">{page.length}</span> of{' '}
-                                        <span className="fw-semibold">{data.length}</span> entries
-                                    </div>
+                                <div className="text-muted">Showing
+                                    <span className="fw-semibold">{page.length}</span> of{' '}
+                                    <span className="fw-semibold">{data.length}</span> entries
                                 </div>
+                            </div>
                             )}
                             <div className="col-sm-12 col-md-7">
                                 <ul className="pagination justify-content-end pagination-rounded">
@@ -71,16 +86,14 @@ export const TableResponsive = ({columns,data,isPagination=true,isShowingPageLen
                 </div>
                 <div className="d-lg-none">
                     <div id="user_list_lst_container">
-                        <div className="row mb-3">
-                            <div className="col">
-                                <div>
-                                    <input className="search form-control" id="tableAsListSearchInput" placeholder="Type to Search"/>
-                                </div>
+                        <div className='row mb-3'>
+                            <div className='col'>
+                                <input type="text" className='form-control' placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                             </div>
                         </div>
                         <SimpleBar style={{ height: "calc(100vh - 376px)" }}>
                             <ul className="list list-group list-group-flush mb-0" id="table_as_list">
-                                {data.map((row, id) => {
+                                {filteredData.map((row, id) => {
                                     const list_obj = columns.filter(d => d.Header === 'List')
                                     return (list_obj.length) ? (<li key={id} className="list-group-item ">{list_obj[0].list(row)}</li>) : <span key={id}>invalid list data </span>;
                                 })}
