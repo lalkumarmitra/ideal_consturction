@@ -46,7 +46,7 @@ export const TableResponsive = ({columns,data,isPagination=true,isShowingPageLen
                         <div className="d-flex justify-content-between align-items-center">
                             {isShowingPageLength && (<div className="col-sm">
                                     <div className="text-muted">Showing 
-                                        <span className="fw-semibold">{page.length}</span> of{' '}
+                                        <span className="fw-semibold ms-1">{page.length}</span> of{' '}
                                         <span className="fw-semibold">{data.length}</span> entries
                                     </div>
                                 </div>
@@ -92,8 +92,8 @@ export const TableResponsive = ({columns,data,isPagination=true,isShowingPageLen
         );
     }
     return (
-        <div className="d-flex align-items-center justify-content-center p-5">
-            <h2>No Data Found</h2>
+        <div className="d-flex bg-soft-warning rounded align-items-center justify-content-center p-5">
+            <h3>No Data Found</h3>
         </div>
     );
 };

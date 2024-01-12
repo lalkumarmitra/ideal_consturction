@@ -6,11 +6,16 @@ export const auth={
 
 // student api url
 export const staff={
-    add: data =>post("/staff",data),
-    list: (callback) =>get("/users/type/staff",callback),
-    delete: (id) =>del(`/user/${id}`),
+    add: data =>post("/user",data),
+    list: () =>get("/users/type/staff"),
+    delete: (id) =>del(`/user/${id}/destroy`),
+    changeStatus: data=>post(`/user/set-status`,data)
 }
-
+export const item = {
+    add:data=>post("/item",data),
+    list:()=>get('/items'),
+    delete:(id)=>del(`/item/${id}/destroy`)
+}
 export const baseURL=API_URL;
 
 

@@ -1,4 +1,5 @@
 
+import Items from "../pages/admin/items/Items"
 import Staffs from "../pages/admin/staffs/Staffs"
 import ForgotPassword from "../pages/auth/ForgotPassword"
 import Login from "../pages/auth/Login"
@@ -12,7 +13,7 @@ export const authenticatedRoutes = [
     {type:'menu',label:'Dashboard',path:'/dashboard',element:<Home/>,icon:'ri-home-8-line',users:['admin','staff'],children:[]},
     {type:'menu',label:'Transactions',path:'/transactions',element:<Home/>,icon:'ri-swap-line',users:['admin','staff'],children:[]},
     {type:'menu',label:'Staffs',path:'/staffs',element:<Staffs/>,icon:'ri-team-line',users:['admin','staff'],children:[]},
-    {type:'menu',label:'Product/Items',path:'/items',element:<Home/>,icon:'ri-shopping-basket-2-line',users:['admin','staff'],children:[]},
+    {type:'menu',label:'Product/Items',path:'/items',element:<Items />,icon:'ri-shopping-basket-2-line',users:['admin','staff'],children:[]},
     {type:'menu',label:'Clients/location',path:'/clients',element:<Home/>,icon:'ri-map-pin-line',users:['admin','staff'],children:[]},
     {type:'menu',label:'Vehicles',path:'/vehicles',element:<Home/>,icon:'ri-truck-line',users:['admin','staff'],children:[]},
     {type:'module',label:'History',icon:'ri-history-line',users:['admin','staff'],children:[

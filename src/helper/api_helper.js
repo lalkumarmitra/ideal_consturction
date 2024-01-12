@@ -13,20 +13,16 @@ axiosApi.interceptors.response.use(
   (error) => Promise.reject(error)
 );
 
-export async function get(url, config = {},callback=null) {
+export async function get(url, config = {}) {
   return await axiosApi
     .get(url, { ...config })
-    .then((response) => {
-      if(callback!=null){
-        callback(response.data)
-      }
-      return response.data
-    });
+    .then((response) => response.data);
 }
 
 export async function post(url, data, config = {}) {
+  // console.log(data);
   return axiosApi
-    .post(url, { ...data }, { ...config })
+    .post(url, data, { ...config })
     .then((response) => response.data);
 }
 
