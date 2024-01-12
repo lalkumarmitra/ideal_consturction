@@ -539,7 +539,7 @@ function LayoutHeader() {
             <div className="dropdown ms-sm-3 header-item topbar-user">
               <button type="button" className="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span className="d-flex align-items-center">
-                  <img className="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar"/>
+                  <img className="rounded-circle header-profile-user" src={`https://idealconstruction.online/${userData.avatar}`} alt="Header Avatar"/>
                   <span className="text-start ms-xl-2">
                     <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
                       {userData.first_name} {" "} {userData.last_name}
@@ -551,7 +551,7 @@ function LayoutHeader() {
                 </span>
               </button>
               <div className="dropdown-menu dropdown-menu-end">
-                <h6 className="dropdown-header">Welcome Anna!</h6>
+                <h6 className="dropdown-header">Welcome {userData.first_name}!</h6>
                 <a className="dropdown-item" href="pages-profile.html">
                   <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
                   <span className="align-middle">Profile</span>
