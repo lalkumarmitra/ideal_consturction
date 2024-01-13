@@ -9,14 +9,23 @@ import 'swiper/css/scrollbar';
 
 
 
+import logo1 from '../assets/images/clientlogo/clientsLogo1.png'
+import logo2 from '../assets/images/clientlogo/clientsLogo2.png'
+import logo3 from '../assets/images/clientlogo/clientsLogo3.png';
+import logo4 from '../assets/images/clientlogo/clientsLogo4.png';
+import logo5 from '../assets/images/clientlogo/clientsLogo5.png';
+import logo6 from '../assets/images/clientlogo/clientsLogo6.png';
+
+
+
 function ClientSlider({sliderPerPage}) {
     const clients = [
-        'assets/images/clients/amazon.svg',
-        'assets/images/clients/walmart.svg',
-        'assets/images/clients/lenovo.svg',
-        'assets/images/clients/paypal.svg',
-        'assets/images/clients/shopify.svg',
-        'assets/images/clients/verizon.svg',
+        logo1,
+        logo2,
+        logo3,
+        logo4,
+        logo5,
+        logo6,
       ];
   return (
     <Swiper
@@ -30,6 +39,7 @@ function ClientSlider({sliderPerPage}) {
             <SwiperSlide key={index}>
                 <div className="client-images">
                     <img
+                        style={{filter: "grayscale(100%)",aspectRatio:'16/9'}}
                         src={client}
                         alt={`client-img-${index}`}
                         className="mx-auto img-fluid d-block"
