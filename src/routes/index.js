@@ -31,7 +31,7 @@ export const authenticatedRoutes = [
     
 ]
 export const publicRoutes = [
-    {label:'Home',path:'/',element:<LandingPage /> ,icon:'null',users:[],children:[]}
+    {label:'Home',path:'/',element:<Login /> ,icon:'null',users:[],children:[]}
 ]
 export const authRoutes = [
     {label:'Login',path:'/login',element:<Login /> ,icon:'null',users:[],children:[]},
