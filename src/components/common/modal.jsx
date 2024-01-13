@@ -3,9 +3,9 @@ import axios from 'axios';
 import { Modal } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { setPreloader } from '../../features/Ui/uiSlice';
-import Select from 'react-select'
-import { staff, item } from '../../helper/api_url';
+import { staff, item, client } from '../../helper/api_url';
 import { swal } from '../../helper/swal';
+
 
 export function NewStaffModal({userData,setUserData}) {
     const dispatch = useDispatch();
@@ -71,7 +71,11 @@ export function NewStaffModal({userData,setUserData}) {
 
                             <div className="col-lg-12">
                                 <label htmlFor="genderInput" className="form-label">Gender</label>
-                                <Select name='gender' options={genders} />
+                                <select id="role" name='role_id' defaultValue='driver' className='form-control'>
+                                    {genders.length?genders.map((staff,idx)=>(
+                                        <option key={idx} value={staff.value}>{staff.label}</option>
+                                    )):(<option disabled >No Staff Gender Found</option>)}
+                                </select>
                             </div>
                             <div className='col-lg-6'>
                                 <label htmlFor="dob" className="form-label">Date Of Birth</label>
@@ -80,12 +84,12 @@ export function NewStaffModal({userData,setUserData}) {
 
                             <div className='col-lg-6'>
                                 <label htmlFor="role" className="form-label">Staff Type</label>
-                                <Select name="role_id" options={staffRoles} />
-                                {/* <select id="role" name='role_id' defaultValue='driver' className='form-control'>
+                                
+                                <select id="role" name='role_id' defaultValue='driver' className='form-control'>
                                     {staffRoles.length?staffRoles.map((staff,idx)=>(
-                                        <option key={idx} value={staff.id}>{staff.name}</option>
+                                        <option key={idx} value={staff.value}>{staff.label}</option>
                                     )):(<option disabled >No Staff Roles Found</option>)}
-                                </select> */}
+                                </select>
                             </div>
                             <div className="col-6">
                                 <div>
@@ -183,6 +187,99 @@ export function NewItemModal({itemData,setItemData}) {
                                     <label htmlFor="description" className="form-label">Description</label>
                                     <textarea name="description" className='form-control' cols="30" rows="5" id="description" ></textarea>
                                 </div>
+                            </div>
+                            <div className="col-lg-12">
+                                <div className="hstack gap-2 justify-content-end">
+                                    <button type="button" className="btn btn-light" onClick={handleClose}>Close</button>
+                                    <button type="submit" className="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </Modal.Body>
+            </Modal>
+        </>
+    )
+}
+
+export function NewClientModal({clientData,setClientData}) {
+    const dispatch = useDispatch();
+    const [status,setStatus] = useState(false);
+    const handleClose = () => setStatus(!status)
+    const handleSubmit = e => {
+        dispatch(setPreloader({loader:true,message:'Creating new Client/Location please wait'}))
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        client.add(formData).then(res=>{
+            setClientData([res.data.client,...clientData])
+            dispatch(setPreloader({loader:false,message:''}))
+            handleClose();
+            swal.success(res.data.message);
+        }).catch(err=>{
+            console.log(err);
+            dispatch(setPreloader({loader:false,message:''}))
+            swal.error(err.response ? err.response.data.message : err.message)
+        })
+    }
+    return (
+        <>
+            <button onClick={handleClose} className='btn btn-soft-success add-btn waves-effect'>
+                <i className="ri-add-line align-bottom me-1"></i> 
+                <span>New Client/Location</span>
+            </button>
+            <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title><h5>New Client Or Location</h5></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form onSubmit={e=>handleSubmit(e)}>
+                        <div className="row g-3">
+                            <div className="col-12">
+                                <div>
+                                    <label htmlFor="name" className="form-label">Name</label>
+                                    <input type="text" className="form-control" id='name' name="name" placeholder="Enter Name" />
+                                </div>
+                            </div>
+                            <div className="col-12">
+                                <div>
+                                    <label htmlFor="address" className="form-label">Address</label>
+                                    <textarea className='form-control' id='address' name='address' cols="30" rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div className="col-4">
+                                <div>
+                                    <label htmlFor="city" className="form-label">City</label>
+                                    <input type="text" className="form-control" name='city' id="city" />
+                                </div>
+                            </div>
+                            <div className='col-4'>
+                                <label htmlFor="district" className="form-label">District</label>
+                                <input type="text" name="district" id="district" className='form-control' />
+                            </div>
+                            <div className="col-4">
+                                <div>
+                                    <label htmlFor="state" className="form-label">State</label>
+                                    <input name="state" className='form-control' id="state" />
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div>
+                                    <label htmlFor="pin" className="form-label">Pin</label>
+                                    <input name="pin" className='form-control'  id="pin" />
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div>
+                                    <label htmlFor="client_type" className="form-label">Client/Location Type</label>
+                                    <select name="client_type" className='form-control'  id="client_type" >
+                                        <option value='sender'>Loading Point</option>
+                                        <option value='receiver'>UnLoading Point</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className='col-12'>
+                                <label htmlFor="itemImage" className="form-label">Client/Location Image</label>
+                                <input type="file" name="image" id="itemImage" className='form-control' />
                             </div>
                             <div className="col-lg-12">
                                 <div className="hstack gap-2 justify-content-end">

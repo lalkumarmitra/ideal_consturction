@@ -105,7 +105,7 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
         );
     }
     return (
-        <div className="d-flex bg-soft-warning rounded align-items-center justify-content-center p-5">
+        <div className="d-flex bg-light bg-opacity-50 rounded align-items-center justify-content-center p-5">
             <h3>No Data Found</h3>
         </div>
     );

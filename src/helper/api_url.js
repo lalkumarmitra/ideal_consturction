@@ -16,4 +16,10 @@ export const item = {
     list:()=>get('/items'),
     delete:(id)=>del(`/item/${id}/destroy`)
 }
+
+export const client = {
+    add:data=>post('/client',data),
+    list:()=>get('/clients'),
+    delete:id=>del(`/client/${id}/destroy`)
+}
 export const baseURL=API_URL;

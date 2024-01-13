@@ -61,6 +61,7 @@ function Staffs() {
             DataClass:'text-center',
             Cell:(cell) => {
                 return (<Switch 
+                    className={cell.row.original.is_active ?'bg-primary':''}
                     loading={cell.row.original.changing?true:false}
                     checkedChildren={(<span style={{fontSize:"10px"}}>Active</span>)} 
                     unCheckedChildren={(<span style={{fontSize:"10px"}}>Deactive</span>)} 
@@ -108,11 +109,10 @@ function Staffs() {
                     <div className="flex-shrink-0">
                         <div>
                             <Switch 
+                                className={row.is_active ?'bg-primary me-2':'me-2'}
                                 loading={row.changing?true:false}
-                                className='me-2'
-                                checkedChildren={(<span style={{fontSize:"10px"}}>Active</span>)} 
-                                unCheckedChildren={(<span style={{fontSize:"10px"}}>Dective</span>)} 
-                                checked={row.is_active} onChange={()=>handleUserStateChange(row)}
+                                checked={row.is_active} 
+                                onChange={()=>handleUserStateChange(row)}
                             />
                             <button className="btn btn-sm btn-soft-success me-1" data-id="1"> <i className="ri-pencil-fill"></i></button>
                             <button onClick={()=>handleUserDelete(row.id,row.first_name)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
