@@ -32,14 +32,14 @@ function ClientSlider({sliderPerPage}) {
         modules={[Pagination, Scrollbar, A11y,Autoplay]}
         spaceBetween={20}
         slidesPerView={sliderPerPage}
-        autoplay={{ delay: 500 }}
+        autoplay={{ delay: 800 }}
         loop={true}
     >
         {clients.map((client, index) => (
             <SwiperSlide key={index}>
-                <div className="client-images">
+                <div className="bg-light py-1 rounded">
                     <img
-                        style={{filter: "grayscale(100%)",aspectRatio:'16/9'}}
+                        style={{height:'112px',aspectRatio:'16/9', objectFit:'contain'}}
                         src={client}
                         alt={`client-img-${index}`}
                         className="mx-auto img-fluid d-block"

@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import ClientSlider from '../../components/ClientSlider';
+import { Link } from 'react-router-dom';
+import img1 from '../../assets/images/landingCrousel/img1.jpg'
+import img2 from '../../assets/images/landingCrousel/img2.jpg'
+import img3 from '../../assets/images/landingCrousel/img3.jpg'
 
 function LandingPage() {
+  const crouseImages = [
+    img1,
+    img2,
+    img3,
+  ]
   const [sliderPerPage,setSliderPerPage] = useState(3);
   const screenSize = s => {
     let sizes = { sm:768, md:992, lg:1200 }
@@ -61,8 +70,7 @@ function LandingPage() {
                     </ul>
 
                     <div className="">
-                        <a href="auth-signin-basic.html" className="btn btn-link fw-medium text-decoration-none text-dark">Sign in</a>
-                        <a href="auth-signup-basic.html" className="btn btn-primary">Sign Up</a>
+                        <Link to="/login" className="btn btn-primary">Log In</Link>
                     </div>
                 </div>
 
@@ -77,10 +85,10 @@ function LandingPage() {
                 <div className="row justify-content-center">
                     <div className="col-lg-8 col-sm-10">
                         <div className="text-center mt-lg-5 pt-5">
-                            <h1 className="display-6 fw-semibold mb-3 lh-base">The better way to manage your website with <span className="text-success">Velzon </span></h1>
+                            <h1 className="display-6 fw-semibold mb-3 lh-base">Skills That Propel, Education That Inspires: <span className="text-success">SK Group of Institutions </span></h1>
                             <div className="d-flex gap-2 justify-content-center mt-4">
-                                <a href="auth-signup-basic.html" className="btn btn-primary">Get Started <i className="ri-arrow-right-line align-middle ms-1"></i></a>
-                                <a href="pages-pricing.html" className="btn btn-danger">View Plans <i className="ri-eye-line align-middle ms-1"></i></a>
+                                <Link to="/login" className="btn btn-primary">Login <i className="ri-arrow-right-line align-middle ms-1"></i></Link>
+                                <Link to="/" className="btn btn-danger">Send Enquiry <i className="ri-eye-line align-middle ms-1"></i></Link>
                             </div>
                         </div>
 
@@ -93,27 +101,11 @@ function LandingPage() {
                             </div>
                             <div className="carousel slide carousel-fade" data-bs-ride="carousel">
                                 <div className="carousel-inner shadow-lg p-2 bg-white rounded">
-                                    <div className="carousel-item active" data-bs-interval="2000">
-                                        <img src="assets/images/demos/default.png" className="d-block w-100" alt="..." />
-                                    </div>
-                                    <div className="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/demos/saas.png" className="d-block w-100" alt="..." />
-                                    </div>
-                                    <div className="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/demos/material.png" className="d-block w-100" alt="..." />
-                                    </div>
-                                    <div className="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/demos/minimal.png" className="d-block w-100" alt="..." />
-                                    </div>
-                                    <div className="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/demos/creative.png" className="d-block w-100" alt="..." />
-                                    </div>
-                                    <div className="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/demos/modern.png" className="d-block w-100" alt="..." />
-                                    </div>
-                                    <div className="carousel-item" data-bs-interval="2000">
-                                        <img src="assets/images/demos/interactive.png" className="d-block w-100" alt="..." />
-                                    </div>
+                                    {crouseImages.map((img,id)=>(
+                                      <div className="carousel-item active" key={id} data-bs-interval="2000">
+                                          <img src={img} className="d-block w-100" alt="..." style={{aspectRatio:'4/3',objectFit:'cover'}} />
+                                      </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
