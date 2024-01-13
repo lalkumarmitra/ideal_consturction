@@ -71,9 +71,9 @@ export function NewStaffModal({userData,setUserData}) {
 
                             <div className="col-lg-12">
                                 <label htmlFor="genderInput" className="form-label">Gender</label>
-                                <select id="role" name='role_id' defaultValue='driver' className='form-control'>
-                                    {genders.length?genders.map((staff,idx)=>(
-                                        <option key={idx} value={staff.value}>{staff.label}</option>
+                                <select id="genderInput" name='gender' defaultValue='male' className='form-control'>
+                                    {genders.length?genders.map((gender,idx)=>(
+                                        <option key={idx} value={gender.value}>{gender.label}</option>
                                     )):(<option disabled >No Staff Gender Found</option>)}
                                 </select>
                             </div>
@@ -313,7 +313,7 @@ export function NewVehicleModal({listData,setListData}){
             swal.error(err.response ? err.response.data.message : err.message)
         })
     }
-
+    console.log('hello');
     return (
         <>
             <button onClick={handleClose} className='btn btn-soft-success add-btn waves-effect'>

@@ -64,8 +64,8 @@ function App() {
 
           {authenticatedRoutes.map((route, idx) => 
             route.children.length 
-            ? route.children.map((child,id)=>(<Route path={child.path} element={(<AuthMiddleWare><Layout>{child.element}</Layout></AuthMiddleWare>)} key={id} />))
-            : (<Route path={route.path} element={(<AuthMiddleWare><Layout>{route.element}</Layout></AuthMiddleWare>)} key={idx} />)
+            ? route.children.map((child,id)=>(<Route path={child.path} element={(<AuthMiddleWare users={route.users}><Layout>{child.element}</Layout></AuthMiddleWare>)} key={id} />))
+            : (<Route path={route.path} element={(<AuthMiddleWare users={route.users}><Layout>{route.element}</Layout></AuthMiddleWare>)} key={idx} />)
           )}
           <Route path="*" element={<AuthLayout><Error404/></AuthLayout>} />
         </Routes>

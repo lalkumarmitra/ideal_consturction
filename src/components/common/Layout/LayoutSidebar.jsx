@@ -3,10 +3,11 @@ import { Container } from "react-bootstrap";
 import { Link, NavLink } from "react-router-dom";
 import { authenticatedRoutes } from "../../../routes";
 import SimpleBar from "simplebar-react";
+import { useSelector } from "react-redux";
 
 function LayoutSidebar() {
   const ref = useRef();
-
+  const roleType = useSelector(state=>state.auth._roleType);
   useEffect(() => {
     ref.current.recalculate();
   });
@@ -14,8 +15,11 @@ function LayoutSidebar() {
     document.getElementsByTagName('body')[0].classList.remove('vertical-sidebar-enable');
   }
   const generateSidebar = type =>{
+    
     return authenticatedRoutes.map((route, idx) => {
-      return route.type === type && (
+      // console.log(route.users.indexOf(roleType)>=0);
+      return (route.users.indexOf(roleType) >= 0) &&
+       route.type === type && (
         route.children.length 
         ? (<li className="nav-item w-100" key={idx}>
             <a className="nav-link menu-link" href={`#drpdwnid-${idx}`} data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls={`drpdwnid-${idx}`}>
@@ -24,11 +28,13 @@ function LayoutSidebar() {
             </a>
             <div className="collapse menu-dropdown" id={`drpdwnid-${idx}`}>
               <ul className="nav nav-sm flex-column">
-                {route.children.map((child, id) => (
-                  <li className="nav-item w-100" key={id}>
+                {route.children.map((child, id) =>
+                  !(child.users && child.users.indexOf(roleType)<0) ?
+                 (<li className="nav-item w-100" key={id}>
                     <NavLink to={child.path} className="nav-link" onClick={handleClickOnNavLink} data-key={`t-${child.label}`}><span className="ps-2">{child.label}</span></NavLink>
-                  </li>
-                ))}
+                  </li>)
+                  :null
+                )}
               </ul>
             </div>
           </li>) 

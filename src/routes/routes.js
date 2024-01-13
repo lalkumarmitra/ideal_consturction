@@ -21,7 +21,6 @@ const validate =  (dispatch,authenticate,setPreloader) => {
             }));
         })
         .catch(e=>{
-            console.log(e);
             localStorage.removeItem('_token');
             dispatch(setPreloader({loader:false,message:''}))
             dispatch(authenticate({_token:null,_user:{}}))
@@ -41,7 +40,7 @@ export const AuthMiddleWare = props =>{
         validate(dispatch,authenticate,setPreloader);
         
     },[])
-    return auth._token ? (<>{props.children}</>) : (<Navigate to={{pathname:'/login', state: { from: props.location }}} />)
+    return auth._token && (props.users.indexOf(auth._roleType)>=0) ? (<>{props.children}</>) : (<Navigate to={{pathname:'/login', state: { from: props.location }}} />)
 }
 export const GuestMiddleware = props =>{
     const dispatch = useDispatch()
