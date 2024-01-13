@@ -21,6 +21,7 @@ const validate =  (dispatch,authenticate,setPreloader) => {
             }));
         })
         .catch(e=>{
+            console.log(e);
             localStorage.removeItem('_token');
             dispatch(setPreloader({loader:false,message:''}))
             dispatch(authenticate({_token:null,_user:{}}))

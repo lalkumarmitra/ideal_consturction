@@ -2,9 +2,9 @@ import {post,get, del,put, use,API_URL} from './api_helper';
 
 export const auth={
     login: data =>post("/login",data),
+    validate:()=>get('/validate'),
 }
 
-// student api url
 export const staff={
     add: data =>post("/user",data),
     list: () =>get("/users/type/staff"),
@@ -22,4 +22,10 @@ export const client = {
     list:()=>get('/clients'),
     delete:id=>del(`/client/${id}/destroy`)
 }
+export const vehicles = {
+    add:data=>post('vehicle',data),
+    list:()=>get('/vehicles'),
+    delete:id=>del(`/vehicle/${id}/destroy`)
+}
+
 export const baseURL=API_URL;

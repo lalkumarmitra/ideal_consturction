@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Modal } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { setPreloader } from '../../features/Ui/uiSlice';
-import { staff, item, client } from '../../helper/api_url';
+import { staff, item, client, vehicles } from '../../helper/api_url';
 import { swal } from '../../helper/swal';
 
 
@@ -280,6 +280,64 @@ export function NewClientModal({clientData,setClientData}) {
                             <div className='col-12'>
                                 <label htmlFor="itemImage" className="form-label">Client/Location Image</label>
                                 <input type="file" name="image" id="itemImage" className='form-control' />
+                            </div>
+                            <div className="col-lg-12">
+                                <div className="hstack gap-2 justify-content-end">
+                                    <button type="button" className="btn btn-light" onClick={handleClose}>Close</button>
+                                    <button type="submit" className="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </Modal.Body>
+            </Modal>
+        </>
+    )
+}
+
+export function NewVehicleModal({listData,setListData}){
+    const dispatch = useDispatch();
+    const [status,setStatus] = useState(false);
+    const handleClose = () => setStatus(!status)
+    const handleSubmit = e => {
+        dispatch(setPreloader({loader:true,message:'Creating new Vehicle please wait'}))
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        vehicles.add(formData).then(res=>{
+            setListData([res.data.vehicle,...listData])
+            dispatch(setPreloader({loader:false,message:''}))
+            handleClose();
+            swal.success(res.data.message);
+        }).catch(err=>{
+            dispatch(setPreloader({loader:false,message:''}))
+            swal.error(err.response ? err.response.data.message : err.message)
+        })
+    }
+
+    return (
+        <>
+            <button onClick={handleClose} className='btn btn-soft-success add-btn waves-effect'>
+                <i className="ri-add-line align-bottom me-1"></i> 
+                <span>New Vehicle</span>
+            </button>
+            <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title><h5>New Vehicle</h5></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form onSubmit={e=>handleSubmit(e)}>
+                        <div className="row g-3">
+                            <div className="col-12">
+                                <div>
+                                    <label htmlFor="vehicle_number" className="form-label">Vehicle Number</label>
+                                    <input type="text" className="form-control" id='vehicle_number' name="number" placeholder="Enter Vehicle Number" />
+                                </div>
+                            </div>
+                            <div className="col-12">
+                                <div>
+                                    <label htmlFor="vehicle_type" className="form-label">Vehicle Type</label>
+                                    <input type="text" className="form-control" id='vehicle_type' name="type" placeholder="Enter Vehicle type" />
+                                </div>
                             </div>
                             <div className="col-lg-12">
                                 <div className="hstack gap-2 justify-content-end">
