@@ -136,13 +136,11 @@ export function NewItemModal({itemData,setItemData}) {
         e.preventDefault();
         const formData = new FormData(e.target);
         item.add(formData).then(res=>{
-            console.log(res);
             setItemData([res.data.item,...itemData])
             dispatch(setPreloader({loader:false,message:''}))
             handleClose();
             swal.success(res.data.message);
         }).catch(err=>{
-            console.log(err);
             dispatch(setPreloader({loader:false,message:''}))
             swal.error(err.response ? err.response.data.message : err.message)
         })
@@ -216,7 +214,6 @@ export function NewClientModal({clientData,setClientData}) {
             handleClose();
             swal.success(res.data.message);
         }).catch(err=>{
-            console.log(err);
             dispatch(setPreloader({loader:false,message:''}))
             swal.error(err.response ? err.response.data.message : err.message)
         })
@@ -313,7 +310,7 @@ export function NewVehicleModal({listData,setListData}){
             swal.error(err.response ? err.response.data.message : err.message)
         })
     }
-    console.log('hello');
+
     return (
         <>
             <button onClick={handleClose} className='btn btn-soft-success add-btn waves-effect'>

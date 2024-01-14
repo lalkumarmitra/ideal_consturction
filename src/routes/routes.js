@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { authenticate } from "../features/Auth/authSlice";
 import { setPreloader } from "../features/Ui/uiSlice";
+import Preloader from "../components/Preloader";
 
 const validate =  (dispatch,authenticate,setPreloader) => {
     const t = localStorage.getItem('_token');
@@ -35,11 +36,10 @@ export const AuthMiddleWare = props =>{
     const dispatch = useDispatch()
     const auth = useSelector(state=>state.auth)
     useEffect(()=>{
-        dispatch(setPreloader({loader:true,message:'Authenticating Please Wait ...'}))
-        const t = localStorage.getItem('_token');
         validate(dispatch,authenticate,setPreloader);
-        
     },[])
+    if(auth._token === false )
+    return (<Preloader title='Authenticating Please Wait ...' />)
     return auth._token && (props.users.indexOf(auth._roleType)>=0) ? (<>{props.children}</>) : (<Navigate to={{pathname:'/login', state: { from: props.location }}} />)
 }
 export const GuestMiddleware = props =>{
@@ -47,9 +47,7 @@ export const GuestMiddleware = props =>{
     const auth = useSelector(state=>state.auth)
     useEffect(()=>{
         dispatch(setPreloader({loader:true,message:'Authenticating Please Wait ...'}))
-        const t = localStorage.getItem('_token');
         validate(dispatch,authenticate,setPreloader);
-        
     },[])
     return auth._token ? (<Navigate to={{pathname:'/dashboard',state: { from: props.location }}} />) : (<>{props.children}</>)
 }

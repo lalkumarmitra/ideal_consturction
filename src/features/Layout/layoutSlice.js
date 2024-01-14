@@ -13,8 +13,8 @@ const initialState = {
   layout: "vertical",
 
   topbar: "light",
-  sidebar: "dark",
-  layoutMode: "dark",
+  sidebar: window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : 'light',
+  layoutMode: window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : 'light',
 
   sidebarImage: "none",
   sidebarSize: screenSize(window.innerWidth)==='md'?'sm':'lg',

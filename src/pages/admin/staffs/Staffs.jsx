@@ -113,6 +113,8 @@ function Staffs() {
                                 loading={row.changing?true:false}
                                 checked={row.is_active} 
                                 onChange={()=>handleUserStateChange(row)}
+                                checkedChildren={(<span style={{fontSize:"10px"}}>Active</span>)} 
+                                unCheckedChildren={(<span style={{fontSize:"10px"}}>Deactive</span>)} 
                             />
                             <button className="btn btn-sm btn-soft-success me-1" data-id="1"> <i className="ri-pencil-fill"></i></button>
                             <button onClick={()=>handleUserDelete(row.id,row.first_name)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>

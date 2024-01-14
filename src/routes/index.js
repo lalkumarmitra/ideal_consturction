@@ -31,9 +31,9 @@ export const authenticatedRoutes = [
     
 ]
 export const publicRoutes = [
-    {label:'Home',path:'/',element:<Login /> ,icon:'null',users:[],children:[]}
 ]
 export const authRoutes = [
+    {label:'Home',path:'/',element:<Login /> ,icon:'null',users:[],children:[]},
     {label:'Login',path:'/login',element:<Login /> ,icon:'null',users:[],children:[]},
     {label:'Password Reset',path:'/passwordReset',element:<ForgotPassword /> ,icon:'null',users:[],children:[]},
 ]

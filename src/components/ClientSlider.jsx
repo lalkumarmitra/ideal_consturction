@@ -9,8 +9,8 @@ import 'swiper/css/scrollbar';
 
 
 
-import logo1 from '../assets/images/clientlogo/clientsLogo1.png'
-import logo2 from '../assets/images/clientlogo/clientsLogo2.png'
+import logo1 from '../assets/images/clientlogo/clientsLogo1.png';
+import logo2 from '../assets/images/clientlogo/clientsLogo2.png';
 import logo3 from '../assets/images/clientlogo/clientsLogo3.png';
 import logo4 from '../assets/images/clientlogo/clientsLogo4.png';
 import logo5 from '../assets/images/clientlogo/clientsLogo5.png';

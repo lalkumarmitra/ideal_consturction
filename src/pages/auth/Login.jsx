@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { setPreloader } from "../../features/Ui/uiSlice";
 import { authenticate } from "../../features/Auth/authSlice";
 import { swal } from "../../helper/swal";
+import { auth } from "../../helper/api_url";
 
 
 function Login() {
@@ -13,16 +14,11 @@ function Login() {
     dispatch(setPreloader({loader:true,message:'Logging In please wait'}));
     e.preventDefault();
     let formData = new FormData(e.target);
-    axios({ 
-      url: "https://idealconstruction.online/application/api/login", 
-      method: "POST",
-      headers: { Accept: "application/json" },
-      data: formData,
-    })
+    auth.login(formData)
     .then((res) => {
       dispatch(setPreloader({loader:false,message:''}))
-      localStorage.setItem('_token',res.data._token);
-      dispatch(authenticate({_token:res.data._token,_user:res.data.data.user}))
+      localStorage.setItem('_token',res._token);
+      dispatch(authenticate({_token:res._token,_user:res.data.user}))
     })
     .catch((err) => {
       dispatch(setPreloader({loader:false,message:''}))
