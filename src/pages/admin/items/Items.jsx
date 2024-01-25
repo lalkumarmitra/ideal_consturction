@@ -2,12 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react'
 import BreadCrumb from "../../../components/common/BreadCrumb";
 import { TableResponsive } from "../../../components/common/TableResponsive";
 import { Card, CardBody, CardHeader, Col, Row, Button } from "react-bootstrap";
-import { item } from '../../../helper/api_url';
+import { ASSET_URL, item } from '../../../helper/api_url';
 import Swal from 'sweetalert2';
 import { NewItemModal } from '../../../components/common/modal';
 import { useDispatch } from 'react-redux';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { swal } from '../../../helper/swal';
+import { UpdateItemModal } from './update';
+import { ViewItemModal } from './view';
 function Items() {
     const dispatch = useDispatch();
     const [itemData,setItemData] = useState([]);
@@ -45,7 +47,7 @@ function Items() {
             HeaderClass:'',
             DataClass:'',
             Cell:(cell)=> {
-                const imageUrl = `https://idealconstruction.online/application/${cell.row.original.image}`;
+                const imageUrl =ASSET_URL+cell.row.original.image;
                 return (<span> <img className="me-2 rounded-circle header-profile-user" src={imageUrl} alt="User Avatar" />{cell.row.original.name}</span>)
             }
         },
@@ -72,14 +74,11 @@ function Items() {
             HeaderClass:'text-center',
             DataClass:'text-center',
             Cell: (cell) => {
+                const row=cell.row.original;
               return ( 
                 <div className="">
-                    <Button className="btn btn-sm btn-soft-primary me-1" >
-                        <i className="ri-eye-fill" /> 
-                    </Button>
-                    <Button className="btn btn-sm btn-soft-success me-1" >
-                        <i className="ri-pencil-fill" />  
-                    </Button>
+                   <ViewItemModal data={row} />
+                    <UpdateItemModal data={row} itemData={itemData} setItemData={setItemData} />
                     <Button onClick={()=>handleItemDelete(cell.row.original)} className="btn btn-sm btn-soft-danger me-1" >
                         <i className="ri-delete-bin-fill" />  
                     </Button>
@@ -92,13 +91,15 @@ function Items() {
             HeaderClass:'d-none',
             DataClass:'d-none',
             list:(row)=>{
-                const imageUrl = `https://idealconstruction.online/application/${row.image}`;
+                const imageUrl =ASSET_URL+row.image;
                 let description = row.description;
                 let truncatedDescription = description.length > 20 ? description.substring(0, 20) + ' ...' : description;
 
                 return (
                 <div className="d-flex">
+                    <ViewItemModal data={row}>
                     <img className="me-2 rounded-circle header-profile-user" src={imageUrl} alt="User Avatar" />
+                    </ViewItemModal>
                     <div className="flex-grow-1" data-id="1">
                         <h5 className="fs-13 mb-1">
                             <a href="#" className="link text-dark"></a>
@@ -109,7 +110,7 @@ function Items() {
                     </div>
                     <div className="flex-shrink-0">
                         <div>
-                            <button className="btn btn-sm btn-soft-success me-1" data-id="1"> <i className="ri-pencil-fill"></i></button>
+                            <UpdateItemModal data={row} itemData={itemData} setItemData={setItemData} />
                             <button onClick={()=>handleItemDelete(row)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
                         </div>
                     </div>

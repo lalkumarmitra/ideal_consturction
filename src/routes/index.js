@@ -8,7 +8,6 @@ import Login from "../pages/auth/Login"
 
 
 import Home from "../pages/public/Home"
-import LandingPage from "../pages/public/LandingPage"
 
 
 

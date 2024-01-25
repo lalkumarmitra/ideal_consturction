@@ -7,25 +7,29 @@ export const auth={
 
 export const staff={
     add: data =>post("/user",data),
+    update: data =>post("/user/update",data),
     list: () =>get("/users/type/staff"),
     delete: (id) =>del(`/user/${id}/destroy`),
     changeStatus: data=>post(`/user/set-status`,data)
 }
 export const item = {
     add:data=>post("/item",data),
+    update:data=>post("/item/update",data),
     list:()=>get('/items'),
     delete:(id)=>del(`/item/${id}/destroy`)
 }
 
 export const client = {
     add:data=>post('/client',data),
+    update:data=>post('/client/update',data),
     list:()=>get('/clients'),
     delete:id=>del(`/client/${id}/destroy`)
 }
 export const vehicles = {
     add:data=>post('vehicle',data),
+    update:data=>post('vehicle/update',data),
     list:()=>get('/vehicles'),
     delete:id=>del(`/vehicle/${id}/destroy`)
 }
 
-export const baseURL=API_URL;
+export const ASSET_URL='https://idealconstruction.online/application/';

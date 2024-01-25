@@ -6,9 +6,11 @@ import { TableResponsive } from "../../../components/common/TableResponsive";
 import { Card, CardBody, CardHeader, Col, Row, Button } from "react-bootstrap";
 import Swal from 'sweetalert2';
 import { NewStaffModal } from '../../../components/common/modal';
-import { staff } from '../../../helper/api_url';
+import { ASSET_URL, staff } from '../../../helper/api_url';
 import { swal } from '../../../helper/swal';
 import { Switch } from 'antd';
+import { UpdateStaffModal } from './update';
+import { ViewStaffModal } from './view';
 function Staffs() {
     const dispatch = useDispatch();
     const [userData,setUserData] = useState([]);
@@ -33,7 +35,7 @@ function Staffs() {
             HeaderClass:'',
             DataClass:'',
             Cell:(cell)=> {
-                const imageUrl = `https://idealconstruction.online/application/${cell.row.original.avatar}`;
+                const imageUrl =ASSET_URL+ cell.row.original.avatar;
                 return (<span> <img className="me-2 rounded-circle header-profile-user" src={imageUrl} alt="User Avatar" />{cell.row.original.first_name} {cell.row.original.last_name}</span>)
             }
         },
@@ -75,14 +77,12 @@ function Staffs() {
             HeaderClass:'text-center',
             DataClass:'text-center',
             Cell: (cell) => {
+                const row=cell.row.original;
               return ( 
                 <div className="">
-                    <Button className="btn btn-sm btn-soft-primary me-1" >
-                        <i className="ri-eye-fill" /> 
-                    </Button>
-                    <Button className="btn btn-sm btn-soft-success me-1" >
-                        <i className="ri-pencil-fill" />  
-                    </Button>
+                    <ViewStaffModal data={row} />
+                  
+                    <UpdateStaffModal data={row} userData={userData} setUserData={setUserData} />
                     <Button onClick={()=>handleUserDelete(cell.row.original.id,cell.row.original.first_name)} className="btn btn-sm btn-soft-danger me-1" >
                         <i className="ri-delete-bin-fill" />  
                     </Button>
@@ -95,10 +95,12 @@ function Staffs() {
             HeaderClass:'d-none',
             DataClass:'d-none',
             list:(row)=>{
-                const imageUrl = `https://idealconstruction.online/application/${row.avatar}`;
+                const imageUrl =ASSET_URL+row.avatar;
                 return (
                 <div className="d-flex">
+                    <ViewStaffModal data={row}>
                     <img className="me-2 rounded-circle header-profile-user" src={imageUrl} alt="User Avatar" />
+                    </ViewStaffModal>
                     <div className="flex-grow-1" data-id="1">
                         <h5 className="fs-13 mb-1">
                             <a href="#" className="link text-dark"></a>
@@ -116,7 +118,7 @@ function Staffs() {
                                 checkedChildren={(<span style={{fontSize:"10px"}}>Active</span>)} 
                                 unCheckedChildren={(<span style={{fontSize:"10px"}}>Deactive</span>)} 
                             />
-                            <button className="btn btn-sm btn-soft-success me-1" data-id="1"> <i className="ri-pencil-fill"></i></button>
+                            <UpdateStaffModal data={row} userData={userData} setUserData={setUserData} />
                             <button onClick={()=>handleUserDelete(row.id,row.first_name)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
                         </div>
                     </div>

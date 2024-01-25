@@ -2,12 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react'
 import BreadCrumb from '../../../components/common/BreadCrumb'
 import { Row, Col, Card, CardHeader, CardBody, Button } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
-import { client } from '../../../helper/api_url';
+import { ASSET_URL, client } from '../../../helper/api_url';
 import { TableResponsive } from '../../../components/common/TableResponsive';
 import { NewClientModal } from '../../../components/common/modal';
 import { swal } from '../../../helper/swal';
 import Swal from 'sweetalert2';
 import { setPreloader } from '../../../features/Ui/uiSlice';
+import { UpdateClientModal } from './update';
+import { ViewClientModal } from './view';
 function Clients() {
     const dispatch = useDispatch();
     const [clientData,setClientData] = useState([]);
@@ -45,7 +47,7 @@ function Clients() {
             HeaderClass:'',
             DataClass:'',
             Cell:(cell)=> {
-                const imageUrl = `https://idealconstruction.online/application/${cell.row.original.image}`;
+                const imageUrl =ASSET_URL+cell.row.original.image;
                 return (<span> <img className="me-2 rounded-circle header-profile-user" src={imageUrl} alt="User Avatar" />{cell.row.original.name}</span>)
             }
             
@@ -89,14 +91,11 @@ function Clients() {
             HeaderClass:'text-center',
             DataClass:'text-center',
             Cell: (cell) => {
+                const row=cell.row.original;
               return ( 
                 <div className="">
-                    <Button className="btn btn-sm btn-soft-primary me-1" >
-                        <i className="ri-eye-fill" /> 
-                    </Button>
-                    <Button className="btn btn-sm btn-soft-success me-1" >
-                        <i className="ri-pencil-fill" />  
-                    </Button>
+                   <ViewClientModal data={row} />
+                   <UpdateClientModal data={row} clientData={clientData} setClientData={setClientData} />
                     <Button onClick={()=>handleClientDelete(cell.row.original)} className="btn btn-sm btn-soft-danger me-1" >
                         <i className="ri-delete-bin-fill" />  
                     </Button>
@@ -109,10 +108,12 @@ function Clients() {
             HeaderClass:'d-none',
             DataClass:'d-none',
             list:(row)=>{
-                const imageUrl = `https://idealconstruction.online/application/${row.image}`;
+                const imageUrl =ASSET_URL+row.image;
                 return (
                 <div className="d-flex">
+                    <ViewClientModal data={row}>
                     <img className="me-2 rounded-circle header-profile-user" src={imageUrl} alt="User Avatar" />
+                    </ViewClientModal>
                     <div className="flex-grow-1" data-id="1">
                         <h5 className="fs-13 mb-1">
                             <a href="#" className="link text-dark"></a>
@@ -127,7 +128,7 @@ function Clients() {
                     </div>
                     <div className="flex-shrink-0">
                         <div>
-                            <button className="btn btn-sm btn-soft-success me-1" data-id="1"> <i className="ri-pencil-fill"></i></button>
+                        <UpdateClientModal data={row} clientData={clientData} setClientData={setClientData} />
                             <button onClick={()=>handleClientDelete(row)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
                         </div>
                     </div>

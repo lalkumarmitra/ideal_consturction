@@ -9,6 +9,8 @@ import { NewStaffModal, NewVehicleModal } from '../../../components/common/modal
 import { vehicles } from '../../../helper/api_url';
 import { swal } from '../../../helper/swal';
 import { Switch } from 'antd';
+import { UpdateVehicleModal } from './update';
+import { ViewVehicleModal } from './view';
 
 function Vehicles() {
     const dispatch = useDispatch();
@@ -51,14 +53,11 @@ function Vehicles() {
             HeaderClass:'text-center',
             DataClass:'text-center',
             Cell: (cell) => {
+                const row=cell.row.original;
               return ( 
                 <div className="">
-                    <Button className="btn btn-sm btn-soft-primary me-1" >
-                        <i className="ri-eye-fill" /> 
-                    </Button>
-                    <Button className="btn btn-sm btn-soft-success me-1" >
-                        <i className="ri-pencil-fill" />  
-                    </Button>
+                   <ViewVehicleModal data={row} />
+                    <UpdateVehicleModal data={row} listData={listData} setListData={setListData} />
                     <Button onClick={()=>handleListDataDelete(cell.row.original)} className="btn btn-sm btn-soft-danger me-1" >
                         <i className="ri-delete-bin-fill" />  
                     </Button>
@@ -87,7 +86,7 @@ function Vehicles() {
                                 checked={row.status == 'active'} 
                                 onChange={()=>{}}
                             />
-                            <button className="btn btn-sm btn-soft-success me-1" data-id="1"> <i className="ri-pencil-fill"></i></button>
+                            <UpdateVehicleModal data={row} listData={listData} setListData={setListData} />
                             <button onClick={()=>handleListDataDelete(row)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
                         </div>
                     </div>
