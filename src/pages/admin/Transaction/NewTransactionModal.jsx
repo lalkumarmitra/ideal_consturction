@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
 import { swal } from '../../../helper/swal';
 import { setPreloader } from '../../../features/Ui/uiSlice';
-import { item, staff, transaction, vehicles } from '../../../helper/api_url';
+import { client, item, staff, transaction, vehicles } from '../../../helper/api_url';
 function NewTransactionModal({ listData, setListData }) {
     const dispatch = useDispatch();
     const [status, setStatus] = useState(false);
@@ -11,14 +11,19 @@ function NewTransactionModal({ listData, setListData }) {
     const [itemData, setItemData] = useState([]);
     const [vehicleData, setvehicleData] = useState([]);
     const [UserData, setUserData] = useState([]);
+    const [clientData, setClientData] = useState([]);
     useEffect(() => {
         if (status) {
             item.list().then(r => setItemData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
             vehicles.list().then(r => setvehicleData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
             staff.list().then(r => setUserData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
+            client.list().then(r => setClientData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
         }
     }, [status]);
-    const handlegetId = (e) => { itemData.map((item) => { if (item.id == e.target.value) document.getElementById('product_rate').value = item.rate; }); };
+    const handlegetId = (e) => { itemData.map((item) => { if (item.id == e.target.value) {
+        document.getElementById('product_rate').value = item.rate;
+        document.getElementById('sales_rate').value = item.rate;
+    } }); };
     const handleSubmit = e => {
         dispatch(setPreloader({ loader: true, message: 'Creating new Transtion please wait' }))
         e.preventDefault();
@@ -39,6 +44,15 @@ function NewTransactionModal({ listData, setListData }) {
         document.querySelector("#purchaseform").className = "d-none";
         document.querySelector("#saleform").className = "d-block";
         document.querySelector("#submit").className = "btn btn-primary d-block";
+        document.querySelector("#prev").disabled = false;
+    }
+    const handleprev=(e)=>{
+        e.preventDefault();
+        document.querySelector("#prev").disabled = true;
+        document.querySelector("#save").className = "btn btn-primary d-block";
+        document.querySelector("#purchaseform").className = "d-block";
+        document.querySelector("#saleform").className = "d-none";
+        document.querySelector("#submit").className = "btn btn-primary d-none";
     }
     return (
         <>
@@ -135,9 +149,13 @@ function NewTransactionModal({ listData, setListData }) {
                                     <div>
                                         <label htmlFor="loading_point" className="form-label">Loading Point</label>
                                         <select id="loading_point" name="loading_point" className='form-control'>
-                                            <option value="">--select--</option>
-                                            <option value="1">Loading</option>
-                                            <option value="0">UnLoading</option>
+                                            <option value="">--Select user--</option>
+                                            {
+                                                clientData.length? clientData.map((user,idx)=>(
+                                                   user.client_type=="sender"?<option key={idx} value={user.id}>{user.name}</option>:''
+                                                )):<option value="">No Data Found</option>
+                                            }
+            
                                         </select>
                                     </div>
                                 </div>
@@ -181,7 +199,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="sales_rate" className="form-label">Sales Rate</label>
-                                        <input type="number" className="form-control" name='sales_rate' id='sales_rate' />
+                                        <input type="number" className="form-control" name='sales_rate' defaultValue="" id='sales_rate' />
                                     </div>
                                 </div>
                                 <div className="col-6">
@@ -229,11 +247,14 @@ function NewTransactionModal({ listData, setListData }) {
 
                                 <div className="col-10">
                                     <div>
-                                        <label htmlFor="unloading_point" className="form-label">Loading Point</label>
+                                        <label htmlFor="unloading_point" className="form-label">UnLoading Point</label>
                                         <select id="unloading_point" name="unloading_point" className='form-control'>
-                                            <option value="">--select--</option>
-                                            <option value="1">Loading</option>
-                                            <option value="0">UnLoading</option>
+                                        <option value="">--Select user--</option>
+                                        {
+                                                clientData.length? clientData.map((user,idx)=>(
+                                                   user.client_type=="receiver"?<option key={idx} value={user.id}>{user.name}</option>:''
+                                                )):<option value="">No Data Found</option>
+                                            }
                                         </select>
                                     </div>
                                 </div>
@@ -247,9 +268,10 @@ function NewTransactionModal({ listData, setListData }) {
                         </div>
                         <div className="col-12 mt-3">
                             <div className="hstack gap-2 justify-content-end">
-                                <button type="button" className="btn btn-light" onClick={handleClose}>Close</button>
-                                <button type="button" id="save" className="btn btn-primary d-block" onClick={handlesave}>save</button>
-                                <button type="submit" id="submit" className="btn btn-primary d-none">Submit</button>
+                                {/* <button type="button" className="btn btn-light" onClick={handleClose}>Close</button> */}
+                                <button type="button" id="prev" className="btn btn-primary" onClick={handleprev}>Back</button>
+                                <button type="button" id="save" className="btn btn-primary d-block" onClick={handlesave}>Next</button>
+                                <button type="submit" id="submit" className="btn btn-primary d-none">Save</button>
                             </div>
                         </div>
                     </form>
