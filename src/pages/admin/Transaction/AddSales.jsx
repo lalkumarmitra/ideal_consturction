@@ -76,8 +76,8 @@ function NewTransactionModal({data,listData,setListData}) {
                             </div>
                             <div className="col-3">
                                 <div>
-                                    <label htmlFor="quantity" className="form-label">Qurantity</label>
-                                    <input type="number" className="form-control" id='quantity' name="purchase_quantity" />
+                                    <label htmlFor="sales_quantity" className="form-label">Qurantity</label>
+                                    <input type="number" className="form-control" id='sales_quantity' defaultValue={data.purchase_quantity} name="sales_quantity" />
                                 </div>
                             </div>
                             <div className="col-3">
@@ -120,7 +120,7 @@ function NewTransactionModal({data,listData,setListData}) {
                             <div className="col-4 mb-2">
                                 <div>
                                     <label htmlFor="loading_challan" className="form-label">Loading Challan</label>
-                                    <input type="number" className="form-control" name='loading_challan' id='loading_challan' />
+                                    <input type="number" className="form-control" name='unloading_challan' defaultValue={data.unloading_challan} id='loading_challan' />
                                 </div>
                             </div>
                             
