@@ -6,14 +6,39 @@ import NewTransactionModal from './NewTransactionModal';
 import { transaction } from '../../../helper/api_url';
 import { swal } from '../../../helper/swal';
 import AddSales from './AddSales';
+import Swal from 'sweetalert2';
+import { useDispatch } from 'react-redux';
+import { setPreloader } from '../../../features/Ui/uiSlice';
 
 function Transaction() {
+    const dispatch = useDispatch();
     const [listData,setListData] = useState([]);
     useEffect(()=>{
         transaction.list().then(res=>setListData(res.data.transaction)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
     },[]);
-    const handleDelete = row => {
-        console.log(row);
+    const handleDelete = itemRow => {
+        Swal.fire({
+            title: "Are you sure ?",
+            text:" You want to delete this Transaction : " + itemRow.item.name,
+            icon:'warning',
+            showDenyButton: true,
+            confirmButtonText: "Delete",
+            denyButtonText: `No`
+        }).then((result)=>{
+            if (result.isConfirmed) {
+                dispatch(setPreloader({loader:true,message:'Deleting Item please wait'}))
+                transaction.delete(itemRow.id)
+                .then(res=>{
+                    setListData([...listData.filter(i=>i.id!=itemRow.id)])
+                    dispatch(setPreloader({loader:false,message:""}))
+                    swal.success(res.data.message);
+                })
+                .catch(err=>{
+                    dispatch(setPreloader({loader:false,message:""}))
+                    swal.error(err.response ? err.response.data.message : err.message);
+                })
+            }
+        })
     }
     const columns = useMemo(()=>[
         {Header: "Item/Product",accessor: "item.name"},
@@ -36,9 +61,9 @@ function Transaction() {
             Cell:(cell)=>{
                 const row = cell.row.original;
                 const sales_price = row.sales_rate * row.sales_quantity;
-                if(row.sales_rate && row.sales_quantity)
+                if(row.status === 'sold')
                 return `${row.sales_rate} X ${row.sales_quantity} = ${sales_price}`;
-                return "-";
+                return (<AddSales data={row} listData={listData} setListData={setListData} />);
             }
         },
         {
@@ -49,7 +74,6 @@ function Transaction() {
                 const row = cell.row.original;
                 return (
                     <div>
-                        {row.status === 'sold'? (<span className='badge badge-outline-success'>Sold</span>) :(<AddSales data={row} listData={listData} setListData={setListData} />)}
                         <Button onClick={()=>handleDelete(row)} className="btn btn-sm btn-soft-danger ms-1" >
                             <i className="ri-delete-bin-fill" />  
                         </Button>

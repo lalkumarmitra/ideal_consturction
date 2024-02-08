@@ -14,8 +14,10 @@ function TransactionHistory() {
                     </Card.Header>
                     <Card.Body>
                         body
+                        filters
+                        <hr />
+                        information
                     </Card.Body>
-                    <Card.Footer>footer</Card.Footer>
                 </Card>
             </Col>
             <Col md={12} lg={9} >
