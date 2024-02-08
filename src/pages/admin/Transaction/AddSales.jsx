@@ -36,7 +36,6 @@ function NewTransactionModal({data,listData,setListData}) {
     return (
         <>
             <button onClick={handleClose} className='btn btn-sm btn-soft-info'>
-                <i className="ri-add-line align-bottom me-1"></i> 
                 <span>Sale</span>
             </button>
             <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClose}>

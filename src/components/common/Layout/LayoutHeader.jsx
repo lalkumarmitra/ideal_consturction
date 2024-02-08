@@ -115,7 +115,7 @@ function LayoutHeader() {
                     <ul className="nav nav-tabs dropdown-tabs nav-tabs-custom" data-dropdown-tabs="true" id="notificationItemsTab" role="tablist">
                       <li className="nav-item waves-effect waves-light">
                         <a className="nav-link active" data-bs-toggle="tab" href="#all-noti-tab" role="tab" aria-selected="true">
-                          All (4)
+                          All 
                         </a>
                       </li>
                       <li className="nav-item waves-effect waves-light">
@@ -135,7 +135,10 @@ function LayoutHeader() {
                 <div className="tab-content position-relative" id="notificationItemsTabContent">
                   <div className="tab-pane fade show active py-2 ps-2" id="all-noti-tab" role="tabpanel">
                     <SimpleBar style={{ maxHeight: "300px" }}>
-                        <div className="text-reset notification-item d-block dropdown-item position-relative">
+                        <div className="d-flex align-items-center justify-content-center p-4">
+                            <button className="btn btn-soft-success">Empty</button>
+                        </div>
+                        {/* <div className="text-reset notification-item d-block dropdown-item position-relative">
                           <div className="d-flex">
                             <div className="avatar-xs me-3">
                               <span className="avatar-title bg-soft-info text-info rounded-circle fs-16">
@@ -304,13 +307,16 @@ function LayoutHeader() {
                             View All Notifications
                             <i className="ri-arrow-right-line align-middle"></i>
                           </button>
-                        </div>
+                        </div> */}
                     </SimpleBar >
                   </div>
 
                   <div className="tab-pane fade py-2 ps-2" id="messages-tab" role="tabpanel" aria-labelledby="messages-tab">
                     <SimpleBar style={{ maxHeight: "300px" }}>
-                      <div className="text-reset notification-item d-block dropdown-item">
+                    <div className="d-flex align-items-center justify-content-center p-4">
+                            <button className="btn btn-soft-success">Empty messages</button>
+                        </div>
+                      {/* <div className="text-reset notification-item d-block dropdown-item">
                         <div className="d-flex">
                           <img
                             src="assets/images/users/avatar-3.jpg"
@@ -484,12 +490,15 @@ function LayoutHeader() {
                           View All Messages
                           <i className="ri-arrow-right-line align-middle"></i>
                         </button>
-                      </div>
+                      </div> */}
                     </SimpleBar>
                   </div>
                   <div className="tab-pane fade p-4" id="alerts-tab" role="tabpanel" aria-labelledby="alerts-tab">
                     <SimpleBar style={{maxHeight:"300px"}}>
-                      <div className="text-reset notification-item d-block dropdown-item">
+                      <div className="d-flex align-items-center justify-content-center p-4">
+                            <button className="btn btn-soft-success">Empty Alerts</button>
+                        </div>
+                      {/* <div className="text-reset notification-item d-block dropdown-item">
                         <div className="d-flex">
                           <img src="assets/images/users/avatar-8.jpg" className="me-3 rounded-circle avatar-xs" alt="user-pic" />
                           <div className="flex-1">
@@ -518,7 +527,7 @@ function LayoutHeader() {
                         <button type="button" className="btn btn-soft-success waves-effect waves-light">
                           View All Messages <i className="ri-arrow-right-line align-middle"></i>
                         </button>
-                      </div>
+                      </div> */}
                     </SimpleBar>
                   </div>
 
@@ -552,17 +561,6 @@ function LayoutHeader() {
               </button>
               <div className="dropdown-menu dropdown-menu-end">
                 <h6 className="dropdown-header">Welcome {userData.first_name}!</h6>
-                <a className="dropdown-item" href="pages-profile.html">
-                  <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
-                  <span className="align-middle">Profile</span>
-                </a>
-                
-                
-                <a className="dropdown-item" href="pages-faqs.html">
-                  <i className="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>
-                  <span className="align-middle">Help</span>
-                </a>
-                <div className="dropdown-divider"></div>
                 
                 <a className="dropdown-item" href="pages-profile-settings.html">
                   <i className="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>

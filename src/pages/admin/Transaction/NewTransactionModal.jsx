@@ -248,8 +248,8 @@ function NewTransactionModal({ listData, setListData }) {
                         <div className="col-12 mt-3">
                             <div className="hstack gap-2 justify-content-end">
                                 <button type="button" className="btn btn-light" onClick={handleClose}>Close</button>
-                                <button type="button" id="save" className="btn btn-primary d-block" onClick={handlesave}>save</button>
-                                <button type="submit" id="submit" className="btn btn-primary d-none">Submit</button>
+                                <button type="button" id="save" className="btn btn-primary d-block" onClick={handlesave}>Next</button>
+                                <button type="submit" id="submit" className="btn btn-primary d-none">Save</button>
                             </div>
                         </div>
                     </form>
