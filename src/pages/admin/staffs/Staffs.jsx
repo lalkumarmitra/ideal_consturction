@@ -26,7 +26,7 @@ function Staffs() {
         }).catch(err=>swal.error(err.response?err.response.data.message:err.message));
     }
     useEffect(()=>{
-        staff.list().then(res=>setUserData(res.data.users));
+        staff.list().then(res=>setUserData(res.data.users)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
     },[]);
     const columns = useMemo(()=>[
         {

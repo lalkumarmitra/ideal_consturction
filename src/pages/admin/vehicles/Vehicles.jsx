@@ -17,7 +17,7 @@ function Vehicles() {
     const [listData,setListData] = useState([]);
 
     useEffect(()=>{
-        vehicles.list().then(res=>setListData(res.data.vehicles));
+        vehicles.list().then(res=>setListData(res.data.vehicles)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
     },[]);
     const columns = useMemo(()=>[
         {

@@ -14,7 +14,7 @@ function Items() {
     const dispatch = useDispatch();
     const [itemData,setItemData] = useState([]);
     useEffect(()=>{
-        item.list().then(res=>setItemData(res.data.items))
+        item.list().then(res=>setItemData(res.data.items)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
     },[])
     const handleItemDelete = itemRow => {
         Swal.fire({

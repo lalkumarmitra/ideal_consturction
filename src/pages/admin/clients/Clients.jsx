@@ -14,7 +14,7 @@ function Clients() {
     const dispatch = useDispatch();
     const [clientData,setClientData] = useState([]);
     useEffect(()=>{
-        client.list().then(res=>setClientData(res.data.clients))
+        client.list().then(res=>setClientData(res.data.clients)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
     },[]);
     const handleClientDelete = clientRow =>{
         Swal.fire({
