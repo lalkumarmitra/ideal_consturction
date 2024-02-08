@@ -31,5 +31,10 @@ export const vehicles = {
     list:()=>get('/vehicles'),
     delete:id=>del(`/vehicle/${id}/destroy`)
 }
+export const transaction = {
+    add:data=>post('/transaction',data),
+    addsell:data=>post('/transaction/sell',data),
+    list:()=>get('/transactions')
+}
 
 export const ASSET_URL='https://idealconstruction.online/application/';

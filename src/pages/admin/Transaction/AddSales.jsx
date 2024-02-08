@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { swal } from '../../../helper/swal';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { item, staff, transaction, vehicles } from '../../../helper/api_url';
-function NewTransactionModal({listData,setListData}) {
+function NewTransactionModal({data,listData,setListData}) {
     const dispatch = useDispatch();
     const [status,setStatus] = useState(false);
     const handleClose = ()=>setStatus(!status);
@@ -20,10 +20,10 @@ function NewTransactionModal({listData,setListData}) {
       },[status]);
     const handlegetId = (e) =>{ itemData.map((item) => {if(item.id == e.target.value) document.getElementById('product_rate').value = item.rate;});};
     const handleSubmit = e => {
-        dispatch(setPreloader({loader:true,message:'Creating new Transtion please wait'}))
+        dispatch(setPreloader({loader:true,message:'please wait'}))
         e.preventDefault();
         const formData = new FormData(e.target);
-        transaction.add(formData).then(res=>{
+        transaction.addsell(formData).then(res=>{
             setListData([res.data.transaction,...listData])
             dispatch(setPreloader({loader:false,message:''}))
             handleClose();
@@ -35,33 +35,34 @@ function NewTransactionModal({listData,setListData}) {
     }
     return (
         <>
-            <button onClick={handleClose} className='btn btn-soft-success add-btn waves-effect'>
+            <button onClick={handleClose} className='btn btn-sm btn-soft-info'>
                 <i className="ri-add-line align-bottom me-1"></i> 
-                <span>New Transaction</span>
+                <span>Sale</span>
             </button>
             <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title><h5>New Transaction</h5></Modal.Title>
+                    <Modal.Title><h5>Sale Transaction</h5></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={e=>handleSubmit(e)}>
                         <div className="row g-3">
                             <div className='col-12'>
-                                <h6 className='text-center'>Purchase</h6>
+                                <h6 className='text-center'>Sales</h6>
                             </div>
                             <hr />
                             <input type="hidden" name="purchase_paid_amount" defaultValue="0"/>
                             <input type="hidden" name="sales_received_amount" defaultValue="0"/>
+                            <input type="hidden" name="transaction_id" defaultValue={data.id}/>
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="purchase_date" className="form-label">Purchase Date</label>
-                                    <input type="date" className="form-control" name='purchase_date' id='purchase_date' />
+                                    <input type="date" className="form-control" name='sales_date' id='purchase_date' />
                                 </div>
                             </div>
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="item_id" className="form-label">Product / Item</label>
-                                    <select id="item_id" name='item_id' className='form-control' onChange={handlegetId}>
+                                    <select id="item_id" name='item_id' className='form-control' defaultValue={data.item_id} onChange={handlegetId}>
                                         <option value="">--Select Item--</option>
                                         {itemData.length ? itemData.map((item, idx) => (<option key={idx} value={item.id}>{item.name}</option>)) : (<option disabled >No Data Found</option>)}
                                     </select>
@@ -70,7 +71,7 @@ function NewTransactionModal({listData,setListData}) {
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="product_rate" className="form-label">Rate</label>
-                                    <input type="number" className="form-control" id='product_rate' name="purchase_rate" defaultValue="" />
+                                    <input type="number" className="form-control" id='product_rate' name="purchase_rate" defaultValue={data.purchase_rate} />
                                 </div>
                             </div>
                             <div className="col-3">
