@@ -34,7 +34,13 @@ export function NewStaffModal({userData,setUserData}) {
         {value:'female',label:'Female'},
         {value:'others',label:'Others'}
     ]
+    const currentDate = new Date().toISOString().split('T')[0];
+    const [selectedDate, setSelectedDate] = useState(currentDate);
+    const handleDateChange = (event) => {
+        setSelectedDate(event.target.value);
+      };
     useEffect(()=>{
+        if(status)
         axios({
             url: "https://idealconstruction.online/application/api/roles", 
             method: "GET",
@@ -42,7 +48,7 @@ export function NewStaffModal({userData,setUserData}) {
         })
         .then(res=>setStaffRoles([...res.data.data.roles.map(role=>{return {value:role.id,label:role.name}})]))
         .catch(err=>console.log(err.response?err.response.data.message:err.message))
-    },[]);
+    },[status]);
     return (
         <>
             <button onClick={handleClick} className='btn btn-soft-success add-btn waves-effect'>
@@ -58,7 +64,7 @@ export function NewStaffModal({userData,setUserData}) {
                         <div className="row g-3">
                             <div className="col-6">
                                 <div>
-                                    <label htmlFor="firstName" className="form-label">First Name</label>
+                                    <label htmlFor="firstName" className="form-label">First Name <span className='text-danger'>*</span></label>
                                     <input type="text" className="form-control" id='firstName' name="first_name" placeholder="Enter firstname" />
                                 </div>
                             </div>
@@ -69,21 +75,15 @@ export function NewStaffModal({userData,setUserData}) {
                                 </div>
                             </div>
 
-                            <div className="col-lg-12">
-                                <label htmlFor="genderInput" className="form-label">Gender</label>
-                                <select id="genderInput" name='gender' defaultValue='male' className='form-control'>
-                                    {genders.length?genders.map((gender,idx)=>(
-                                        <option key={idx} value={gender.value}>{gender.label}</option>
-                                    )):(<option disabled >No Staff Gender Found</option>)}
-                                </select>
+                            
+                            <div className="col-12">
+                                <div>
+                                    <label htmlFor="phoneNumber" className="form-label">Phone  <span className='text-danger'>*</span></label>
+                                    <input type="tel" className="form-control" name='phone' id="phoneNumber" />
+                                </div>
                             </div>
-                            <div className='col-lg-6'>
-                                <label htmlFor="dob" className="form-label">Date Of Birth</label>
-                                <input type="date" id="dob" name='dob' className='form-control' />
-                            </div>
-
-                            <div className='col-lg-6'>
-                                <label htmlFor="role" className="form-label">Staff Type</label>
+                            <div className='col-6'>
+                                <label htmlFor="role" className="form-label">Staff Type  <span className='text-danger'>*</span></label>
                                 
                                 <select id="role" name='role_id' defaultValue='driver' className='form-control'>
                                     {staffRoles.length?staffRoles.map((staff,idx)=>(
@@ -92,17 +92,26 @@ export function NewStaffModal({userData,setUserData}) {
                                 </select>
                             </div>
                             <div className="col-6">
+                                <label htmlFor="genderInput" className="form-label">Gender</label>
+                                <select id="genderInput" name='gender' defaultValue='male' className='form-control'>
+                                    {genders.length?genders.map((gender,idx)=>(
+                                        <option key={idx} value={gender.value}>{gender.label}</option>
+                                    )):(<option disabled >No Gender Found</option>)}
+                                </select>
+                            </div>
+                            <hr />
+                            <div className='col-6'>
+                                <label htmlFor="dob" className="form-label">Date Of Birth</label>
+                                <input type="date" id="dob" name='dob' value={selectedDate} onChange={handleDateChange} className='form-control' />
+                            </div>
+
+                            <div className="col-6">
                                 <div>
                                     <label htmlFor="emailInput" className="form-label">Email</label>
                                     <input type="email" className="form-control" id="emailInput" name='email' placeholder="Enter your email"/>
                                 </div>
                             </div>
-                            <div className="col-6">
-                                <div>
-                                    <label htmlFor="phoneNumber" className="form-label">Phone</label>
-                                    <input type="tel" className="form-control" name='phone' id="phoneNumber" />
-                                </div>
-                            </div>
+                            
                             <div className='col-12'>
                                 <label htmlFor="avatarInput" className="form-label">Profile Image</label>
                                 <input type="file" name="avatar" id="avatarInput" className='form-control' />
@@ -113,7 +122,7 @@ export function NewStaffModal({userData,setUserData}) {
                                     <input type="password" className="form-control" name='password' id="passwordInput" />
                                 </div>
                             </div>
-                            <div className="col-lg-12">
+                            <div className="col-12">
                                 <div className="hstack gap-2 justify-content-end">
                                     <button type="button" className="btn btn-light" onClick={handleClick}>Close</button>
                                     <button type="submit" className="btn btn-primary">Submit</button>
