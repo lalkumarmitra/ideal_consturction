@@ -3,7 +3,7 @@ import SimpleBar from 'simplebar-react';
 import { useTable, usePagination, useFilters, useGlobalFilter } from 'react-table';
 import { Link } from 'react-router-dom';
 
-export const TableResponsive = ({ columns, data, isPagination = true, isShowingPageLength = true, customPageSize = 4, showFilter = true,showCustomOptionPage=true }) => {
+export const TableResponsive = ({ columns, data, isPagination = true, isShowingPageLength = true, customPageSize = 8, showFilter = true,showCustomOptionPage=true }) => {
     const { getTableProps, getTableBodyProps, headerGroups, prepareRow, page, pageOptions, canPreviousPage, previousPage, gotoPage, canNextPage,
         nextPage, state: { pageIndex, pageSize, globalFilter }, setPageSize, setGlobalFilter } = useTable({ columns, data }, useFilters, useGlobalFilter, usePagination);
     React.useEffect(() => { setPageSize(customPageSize); }, [customPageSize, setPageSize]);
@@ -25,7 +25,7 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
         return (
             <>
                 <div className="d-none d-lg-block">
-                    <div className='row mb-3'>
+                    <div className='row mb-3 justify-content-between'>
                         {showCustomOptionPage && (
                             <div className='col-lg-2'>
                             <select className="form-select" value={pageSize} onChange={onChangeInSelect}>
