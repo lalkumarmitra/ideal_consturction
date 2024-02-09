@@ -26,9 +26,9 @@ export function ViewStaffModal(data) {
                             <ul className="list-group">
                                 <li className='list-group-item'>
                                     <Row>
-                                        <Col xs={5}><span className='fw-bold'>Staff Name </span></Col>
+                                        <Col xs={4}><span className='fw-bold'>Staff Name </span></Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
-                                        <Col className='text-start' xs={5}>
+                                        <Col className='text-start' xs={6}>
                                             <span className='text-wrap'> {data.data.first_name} {data.last_name} </span>
                                             {(data.data.role.name !== null) ? (<span className='badge badge-soft-success px-1 ms-1'>{data.data.role.name}</span>) : ''}
                                         </Col>
@@ -36,36 +36,36 @@ export function ViewStaffModal(data) {
                                 </li>
                                 <li className='list-group-item'>
                                     <Row>
-                                        <Col xs={5}><span className='fw-bold'>Type </span> </Col>
+                                        <Col xs={4}><span className='fw-bold'>Type </span> </Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
-                                        <Col className='text-start' xs={5}>
+                                        <Col className='text-start' xs={6}>
                                             <span className='text-nowrap'> {data.data.role.name} </span>
                                         </Col>
                                     </Row>
                                 </li>
                                 <li className='list-group-item'>
                                     <Row>
-                                        <Col xs={5}><span className='fw-bold'>Gender </span> </Col>
+                                        <Col xs={4}><span className='fw-bold'>Gender </span> </Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
-                                        <Col className='text-start' xs={5}>
+                                        <Col className='text-start' xs={6}>
                                             <span className='text-nowrap'> {data.data.gender} </span>
                                         </Col>
                                     </Row>
                                 </li>
                                 <li className='list-group-item'>
                                     <Row>
-                                        <Col xs={5}><span className='fw-bold'>Email </span> </Col>
+                                        <Col xs={4}><span className='fw-bold'>Email </span> </Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
-                                        <Col className='text-start' xs={5} style={{ overflowWrap: 'break-word' }}>
+                                        <Col className='text-start' xs={6} style={{ overflowWrap: 'break-word',fontSize:'12px' }}>
                                             <span className='text-nowrap'> {data.data.email} </span>
                                         </Col>
                                     </Row>
                                 </li>
                                 <li className='list-group-item'>
                                     <Row>
-                                        <Col xs={5}><span className='fw-bold'>Phone </span> </Col>
+                                        <Col xs={4}><span className='fw-bold'>Phone </span> </Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
-                                        <Col className='text-start' xs={5}>
+                                        <Col className='text-start' xs={6}>
                                             <span className='text-wrap'> {data.data.phone} </span>
                                         </Col>
                                     </Row>

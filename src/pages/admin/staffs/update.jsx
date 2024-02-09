@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Modal } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { setPreloader } from '../../../features/Ui/uiSlice';
-import { ASSET_URL, staff, } from '../../../helper/api_url';
+import { ASSET_URL, role, staff, } from '../../../helper/api_url';
 import { swal } from '../../../helper/swal'
 import Modal_profile_image from '../../../components/common/modalProfile';
 
@@ -38,15 +38,13 @@ export function UpdateStaffModal({data,userData,setUserData}) {
     ]
     const viewimage=ASSET_URL+data.avatar;
     useEffect(()=>{
-        setUserProfile(viewimage);
-        axios({
-            url: "https://idealconstruction.online/application/api/roles", 
-            method: "GET",
-            headers: { Accept: "application/json", Authorization: 'Bearer '+token },
-        })
-        .then(res=>setStaffRoles([...res.data.data.roles.map(role=>{return {value:role.id,label:role.name}})]))
-        .catch(err=>console.log(err.response?err.response.data.message:err.message))
-    },[]);
+        if(status){
+            setUserProfile(viewimage);
+            role.list()
+            .then(res=>setStaffRoles([...res.data.data.roles.map(role=>{return {value:role.id,label:role.name}})]))
+            .catch(err=>console.log(err.response?err.response.data.message:err.message))
+        }
+    },[status]);
 
     const setprofile = file => {
         const dataURL = window.URL.createObjectURL(file);
