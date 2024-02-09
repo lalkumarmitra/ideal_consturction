@@ -38,5 +38,8 @@ export const transaction = {
     delete:(id)=>del('/transaction/'+id),
     history:filters=>post('/transaction/history',filters)
 }
+export const role = {
+    list:()=>get('/roles')
+}
 
 export const ASSET_URL='https://idealconstruction.online/application/';

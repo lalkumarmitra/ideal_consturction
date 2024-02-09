@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios';
 import { Modal } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setPreloader } from '../../features/Ui/uiSlice';
-import { staff, item, client, vehicles } from '../../helper/api_url';
+import { staff, item, client, vehicles, role } from '../../helper/api_url';
 import { swal } from '../../helper/swal';
 
 
@@ -12,7 +11,6 @@ export function NewStaffModal({userData,setUserData}) {
     const [status,setStatus] = useState(false);
     const [staffRoles,setStaffRoles] = useState([])
     const handleClick = () => setStatus(!status);
-    const token = useSelector(state=>state.auth._token);
     const handleSubmit = e =>{
         dispatch(setPreloader({loader:true,message:'Creating new user please wait'}))
         e.preventDefault();
@@ -29,24 +27,13 @@ export function NewStaffModal({userData,setUserData}) {
             swal.error(err.response ? err.response.data.message : err.message)
         })
     }
-    const genders = [
-        {value:'male',label:'Male'},
-        {value:'female',label:'Female'},
-        {value:'others',label:'Others'}
-    ]
+    const genders = [{value:'male',label:'Male'},{value:'female',label:'Female'},{value:'others',label:'Others'}]
     const currentDate = new Date().toISOString().split('T')[0];
     const [selectedDate, setSelectedDate] = useState(currentDate);
-    const handleDateChange = (event) => {
-        setSelectedDate(event.target.value);
-      };
+    const handleDateChange = (event) => setSelectedDate(event.target.value);
     useEffect(()=>{
         if(status)
-        axios({
-            url: "https://idealconstruction.online/application/api/roles", 
-            method: "GET",
-            headers: { Accept: "application/json", Authorization: 'Bearer '+token },
-        })
-        .then(res=>setStaffRoles([...res.data.data.roles.map(role=>{return {value:role.id,label:role.name}})]))
+        role.list().then(res=>setStaffRoles([...res.data.data.roles.map(role=>{return {value:role.id,label:role.name}})]))
         .catch(err=>console.log(err.response?err.response.data.message:err.message))
     },[status]);
     return (
