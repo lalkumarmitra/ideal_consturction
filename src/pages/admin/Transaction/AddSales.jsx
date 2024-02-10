@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { swal } from '../../../helper/swal';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { client, item, staff, transaction, vehicles } from '../../../helper/api_url';
+import { NewClientModal, NewStaffModal, NewVehicleModal } from '../../../components/common/modal';
 function NewTransactionModal({data,listData,setListData}) {
     const dispatch = useDispatch();
     const [status,setStatus] = useState(false);
@@ -100,7 +101,7 @@ function NewTransactionModal({data,listData,setListData}) {
                             <div className='col-2'>
                                 <div>
                                     <label htmlFor="add_new_location_point">Add</label>
-                                    <button type='button' className='form-control btn btn-light'>+</button>
+                                    <NewVehicleModal add={true} />
                                 </div>
                             </div>
                             <div className="col-6">
@@ -115,7 +116,7 @@ function NewTransactionModal({data,listData,setListData}) {
                             <div className='col-2'>
                                 <div>
                                     <label htmlFor="add_new_location_point">Add</label>
-                                    <button type='button' className='form-control btn btn-light'>+</button>
+                                    <NewStaffModal add={true}  />
                                 </div>
                             </div>
                             <div className="col-4 mb-2">
@@ -142,7 +143,7 @@ function NewTransactionModal({data,listData,setListData}) {
                             <div className='col-2'>
                                 <div>
                                     <label htmlFor="add_new_location_point" className="form-label">Add</label>
-                                    <button type='button' id='' className='form-control btn btn-light'>+</button>
+                                    <NewClientModal add={true} />
                                 </div>
                             </div>
                             

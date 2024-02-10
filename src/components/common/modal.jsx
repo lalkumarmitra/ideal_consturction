@@ -6,7 +6,7 @@ import { staff, item, client, vehicles, role } from '../../helper/api_url';
 import { swal } from '../../helper/swal';
 
 
-export function NewStaffModal({userData,setUserData}) {
+export function NewStaffModal({userData,setUserData,add}) {
     const dispatch = useDispatch();
     const [status,setStatus] = useState(false);
     const [staffRoles,setStaffRoles] = useState([])
@@ -38,9 +38,9 @@ export function NewStaffModal({userData,setUserData}) {
     },[status]);
     return (
         <>
-            <button onClick={handleClick} type='button' className='btn btn-soft-success add-btn waves-effect'>
+            <button type='button' onClick={handleClick} className={add==true?'form-control btn btn-light':'btn btn-soft-success add-btn waves-effect'}>
                 <i className="ri-add-line align-bottom me-1"></i> 
-                <span>New Staff</span>
+                {add==true?'':<span>New Staff</span>}
             </button>
             <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClick}>
                 <Modal.Header closeButton>
@@ -196,7 +196,7 @@ export function NewItemModal({itemData,setItemData}) {
     )
 }
 
-export function NewClientModal({clientData,setClientData}) {
+export function NewClientModal({clientData,setClientData,add}) {
     const dispatch = useDispatch();
     const [status,setStatus] = useState(false);
     const handleClose = () => setStatus(!status)
@@ -216,9 +216,9 @@ export function NewClientModal({clientData,setClientData}) {
     }
     return (
         <>
-            <button onClick={handleClose} type='button' className='btn btn-soft-success add-btn waves-effect'>
+            <button onClick={handleClose} type='button' className={add==true?'form-control btn btn-light':'btn btn-soft-success add-btn waves-effect'}>
                 <i className="ri-add-line align-bottom me-1"></i> 
-                <span>New Client/Location</span>
+                {add==true?'':<span>New Client/Location</span>}
             </button>
             <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -288,7 +288,7 @@ export function NewClientModal({clientData,setClientData}) {
     )
 }
 
-export function NewVehicleModal({listData,setListData}){
+export function NewVehicleModal({listData,setListData,add}){
     const dispatch = useDispatch();
     const [status,setStatus] = useState(false);
     const handleClose = () => setStatus(!status)
@@ -309,11 +309,12 @@ export function NewVehicleModal({listData,setListData}){
 
     return (
         <>
-            <button onClick={handleClose} className='btn btn-soft-success add-btn waves-effect'>
+            <button type='button' onClick={handleClose} className={add==true?'form-control btn btn-light':'btn btn-soft-success add-btn waves-effect'}>
                 <i className="ri-add-line align-bottom me-1"></i> 
-                <span>New Vehicle</span>
+                {add==true?'':<span>New Vehicle</span>}
             </button>
-            <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClose}>
+            
+            <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClose} style={{ zIndex: 9999 }}>
                 <Modal.Header closeButton>
                     <Modal.Title><h5>New Vehicle</h5></Modal.Title>
                 </Modal.Header>

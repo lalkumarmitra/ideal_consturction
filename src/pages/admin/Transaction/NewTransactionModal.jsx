@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { swal } from '../../../helper/swal';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { client, item, staff, transaction, vehicles } from '../../../helper/api_url';
-import { NewClientModal } from '../../../components/common/modal';
+import { NewClientModal, NewStaffModal, NewVehicleModal } from '../../../components/common/modal';
 function NewTransactionModal({ listData, setListData }) {
     const dispatch = useDispatch();
     const [status, setStatus] = useState(false);
@@ -121,7 +121,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className='col-2'>
                                     <div>
                                         <label htmlFor="add_new_location_point">Add</label>
-                                        <button type='button' className='form-control btn btn-light'>+</button>
+                                        <NewVehicleModal add={true} />
                                     </div>
                                 </div>
                                 <div className="col-6">
@@ -136,7 +136,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className='col-2'>
                                     <div>
                                         <label htmlFor="add_new_location_point">Add</label>
-                                        <button type='button' className='form-control btn btn-light'>+</button>
+                                        <NewStaffModal add={true}  />
                                     </div>
                                 </div>
                                 <div className="col-4 mb-2">
@@ -163,7 +163,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className='col-2'>
                                     <div>
                                         <label htmlFor="loading_point_label" className="form-label">Add</label>
-                                        <button type='button' id='loading_point_label' className='form-control btn btn-light'>+</button>
+                                        <NewClientModal add={true} />
                                     </div>
                                 </div>
                                 {/* <div className="col-5">
@@ -227,7 +227,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className='col-2'>
                                     <div>
                                         <label htmlFor="unloading_vehicle_id_label">Add</label>
-                                        <button type='button' className='form-control btn btn-light'>+</button>
+                                        <NewVehicleModal add={true} />
                                     </div>
                                 </div>
                                 <div className="col-10">
@@ -242,7 +242,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className='col-2'>
                                     <div>
                                         <label htmlFor="unloading_driver_id_label">Add</label>
-                                        <button type='button' className='form-control btn btn-light'>+</button>
+                                        <NewStaffModal add={true}  />
                                     </div>
                                 </div>
 
@@ -262,7 +262,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className='col-2'>
                                     <div>
                                         <label htmlFor="unloading_point_label" className="form-label">Add</label>
-                                        <button type='button' id='unloading_point_label' className='form-control btn btn-light'>+</button>
+                                        <NewClientModal add={true} />
                                     </div>
                                 </div>
                             </div>
