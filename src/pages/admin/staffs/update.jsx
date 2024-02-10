@@ -41,7 +41,7 @@ export function UpdateStaffModal({data,userData,setUserData}) {
         if(status){
             setUserProfile(viewimage);
             role.list()
-            .then(res=>setStaffRoles([...res.data.data.roles.map(role=>{return {value:role.id,label:role.name}})]))
+            .then(res=>setStaffRoles([...res.data.roles.map(role=>{return {value:role.id,label:role.name}})]))
             .catch(err=>console.log(err.response?err.response.data.message:err.message))
         }
     },[status]);

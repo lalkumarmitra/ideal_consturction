@@ -33,7 +33,7 @@ export function NewStaffModal({userData,setUserData}) {
     const handleDateChange = (event) => setSelectedDate(event.target.value);
     useEffect(()=>{
         if(status)
-        role.list().then(res=>setStaffRoles([...res.data.data.roles.map(role=>{return {value:role.id,label:role.name}})]))
+        role.list().then(res=>setStaffRoles([...res.data.roles.map(role=>{return {value:role.id,label:role.name}})]))
         .catch(err=>console.log(err.response?err.response.data.message:err.message))
     },[status]);
     return (
