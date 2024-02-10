@@ -23,13 +23,14 @@ export const authenticatedRoutes = [
 
     {type:'module',label:'Transaction History',path:'/transaction/history',element:<TransactionHistory />,icon:'ri-history-line',users:['admin','staff'],children:[]},
 
-    {type:'setting',label:'Setting',icon:'bx bx-cog',users:['admin','staff'],children:[
-        {label:'Roles',path:'/roles',element:<Home/>,users:['admin']},
-    ]},
+    // {type:'setting',label:'Setting',icon:'bx bx-cog',users:['admin','staff'],children:[
+    //     {label:'Roles',path:'/roles',element:<Home/>,users:['admin']},
+    // ]},
 
     
 ]
 export const publicRoutes = [
+    
 ]
 export const authRoutes = [
     {label:'Home',path:'/',element:<Login /> ,icon:'null',users:[],children:[]},

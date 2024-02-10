@@ -69,8 +69,8 @@ function LayoutSidebar() {
             {generateSidebar('menu')}
             <li className="menu-title w-100"><i className="ri-more-fill"></i><span data-key="t-pages">Modules</span></li>
             {generateSidebar('module')}
-            <li className="menu-title w-100"><i className="ri-more-fill"></i><span data-key="t-components">Settings</span></li>
-            {generateSidebar('setting')}
+            {/* <li className="menu-title w-100"><i className="ri-more-fill"></i><span data-key="t-components">Settings</span></li>
+            {generateSidebar('setting')} */}
           </ul>
         </Container>
       </SimpleBar>
