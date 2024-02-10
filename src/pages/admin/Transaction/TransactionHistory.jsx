@@ -86,7 +86,7 @@ function TransactionHistory() {
                             </h5>
                             <div className='mt-3'>
                                 <p className='mb-2'>Purchage : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price}</p>
-                                <p className='mb-2'>Sale : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price}</p>
+                                <p className='mb-2'>Sale : {row.sales_rate} X {row.sales_quantity} = {sales_price}</p>
                                 <p className="text-muted mb-0"><b>From :</b> {row.loading_point.name} <b>To :</b> {row.unloading_point?.name}</p>
                             </div>
                         </div>

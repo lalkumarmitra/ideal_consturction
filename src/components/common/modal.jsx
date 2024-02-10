@@ -38,7 +38,7 @@ export function NewStaffModal({userData,setUserData}) {
     },[status]);
     return (
         <>
-            <button onClick={handleClick} className='btn btn-soft-success add-btn waves-effect'>
+            <button onClick={handleClick} type='button' className='btn btn-soft-success add-btn waves-effect'>
                 <i className="ri-add-line align-bottom me-1"></i> 
                 <span>New Staff</span>
             </button>
@@ -216,13 +216,13 @@ export function NewClientModal({clientData,setClientData}) {
     }
     return (
         <>
-            <button onClick={handleClose} className='btn btn-soft-success add-btn waves-effect'>
+            <button onClick={handleClose} type='button' className='btn btn-soft-success add-btn waves-effect'>
                 <i className="ri-add-line align-bottom me-1"></i> 
                 <span>New Client/Location</span>
             </button>
             <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title><h5>New Client Or Location</h5></Modal.Title>
+                    <Modal.Title><h5>New Client / Location</h5></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={e=>handleSubmit(e)}>

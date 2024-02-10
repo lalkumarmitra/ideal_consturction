@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { swal } from '../../../helper/swal';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { client, item, staff, transaction, vehicles } from '../../../helper/api_url';
+import { NewClientModal } from '../../../components/common/modal';
 function NewTransactionModal({ listData, setListData }) {
     const dispatch = useDispatch();
     const [status, setStatus] = useState(false);
