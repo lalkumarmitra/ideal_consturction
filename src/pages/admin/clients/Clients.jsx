@@ -13,8 +13,11 @@ import { ViewClientModal } from './view';
 function Clients() {
     const dispatch = useDispatch();
     const [clientData,setClientData] = useState([]);
+    const [dataLoading,setDataLoading] = useState(true);
     useEffect(()=>{
-        client.list().then(res=>setClientData(res.data.clients)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
+        client.list().then(res=>setClientData(res.data.clients))
+        .catch(err=>swal.error(err.response?err.response.data.message:err.message))
+        .finally(()=>setDataLoading(false));
     },[]);
     const handleClientDelete = clientRow =>{
         Swal.fire({
@@ -148,7 +151,7 @@ function Clients() {
                             <NewClientModal clientData={clientData} setClientData={setClientData} />
                         </CardHeader>
                         <CardBody className="">
-                            <TableResponsive customPageSize={8} columns={columns} data={clientData}  />
+                            <TableResponsive isLoading={dataLoading} customPageSize={8} columns={columns} data={clientData}  />
                         </CardBody>
                     </Card>
                 </Col>

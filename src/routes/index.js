@@ -10,6 +10,7 @@ import Login from "../pages/auth/Login"
 
 
 import Home from "../pages/public/Home"
+import Issues from "../pages/public/Support/Issues"
 
 
 
@@ -20,6 +21,7 @@ export const authenticatedRoutes = [
     {type:'menu',label:'Product/Items',path:'/items',element:<Items />,icon:'ri-shopping-basket-2-line',users:['admin','staff'],children:[]},
     {type:'menu',label:'Clients/location',path:'/clients',element:<Clients />,icon:'ri-map-pin-line',users:['admin','staff'],children:[]},
     {type:'menu',label:'Vehicles',path:'/vehicles',element:<Vehicles />,icon:'ri-truck-line',users:['admin','staff'],children:[]},
+    {type:'menu',label:'Help And Support',path:'/help-and-support',element:<Issues />,icon:' ri-customer-service-2-fill',users:['admin','staff'],children:[]},
 
     {type:'module',label:'Transaction History',path:'/transaction/history',element:<TransactionHistory />,icon:'ri-history-line',users:['admin','staff'],children:[]},
 

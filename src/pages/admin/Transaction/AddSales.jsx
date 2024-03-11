@@ -5,6 +5,7 @@ import { swal } from '../../../helper/swal';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { client, item, staff, transaction, vehicles } from '../../../helper/api_url';
 import { NewClientModal, NewStaffModal, NewVehicleModal } from '../../../components/common/modal';
+import CustomSelect from '../../../components/CustomSelect';
 function NewTransactionModal({data,listData,setListData}) {
     const dispatch = useDispatch();
     const [status,setStatus] = useState(false);
@@ -12,16 +13,32 @@ function NewTransactionModal({data,listData,setListData}) {
     const [itemData,setItemData]=useState([]);
     const [vehicleData,setvehicleData]=useState([]);
     const [UserData,setUserData]=useState([]);
-    const [clientData, setClientData] = useState([]);
+    const [unloadingPoints,setUnloadingPoints] = useState([]);
+    const [selectedVehicle,setSelectedVehicle] = useState(null);
+    const [selectedDriver,setSelectedDriver] = useState(null);
+    const [selectedUnloadingPoint,setSelectedUnloadingPoint] = useState(null);
     useEffect(()=>{
         if(status){
-        item.list().then(r=>setItemData(r.data[Object.keys(r.data)[0]])).catch(err=>swal.error(err.response?err.response.data.message:err.message))
-        vehicles.list().then(r=>setvehicleData(r.data[Object.keys(r.data)[0]])).catch(err=>swal.error(err.response?err.response.data.message:err.message))
-        staff.list().then(r=>setUserData(r.data[Object.keys(r.data)[0]])).catch(err=>swal.error(err.response?err.response.data.message:err.message))
-        client.list().then(r => setClientData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
+            item.list().then(r=>setItemData(r.data[Object.keys(r?.data)[0]]))    
+            .catch(err=>console.error(err.response?err.response.data.message:err.message));
+
+            vehicles.list().then(r=>setvehicleData(r.data[Object.keys(r.data)[0]]))
+            .then(r=>vehicleData.filter(v=>v.id == data.unloading_vehicle_id)[0])
+            .then(d=>setSelectedVehicle({value:d.id,label:d.number}))
+            .catch(err=>console.error(err.response?err.response.data.message:err.message));
+
+            staff.list().then(r=>setUserData(r.data[Object.keys(r.data)[0]]))
+            .then(r=>UserData.filter(u=>u.id == data.unloading_driver_id)[0])
+            .then(d=>setSelectedDriver({value:d.id,label:`${d.first_name} ${d.last_name}`}))
+            .catch(err=>console.error(err.response?err.response.data.message:err.message));
+
+            client.list().then(r => setUnloadingPoints(r.data[Object.keys(r.data)[0]].filter(c=>c.client_type == 'receiver'))) 
+            .then(()=>setSelectedUnloadingPoint({value:data.unloading_point?.id,label:data.unloading_point.name}))
+            .catch(err => console.error(err.response ? err.response.data.message : err.message));
+    
         }
-      },[status]);
-    const handlegetId = (e) =>{ itemData.map((item) => {if(item.id == e.target.value) document.getElementById('product_rate').value = item.rate;});};
+    },[status]);
+    
     const handleSubmit = e => {
         dispatch(setPreloader({loader:true,message:'please wait'}))
         e.preventDefault();
@@ -48,10 +65,6 @@ function NewTransactionModal({data,listData,setListData}) {
                 <Modal.Body>
                     <form  onSubmit={e=>handleSubmit(e)}>
                         <div className="row g-3">
-                            <div className='col-12'>
-                                <h6 className='text-center'>Sales</h6>
-                            </div>
-                            <hr />
                             <input type="hidden" name="purchase_paid_amount" defaultValue="0"/>
                             <input type="hidden" name="sales_received_amount" defaultValue="0"/>
                             <input type="hidden" name="transaction_id" defaultValue={data.id}/>
@@ -64,89 +77,66 @@ function NewTransactionModal({data,listData,setListData}) {
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="item_id" className="form-label">Product / Item</label>
-                                    <select id="item_id" name='item_id' className='form-control' defaultValue={data.item_id} onChange={handlegetId}>
-                                        <option value="">--Select Item--</option>
-                                        {itemData.length ? itemData.map((item, idx) => (<option key={idx} value={item.id}>{item.name}</option>)) : (<option disabled >No Data Found</option>)}
-                                    </select>
+                                    <CustomSelect isSearchable name='item_id' options={itemData.map(i=>({value:i.id,label:i.name}))} value={{value:data.item.id,label:data.item.name}} />
                                 </div>
                             </div>
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="product_rate" className="form-label">Rate</label>
-                                    <input type="number" className="form-control" id='product_rate' name="sales_rate" defaultValue={data.purchase_rate} />
+                                    <input type="text" className="form-control" id='product_rate' name="sales_rate" defaultValue={data.purchase_rate} />
                                 </div>
                             </div>
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="sales_quantity" className="form-label">Qurantity</label>
-                                    <input type="number" className="form-control" id='sales_quantity' defaultValue={data.sales_quantity} name="sales_quantity" />
+                                    <input type="text" className="form-control" id='sales_quantity' defaultValue={data.sales_quantity} name="sales_quantity" />
                                 </div>
                             </div>
-                            {/* <div className="col-3">
-                                <div>
-                                    <label htmlFor="do_number" className="form-label">Do Number</label>
-                                    <input type="number" className="form-control" id='do_number' name="do_number" />
-                                </div>
-                            </div> */}
-
-                            <div className="col-10">
+                            <div className="col-6">
                                 <div>
                                     <label htmlFor="vehicle_id" className="form-label">Vehicle</label>
-                                    <select id="vehicle_id" name='unloading_vehicle_id' className='form-control' defaultValue={data.unloading_vehicle_id} onChange={handlegetId}>
-                                        <option value="">--Select Vehicle--</option>
-                                        {vehicleData.length ? vehicleData.map((item, idx) => (<option key={idx} value={item.id}>{item.type}</option>)) : (<option disabled >No data Found</option>)}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className='col-2'>
-                                <div>
-                                    <label htmlFor="add_new_location_point">Add</label>
-                                    <NewVehicleModal add={true} />
+                                    <CustomSelect 
+                                        isSearchable  
+                                        value={selectedVehicle}
+                                        onChange={e=>setSelectedVehicle(e)}
+                                        name='unloading_vehicle_id' 
+                                        options={vehicleData?.map(v=>({value:v.id,label:v.type}))} 
+                                    />
+                                    
                                 </div>
                             </div>
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="driver_id" className="form-label">Driver</label>
-                                    <select id="driver_id" name='unloading_driver_id' className='form-control' defaultValue={data.unloading_driver_id} onChange={handlegetId}>
-                                        <option value="">--Select Driver--</option>
-                                        {UserData.length ? UserData.map((user, idx) => (<option key={idx} value={user.id}>{user.first_name} {user.last_name}</option>)) : (<option disabled >No data Found</option>)}
-                                    </select>
+                                    <CustomSelect 
+                                        isSearchable 
+                                        value={selectedDriver}
+                                        onChange={e=>setSelectedDriver(e)}
+                                        name='unloading_driver_id' 
+                                        options={UserData?.map(u=>({value:u.id,label:`${u.first_name} ${u.last_name}`}))} 
+                                    />
+                                    
                                 </div>
                             </div>
-                            <div className='col-2'>
+                            
+                            <div className="col-6">
                                 <div>
-                                    <label htmlFor="add_new_location_point">Add</label>
-                                    <NewStaffModal add={true}  />
+                                    <label htmlFor="unloading_point" className="form-label">UnLoading Point</label>
+                                    <CustomSelect 
+                                        isSearchable 
+                                        name="unloading_point" 
+                                        options={unloadingPoints?.map(c=>({value:c.id,label:c.name}))}
+                                        value={selectedUnloadingPoint}
+                                        onChange={e=>setSelectedUnloadingPoint(e)}
+                                    />
                                 </div>
-                            </div>
-                            <div className="col-4 mb-2">
+                            </div>                            
+                            <div className="col-6 mb-2">
                                 <div>
                                     <label htmlFor="unloading_challan" className="form-label">UnLoading Challan</label>
                                     <input type="number" className="form-control" name='unloading_challan' defaultValue={data.unloading_challan} id='loading_challan' />
                                 </div>
                             </div>
-                            
-                            <div className="col-10">
-                                <div>
-                                    <label htmlFor="unloading_point" className="form-label">UnLoading Point</label>
-                                    <select id="unloading_point" name="unloading_point" defaultValue={data.unloading_point}  className='form-control'>
-                                    <option value="">--Select user--</option>
-                                        {
-                                                clientData.length? clientData.map((user,idx)=>(
-                                                   user.client_type=="receiver"?<option key={idx} value={user.id}>{user.name}</option>:''
-                                                )):<option value="">No Data Found</option>
-                                            }
-                                    </select>
-
-                                </div>
-                            </div>
-                            <div className='col-2'>
-                                <div>
-                                    <label htmlFor="add_new_location_point" className="form-label">Add</label>
-                                    <NewClientModal add={true} />
-                                </div>
-                            </div>
-                            
                            
                             <div className="col-12">
                                 <div className="hstack gap-2 justify-content-end">

@@ -4,27 +4,30 @@ import { Row, Col, Card, Button, Collapse } from "react-bootstrap";
 import { TableResponsive } from "../../../components/common/TableResponsive";
 import { item, client, transaction, vehicles, staff } from "../../../helper/api_url";
 import { swal } from "../../../helper/swal";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { formatDate } from "../../../helper/formatDate";
+import CustomSelect from "../../../components/CustomSelect";
 
 
 function TransactionHistory() {
     const [tableData, setTableData] = useState([]);
+    const [dataLoading,setDataLoading] = useState(true);
+
     const [historyinfo, setHistoryinfo] = useState({});
     const [itemData, setItemData] = useState([]);
     const [clientData, setClientData] = useState([]);
     const [vehicleData, setvehicleData] = useState([]);
     const [UserData, setUserData] = useState([]);
     const [openfilter, setOpenFilter] = useState(true);
-    
     const [fromDate,setFromDate] = useState();
     const [toDate,setToDate] = useState();
-    const handleDateChange = (event,type) => {
-        if(type == 'from') setFromDate(event.target.value)
-        if(type == 'to') setToDate(event.target.value)
-    };
+    
     const setTransactionHistory = () =>{
+        setDataLoading(true);
         let formData = new FormData(document.getElementById('filters_form'));
-        if(fromDate) formData.append('from_date',fromDate);
-        if(toDate) formData.append('to_date',toDate);
+        if(fromDate) formData.append('to_date',fromDate);
+        if(toDate) formData.append('from_date',toDate);
         transaction.history(formData).then(res => {
             setTableData(res.data.transactions)
             setHistoryinfo({
@@ -34,9 +37,10 @@ function TransactionHistory() {
                 total_sales_quantity: res.data.total_sales_quantity,
                 total_sales_price: res.data.total_sales_price,
             })
-            setFromDate(res.data.dates.from.split('T')[0]);
-            setToDate(res.data.dates.to.split('T')[0]);
-        }).catch(e => console.log(e)).finally(r=>console.log(r));
+            if(!fromDate) setFromDate(res.data.dates.to.split('T')[0]);
+            if(!toDate) setToDate(res.data.dates.from.split('T')[0]);
+        }).catch(e => console.log(e))
+        .finally(()=>setDataLoading(false));
     }
     useEffect(() => {
         setTransactionHistory();
@@ -45,6 +49,9 @@ function TransactionHistory() {
         vehicles.list().then(r => setvehicleData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
         staff.list().then(r => setUserData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
     }, []);
+    useEffect(()=>{
+        setTransactionHistory();
+    },[fromDate,toDate]);
     const columns = useMemo(() => [
         { Header: "Item/Product", accessor: "item.name" },
         { Header: "Loading Point", accessor: "loading_point.name" },
@@ -55,7 +62,7 @@ function TransactionHistory() {
             Cell: (cell) => {
                 const row = cell.row.original;
                 const purchase_price = row.purchase_rate * row.purchase_quantity;
-                return `${row.purchase_rate} X ${row.purchase_quantity} = ${purchase_price}`;
+                return `${row.purchase_rate} X ${row.purchase_quantity} = ${purchase_price.toFixed(2)}`;
             }
         },
         { Header: "UnLoading Point", accessor: "unloading_point.name" },
@@ -67,7 +74,7 @@ function TransactionHistory() {
                 const row = cell.row.original;
                 const sales_price = row.sales_rate * row.sales_quantity;
                 if (row.status === 'sold')
-                    return `${row.sales_rate} X ${row.sales_quantity} = ${sales_price}`;
+                    return `${row.sales_rate} X ${row.sales_quantity} = ${sales_price.toFixed(2)}`;
                 return "-";
             }
         },
@@ -101,13 +108,61 @@ function TransactionHistory() {
             }
         }
     ]);
+    const generatePdf = () =>{
+        const doc = new jsPDF('p','mm','a4');
+        doc.text("IDEAL Construction : Transaction Purchase History information", 15, 10);
+        doc.text(`Date : ${formatDate(fromDate)} - ${formatDate(toDate)}`,15,20);
+        doc.text(`Total Purchase Price : ${historyinfo.total_purchase_price?.toFixed(2)}`,15,30);
+        doc.autoTable({
+            head:[['Product','Quantity','Rate','Price','Loading point','Unloading Point','Purchase Date']],
+            body:tableData.reverse().map(d=>([
+                // d.id,
+                d.item.name,
+                d.purchase_quantity,
+                d.purchase_rate,
+                d.purchase_price?.toFixed(2),
+                d.loading_point.name,
+                d.unloading_point.name,
+                formatDate(d.purchase_date),
+                // formatDate(d.created_at)
+            ])),
+            startY:40,
+            startX:10,
+            theme: 'grid',
+        });
+        doc.save('Purchase_history.pdf');
+    }
+    const generateSalePdf = () =>{
+        const doc = new jsPDF('p','mm','a4');
+        doc.text("IDEAL Construction : Transaction Sale History information", 15, 10);
+        doc.text(`Date : ${formatDate(fromDate)} - ${formatDate(toDate)}`,15,20);
+        doc.text(`Total Sales Price : ${historyinfo.total_sales_price?.toFixed(2)}`,15,30)
+        doc.autoTable({
+            head:[['Product','Quantity','Rate','Price','Loading point','Unloading Point','Sales Date']],
+            body:tableData.reverse().map(d=>([
+                // d.id,
+                d.item.name,
+                d.sales_quantity,
+                d.sales_rate,
+                d.sales_price?.toFixed(2),
+                d.loading_point.name,
+                d.unloading_point.name,
+                formatDate(d.sales_date)
+                // formatDate(d.created_at)
+            ])),
+            startY:40,
+            startX:10,
+            theme: 'grid',
+        });
+        doc.save('Sales_History.pdf');
+    }
     return (
         <>
             <BreadCrumb title="History" prevPage="Home" prevPath="/dashboard" />
             <Row>
                 <Col md={12} lg={4}>
                     <Card className="py-3">
-                        <Card.Header>
+                        <Card.Header className="py-1">
                             <Card.Title>Transaction Information</Card.Title>
                         </Card.Header>
                         <Card.Body>
@@ -128,7 +183,7 @@ function TransactionHistory() {
                                                 <Col xs={8}><span className='fw-bold'>Total Purchase Quantity </span></Col>
                                                 <Col xs={1}><span className='fw-bold'>:</span></Col>
                                                 <Col className='text-start' xs={3}>
-                                                    <span className='text-wrap'> {historyinfo.total_purchase_quantity} </span>
+                                                    <span className='text-wrap'> {historyinfo.total_purchase_quantity?.toFixed(2)} </span>
                                                 </Col>
                                             </Row>
                                         </li>
@@ -137,7 +192,7 @@ function TransactionHistory() {
                                                 <Col xs={8}><span className='fw-bold'>Total Purchase Price </span></Col>
                                                 <Col xs={1}><span className='fw-bold'>:</span></Col>
                                                 <Col className='text-start' xs={3}>
-                                                    <span className='text-wrap'> {historyinfo.total_purchase_price} </span>
+                                                    <span className='text-wrap'> {historyinfo.total_purchase_price?.toFixed(2)} </span>
                                                 </Col>
                                             </Row>
                                         </li>
@@ -146,7 +201,7 @@ function TransactionHistory() {
                                                 <Col xs={8}><span className='fw-bold'>Total Sold Quantity </span></Col>
                                                 <Col xs={1}><span className='fw-bold'>:</span></Col>
                                                 <Col className='text-start' xs={3}>
-                                                    <span className='text-wrap'> {historyinfo.total_sales_quantity} </span>
+                                                    <span className='text-wrap'> {historyinfo.total_sales_quantity?.toFixed(2)} </span>
                                                 </Col>
                                             </Row>
                                         </li>
@@ -155,7 +210,7 @@ function TransactionHistory() {
                                                 <Col xs={8}><span className='fw-bold'>Total Sold Price </span></Col>
                                                 <Col xs={1}><span className='fw-bold'>:</span></Col>
                                                 <Col className='text-start' xs={3}>
-                                                    <span className='text-wrap'> {historyinfo.total_sales_price} </span>
+                                                    <span className='text-wrap'> {historyinfo.total_sales_price?.toFixed(2)} </span>
                                                 </Col>
                                             </Row>
                                         </li>
@@ -183,6 +238,7 @@ function TransactionHistory() {
                                     <div className="row g-3">
                                         <div className='col-6'>
                                             <label htmlFor="item_id" className="form-label">Item<span className='text-danger'>*</span></label>
+                                            {/* <CustomSelect /> */}
                                             <select onChange={setTransactionHistory} id="item_id" name='item_id' className='form-control' >
                                                 <option value="" selected>All</option>
                                                 {itemData.length ? itemData.map((item, idx) => (<option key={idx} value={item.id}>{item.name}</option>)) : (<option disabled >No Data Found</option>)}
@@ -190,6 +246,12 @@ function TransactionHistory() {
                                         </div>
                                         <div className="col-6">
                                             <label htmlFor="transaction_status" className="form-label">Status</label>
+                                            {/* <CustomSelect 
+                                                name='status'
+                                                defaultValue={{value:'',label:'All'}}
+                                                options={[{value:'',label:'All'},{value:'purchased',label:'Purchased'},{value:'sold',label:'Sold'}]} 
+                                                onChange={setTransactionHistory} 
+                                            /> */}
                                             <select onChange={setTransactionHistory} id="transaction_status" name='status' className='form-control'>
                                                 <option selected value=''>All</option>
                                                 <option value='purchased'>Purchased</option>
@@ -251,28 +313,32 @@ function TransactionHistory() {
                 </Col>
                 <Col>
                     <Card>
-                        <Card.Header>
-                            <Card.Title>Transaction History</Card.Title>
+                        <Card.Header className="d-flex align-item-center justify-content-between">
+                            <Card.Title className="d-flex align-items-center">Transaction History</Card.Title>
+                            <div>
+                                <Button onClick={generatePdf} className="btn btn-soft-success me-2">Purchase PDF</Button>
+                                <Button onClick={generateSalePdf} className="btn btn-soft-warning">Sale PDF</Button>
+                            </div>
                         </Card.Header>
                         <Card.Body>
                             <Row className="mb-2">
                                 <Col xs={6}>
                                     <label>From</label>
                                     <input type="date" value={fromDate} onChange={e=>{
-                                        handleDateChange(e,'from');
-                                        setTransactionHistory();
+                                        setFromDate(e.target.value)
+                                        
                                     }} className="form-control" />
                                 </Col>
                                 <Col xs={6}>
                                     <label>To</label>
                                     <input type="date" value={toDate} onChange={e=>{
-                                        handleDateChange(e,'to');
-                                        setTransactionHistory();
+                                        setToDate(e.target.value);
+                                    
                                     }} className="form-control" />
                                 </Col>
                             </Row>
                             <hr />
-                            <TableResponsive columns={columns} data={tableData} />
+                            <TableResponsive isLoading={dataLoading} columns={columns} data={tableData} />
                         </Card.Body>
                     </Card>
                 </Col>

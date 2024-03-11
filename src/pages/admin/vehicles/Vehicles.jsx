@@ -15,9 +15,11 @@ import { ViewVehicleModal } from './view';
 function Vehicles() {
     const dispatch = useDispatch();
     const [listData,setListData] = useState([]);
-
+    const [dataLoading,setDataLoading] = useState(true);
     useEffect(()=>{
-        vehicles.list().then(res=>setListData(res.data.vehicles)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
+        setDataLoading(true);
+        vehicles.list().then(res=>setListData(res.data.vehicles))
+        .catch(err=>swal.error(err.response?err.response.data.message:err.message));
     },[]);
     const columns = useMemo(()=>[
         {
@@ -130,7 +132,7 @@ function Vehicles() {
                         <NewVehicleModal listData={listData} setListData={setListData}/>
                     </CardHeader>
                     <CardBody className="">
-                        <TableResponsive columns={columns} data={listData}  />
+                        <TableResponsive isLoading={dataLoading} columns={columns} data={listData}  />
                     </CardBody>
                 </Card>
             </Col>

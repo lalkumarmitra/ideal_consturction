@@ -5,6 +5,7 @@ import { swal } from '../../../helper/swal';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { client, item, staff, transaction, vehicles } from '../../../helper/api_url';
 import { NewClientModal, NewStaffModal, NewVehicleModal } from '../../../components/common/modal';
+import CustomSelect from '../../../components/CustomSelect';
 function NewTransactionModal({ listData, setListData }) {
     const dispatch = useDispatch();
     const [status, setStatus] = useState(false);
@@ -13,18 +14,31 @@ function NewTransactionModal({ listData, setListData }) {
     const [vehicleData, setvehicleData] = useState([]);
     const [UserData, setUserData] = useState([]);
     const [clientData, setClientData] = useState([]);
+    const [unloadingPoints, setUnloadingPoints] = useState([]);
+    const [loadingPoints, setLoadingPoints] = useState([]);
+    const [loadingVehicleId,setLoadingVehicleId] = useState();
+    const [unloadingVehicleId,setUnloadingVehicleId] = useState();
+    const [loadingDriverId,setLoadingDriverId] = useState();
+    const [unloadingDriverId,setUnloadingDriverId] = useState();
     useEffect(() => {
         if (status) {
-            item.list().then(r => setItemData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
-            vehicles.list().then(r => setvehicleData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
-            staff.list().then(r => setUserData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
-            client.list().then(r => setClientData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
+            item.list().then(r => setItemData(r.data[Object.keys(r.data)[0]])).catch(err => console.log(err.response ? err.response.data.message : err.message))
+            vehicles.list().then(r => setvehicleData(r.data[Object.keys(r.data)[0]])).catch(err => console.log(err.response ? err.response.data.message : err.message))
+            staff.list().then(r => setUserData(r.data[Object.keys(r.data)[0]])).catch(err => console.log(err.response ? err.response.data.message : err.message))
+            client.list().then(r => setClientData(r.data[Object.keys(r.data)[0]])).catch(err => console.log(err.response ? err.response.data.message : err.message))
         }
     }, [status]);
-    const handlegetId = (e) => { itemData.map((item) => { if (item.id == e.target.value) {
-        document.getElementById('product_rate').value = item.rate;
-        document.getElementById('sales_rate').value = item.rate;
-    } }); };
+    useEffect(()=>{
+        if(status){
+            setUnloadingPoints(clientData.filter(c=>c.client_type === "receiver"));
+            setLoadingPoints(clientData.filter(c=>c.client_type === "sender"));
+        }
+    },[clientData])
+    const handlegetId = (e) => { 
+        const currentItem = itemData.filter(i=>i.id===e.value)[0];
+        document.getElementById('product_rate').value = currentItem.rate;
+        document.getElementById('sales_rate').value = currentItem.rate;
+    };
     const handleSubmit = e => {
         dispatch(setPreloader({ loader: true, message: 'Creating new Transtion please wait' }))
         e.preventDefault();
@@ -46,6 +60,8 @@ function NewTransactionModal({ listData, setListData }) {
         document.querySelector("#saleform").className = "d-block";
         document.querySelector("#submit").className = "btn btn-primary d-block";
         document.querySelector("#prev").disabled = false;
+        document.querySelector("#sales_date").value = document.querySelector("#purchase_date").value;
+        document.querySelector("#sales_quantity").value = document.querySelector("#quantity").value;
     }
     const handleprev=(e)=>{
         e.preventDefault();
@@ -54,6 +70,7 @@ function NewTransactionModal({ listData, setListData }) {
         document.querySelector("#purchaseform").className = "d-block";
         document.querySelector("#saleform").className = "d-none";
         document.querySelector("#submit").className = "btn btn-primary d-none";
+
     }
     return (
         <>
@@ -84,10 +101,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="item_id" className="form-label">Product / Item</label>
-                                        <select id="item_id" name='item_id' className='form-control' onChange={handlegetId}>
-                                            <option value="">--Select Item--</option>
-                                            {itemData.length ? itemData.map((item, idx) => (<option key={idx} value={item.id}>{item.name}</option>)) : (<option disabled >No Data Found</option>)}
-                                        </select>
+                                        <CustomSelect isSearchable options={itemData?.map(i=>({value:i.id,label:i.name}))} elementId="item_id" name="item_id" onChange={handlegetId} />
                                     </div>
                                 </div>
                                 <div className="col-6">
@@ -96,13 +110,50 @@ function NewTransactionModal({ listData, setListData }) {
                                         <input type="number" className="form-control" id='product_rate' name="purchase_rate" defaultValue="" />
                                     </div>
                                 </div>
-                                <div className="col-3">
+                                <div className="col-6">
                                     <div>
-                                        <label htmlFor="quantity" className="form-label">Qurantity</label>
-                                        <input type="number" className="form-control" id='quantity' name="purchase_quantity" />
+                                        <label htmlFor="quantity" className="form-label">Quantity</label>
+                                        <input type="text" className="form-control" id='quantity' required defaultValue={0} name="purchase_quantity" />
                                     </div>
                                 </div>
-                                <div className="col-3">
+
+                                <div className="col-10">
+                                    <div>
+                                        <label htmlFor="vehicle_id" className="form-label">Vehicle</label>
+                                        <CustomSelect 
+                                            onChange={e=>{setLoadingVehicleId(e);setUnloadingVehicleId(e)}} 
+                                            options={vehicleData?.map(item=>({value:item.id,label:item.type}))} 
+                                            elementId="vehicle_id" name='vehicle_id' 
+                                            isSearchable 
+                                        />
+                
+                                    </div>
+                                </div>
+                                <div className='col-2'>
+                                    <div>
+                                        <label htmlFor="add_new_location_point">Add</label>
+                                        <NewVehicleModal listData={vehicleData} setListData={setvehicleData}   add={true} />
+                                    </div>
+                                </div>
+                                <div className="col-6">
+                                    <div>
+                                        <label htmlFor="driver_id" className="form-label">Driver</label>
+                                        <CustomSelect 
+                                            onChange={e=>{setLoadingDriverId(e);setUnloadingDriverId(e)}} 
+                                            isSearchable 
+                                            name='driver_id' 
+                                            elementId="driver_id" 
+                                            options={UserData?.map(u=>({value:u.id,label:`${u.first_name} ${u.last_name}`}))} 
+                                        />
+                                    </div>
+                                </div>
+                                <div className='col-2'>
+                                    <div>
+                                        <label htmlFor="add_new_location_point">Add</label>
+                                        <NewStaffModal listData={UserData} setListData={setUserData} add={true}  />
+                                    </div>
+                                </div>
+                                <div className="col-4">
                                     <div>
                                         <label htmlFor="do_number" className="form-label">Do Number</label>
                                         <input type="number" className="form-control" id='do_number' name="do_number" />
@@ -111,76 +162,16 @@ function NewTransactionModal({ listData, setListData }) {
 
                                 <div className="col-10">
                                     <div>
-                                        <label htmlFor="vehicle_id" className="form-label">Vehicle</label>
-                                        <select id="vehicle_id" name='vehicle_id' className='form-control' >
-                                            <option value="">--Select Vehicle--</option>
-                                            {vehicleData.length ? vehicleData.map((item, idx) => (<option key={idx} value={item.id}>{item.type}</option>)) : (<option disabled >No data Found</option>)}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className='col-2'>
-                                    <div>
-                                        <label htmlFor="add_new_location_point">Add</label>
-                                        <NewVehicleModal add={true} />
-                                    </div>
-                                </div>
-                                <div className="col-6">
-                                    <div>
-                                        <label htmlFor="driver_id" className="form-label">Driver</label>
-                                        <select id="driver_id" name='driver_id' className='form-control'>
-                                            <option value="">--Select Driver--</option>
-                                            {UserData.length ? UserData.map((user, idx) => (<option key={idx} value={user.id}>{user.first_name} {user.last_name}</option>)) : (<option disabled >No data Found</option>)}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className='col-2'>
-                                    <div>
-                                        <label htmlFor="add_new_location_point">Add</label>
-                                        <NewStaffModal add={true}  />
-                                    </div>
-                                </div>
-                                <div className="col-4 mb-2">
-                                    <div>
-                                        <label htmlFor="loading_challan" className="form-label">Loading Challan</label>
-                                        <input type="number" className="form-control" name='loading_challan' id='loading_challan' />
-                                    </div>
-                                </div>
-
-                                <div className="col-10">
-                                    <div>
                                         <label htmlFor="loading_point" className="form-label">Loading Point</label>
-                                        <select id="loading_point" name="loading_point" className='form-control'>
-                                            <option value="">--Select user--</option>
-                                            {
-                                                clientData.length? clientData.map((user,idx)=>(
-                                                   user.client_type=="sender"?<option key={idx} value={user.id}>{user.name}</option>:''
-                                                )):<option value="">No Data Found</option>
-                                            }
-            
-                                        </select>
+                                        <CustomSelect elementId="loading_point" isSearchable options={loadingPoints?.map(c=>({value:c.id,label:c.name}))} name="loading_point" />
                                     </div>
                                 </div>
                                 <div className='col-2'>
                                     <div>
                                         <label htmlFor="loading_point_label" className="form-label">Add</label>
-                                        <NewClientModal add={true} />
+                                        <NewClientModal listData={clientData} setListData={setClientData} add={true} />
                                     </div>
                                 </div>
-                                {/* <div className="col-5">
-                                    <div>
-                                        <label htmlFor="status_transction" className="form-label">Status</label>
-                                        <select name="status" id="status_transction" className='form-control'>
-                                            <option value="">--select status--</option>
-                                            <option value="pending">pending</option>
-                                            <option value="active">active</option>
-                                            <option value="deactive">deactive</option>
-                                            <option value="closed">closed</option>
-                                            <option value="sold">sold</option>
-                                            <option value="purchased">purchased</option>
-                                            <option value="deleted">deleted</option>
-                                        </select>
-                                    </div>
-                                </div> */}
                             </div>
                         </div>
 
@@ -194,7 +185,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="sales_date" className="form-label">Sales Date</label>
-                                        <input type="date" className="form-control" name='sales_date' id='sales_date' />
+                                        <input type="date"  className="form-control" name='sales_date' id='sales_date' />
                                     </div>
                                 </div>
                                 <div className="col-6">
@@ -206,7 +197,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="sales_quantity" className="form-label">Sales Quantitiy</label>
-                                        <input type="number" className="form-control" name='sales_quantity' id='sales_quantity' />
+                                        <input type="text" className="form-control" name='sales_quantity' id='sales_quantity' />
                                     </div>
                                 </div>
                                 <div className="col-6">
@@ -218,10 +209,15 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className="col-10">
                                     <div>
                                         <label htmlFor="unloading_vehicle_id" className="form-label">Vehicle</label>
-                                        <select id="unloading_vehicle_id" name='unloading_vehicle_id' className='form-control'>
-                                            <option value="">--Select Vehicle--</option>
-                                            {vehicleData.length ? vehicleData.map((item, idx) => (<option key={idx} value={item.id}>{item.type}</option>)) : (<option disabled >No data Found</option>)}
-                                        </select>
+                                        <CustomSelect 
+                                            value={unloadingVehicleId} 
+                                            onChange={e=>{setUnloadingVehicleId(e)}}
+                                            options={vehicleData?.map(item=>({value:item.id,label:item.type}))} 
+                                            elementId="unloading_vehicle_id" 
+                                            name='unloading_vehicle_id' 
+                                            isSearchable 
+                                        />
+                                        
                                     </div>
                                 </div>
                                 <div className='col-2'>
@@ -233,10 +229,14 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className="col-10">
                                     <div>
                                         <label htmlFor="unloading_driver_id" className="form-label">Driver</label>
-                                        <select id="unloading_driver_id" name='unloading_driver_id' className='form-control' >
-                                            <option value="">--Select Driver--</option>
-                                            {UserData.length ? UserData.map((user, idx) => (<option key={idx} value={user.id}>{user.first_name} {user.last_name}</option>)) : (<option disabled >No data Found</option>)}
-                                        </select>
+                                        <CustomSelect 
+                                            value={unloadingDriverId} 
+                                            onChange={e=>{setUnloadingDriverId(e)}}
+                                            isSearchable 
+                                            name='unloading_driver_id' 
+                                            elementId="unloading_driver_id" 
+                                            options={UserData?.map(u=>({value:u.id,label:`${u.first_name} ${u.last_name}`}))} 
+                                        />
                                     </div>
                                 </div>
                                 <div className='col-2'>
@@ -249,14 +249,15 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className="col-10">
                                     <div>
                                         <label htmlFor="unloading_point" className="form-label">UnLoading Point</label>
-                                        <select id="unloading_point" name="unloading_point" className='form-control'>
+                                        <CustomSelect elementId="unloading_point" isSearchable options={unloadingPoints?.map(c=>({value:c.id,label:c.name}))} name="unloading_point" />
+                                        {/* <select id="unloading_point" name="unloading_point" className='form-control'>
                                         <option value="">--Select user--</option>
                                         {
                                                 clientData.length? clientData.map((user,idx)=>(
                                                    user.client_type=="receiver"?<option key={idx} value={user.id}>{user.name}</option>:''
                                                 )):<option value="">No Data Found</option>
                                             }
-                                        </select>
+                                        </select> */}
                                     </div>
                                 </div>
                                 <div className='col-2'>

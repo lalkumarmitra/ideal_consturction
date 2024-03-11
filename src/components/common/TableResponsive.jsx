@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import SimpleBar from 'simplebar-react';
 import { useTable, usePagination, useFilters, useGlobalFilter } from 'react-table';
 import { Link } from 'react-router-dom';
+import CustomSelect from '../CustomSelect';
+import { toHaveAttribute } from '@testing-library/jest-dom/matchers';
+import DataLoading from '../DataLoading';
 
-export const TableResponsive = ({ columns, data, isPagination = true, isShowingPageLength = true, customPageSize = 8, showFilter = true,showCustomOptionPage=true }) => {
+export const TableResponsive = ({isLoading,toHaveAttribute,columns, data, isPagination = true, isShowingPageLength = true, customPageSize = 10, showFilter = true,showCustomOptionPage=true,tableId="", noRecord="No Data Found"}) => {
     const { getTableProps, getTableBodyProps, headerGroups, prepareRow, page, pageOptions, canPreviousPage, previousPage, gotoPage, canNextPage,
         nextPage, state: { pageIndex, pageSize, globalFilter }, setPageSize, setGlobalFilter } = useTable({ columns, data }, useFilters, useGlobalFilter, usePagination);
     React.useEffect(() => { setPageSize(customPageSize); }, [customPageSize, setPageSize]);
@@ -17,26 +20,38 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
         return pageButtons;
     };
     const onChangeInSelect = event => {
-        setPageSize(Number(event.target.value))
+        // console.log(event);
+        setPageSize(Number(event.value))
       }
     const [searchQuery, setSearchQuery] = useState('');
     const filteredData = data.filter(row => { return columns.some(column => String(row[column.accessor]).toLowerCase().includes(searchQuery.toLowerCase())); });
+    
     if (data.length) {
         return (
             <>
                 <div className="d-none d-lg-block">
-                    <div className='row mb-3 justify-content-between'>
+                    <div className='row mb-3 d-flex justify-content-between'>
                         {showCustomOptionPage && (
                             <div className='col-lg-2'>
-                            <select className="form-select" value={pageSize} onChange={onChangeInSelect}>
+                                <CustomSelect options={[
+                                    {label:'2',value:2},
+                                    {label:'4',value:4},
+                                    {label:'8',value:8},
+                                    {label:'10',value:10},
+                                    {label:'20',value:20},
+                                    {label:'30',value:30},
+                                    {label:'40',value:40},
+                                    {label:'50',value:50},
+                                ]} onChange={onChangeInSelect} />
+                            {/* <select className="form-select" value={pageSize} onChange={onChangeInSelect}>
                                 {[2,4,8,10, 20, 30, 40, 50].map((pageSize,id) => (<option key={id} value={pageSize}>Show {pageSize}</option> ))}
-                            </select>
+                            </select> */}
                             </div>)
                         }
                         {showFilter && (<div className='col-lg-4'><input type="text" className='form-control' placeholder="Search..." value={globalFilter || ''} onChange={(e) => setGlobalFilter(e.target.value)} /></div>)}
                     </div>
 
-                    <table {...getTableProps()} className="table table-bordered dt-responsive nowrap table-striped align-middle" style={{ width: '100%' }}>
+                    <table id={tableId} {...getTableProps()} className="table table-bordered dt-responsive nowrap table-striped align-middle" style={{ width: '100%' }}>
                         <thead>
                             {headerGroups.map((headerGroup,id) => (<tr  {...headerGroup.getHeaderGroupProps()} key={id}>{headerGroup.headers.map((column, index) => (
                                 <th {...column.getHeaderProps()} className={columns[index].HeaderClass} key={index}>{column.render('Header')} </th>
@@ -91,7 +106,7 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
                                 <input type="text" className='form-control' placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                             </div>
                         </div>
-                        <SimpleBar style={{ height: "calc(100vh - 376px)" }}>
+                        <SimpleBar  className='custom-scrollbar' style={{ height: "calc(100vh - 376px)" }}>
                             <ul className="list list-group list-group-flush mb-0" id="table_as_list">
                                 {filteredData.map((row, id) => {
                                     const list_obj = columns.filter(d => d.Header === 'List')
@@ -104,9 +119,9 @@ export const TableResponsive = ({ columns, data, isPagination = true, isShowingP
             </>
         );
     }
-    return (
-        <div className="d-flex bg-light bg-opacity-50 rounded align-items-center justify-content-center p-5">
-            <h3>No Data Found</h3>
-        </div>
-    );
+    return isLoading 
+    ? <DataLoading />
+    : (<div className="d-flex bg-light bg-opacity-50 rounded align-items-center justify-content-center p-5">
+        <h3>{noRecord}</h3>
+    </div>);
 };
