@@ -13,7 +13,6 @@ import CustomSelect from "../../../components/CustomSelect";
 function TransactionHistory() {
     const [tableData, setTableData] = useState([]);
     const [dataLoading,setDataLoading] = useState(true);
-
     const [historyinfo, setHistoryinfo] = useState({});
     const [itemData, setItemData] = useState([]);
     const [clientData, setClientData] = useState([]);
@@ -23,9 +22,10 @@ function TransactionHistory() {
     const [fromDate,setFromDate] = useState();
     const [toDate,setToDate] = useState();
     
-    const setTransactionHistory = () =>{
+    const handleButtonClickUnderConstruction = () => swal.warning('Under construction','This Feature is comming Soon');
+    const setTransactionHistory = (target) =>{
         setDataLoading(true);
-        let formData = new FormData(document.getElementById('filters_form'));
+        let formData = new FormData(target);
         if(fromDate) formData.append('to_date',fromDate);
         if(toDate) formData.append('from_date',toDate);
         transaction.history(formData).then(res => {
@@ -43,14 +43,13 @@ function TransactionHistory() {
         .finally(()=>setDataLoading(false));
     }
     useEffect(() => {
-        setTransactionHistory();
         item.list().then(r => setItemData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
         client.list().then(r => setClientData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
         vehicles.list().then(r => setvehicleData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
         staff.list().then(r => setUserData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
     }, []);
     useEffect(()=>{
-        setTransactionHistory();
+        setTransactionHistory(document.getElementById('filters_form'));
     },[fromDate,toDate]);
     const columns = useMemo(() => [
         { Header: "Item/Product", accessor: "item.name" },
@@ -79,6 +78,27 @@ function TransactionHistory() {
             }
         },
         {
+            Header: "Action",
+            HeaderClass: 'text-center',
+            DataClass: 'text-center',
+            Cell: (cell) => {
+                const row = cell.row.original;
+                return (
+                    <div className="">
+                        <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-success me-1" >
+                            <i className="ri-eye-fill" />  
+                        </Button>
+                        <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-info me-1" >
+                            <i className="ri-pencil-fill" />  
+                        </Button>
+                        <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-warning me-1" >
+                            <i className=" ri-file-list-3-fill" />  
+                        </Button>
+                    </div>
+                )
+            }
+        },
+        {
             Header: 'List',
             HeaderClass: 'd-none',
             DataClass: 'd-none',
@@ -92,15 +112,22 @@ function TransactionHistory() {
                                 <a href="#">{row.item.name} </a>
                             </h5>
                             <div className='mt-3'>
-                                <p className='mb-2'>Purchage : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price}</p>
-                                <p className='mb-2'>Sale : {row.sales_rate} X {row.sales_quantity} = {sales_price}</p>
+                                <p className='mb-2'>Purchage : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price?.toFixed(2)}</p>
+                                <p className='mb-2'>Sale : {row.sales_rate} X {row.sales_quantity} = {sales_price?.toFixed(2)}</p>
                                 <p className="text-muted mb-0"><b>From :</b> {row.loading_point.name} <b>To :</b> {row.unloading_point?.name}</p>
                             </div>
                         </div>
                         <div className="flex-shrink-0">
                             <div>
-                                <button onClick={() => console.log(row)} className="btn btn-sm btn-soft-danger ms-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
-                                {/* <button onClick={()=>handleDelete(row)} className="btn btn-sm btn-soft-info ms-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button> */}
+                                <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-success me-1" >
+                                    <i className="ri-eye-fill" />  
+                                </Button>
+                                <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-info me-1" >
+                                    <i className="ri-pencil-fill" />  
+                                </Button>
+                                <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-warning me-1" >
+                                    <i className=" ri-file-list-3-fill" />  
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -156,162 +183,195 @@ function TransactionHistory() {
         });
         doc.save('Sales_History.pdf');
     }
+
+
     return (
         <>
             <BreadCrumb title="History" prevPage="Home" prevPath="/dashboard" />
             <Row>
-                <Col md={12} lg={4}>
-                    <Card className="py-3">
-                        <Card.Header className="py-1">
-                            <Card.Title>Transaction Information</Card.Title>
-                        </Card.Header>
-                        <Card.Body>
-                            <Row>
-                                <Col>
-                                    <ul className="list-group">
-                                        <li className='list-group-item'>
-                                            <Row>
-                                                <Col xs={8}><span className='fw-bold'>Total Transactions </span></Col>
-                                                <Col xs={1}><span className='fw-bold'>:</span></Col>
-                                                <Col className='text-start' xs={3}>
-                                                    <span className='text-wrap'> {historyinfo.total_transactions} </span>
-                                                </Col>
-                                            </Row>
-                                        </li>
-                                        <li className='list-group-item'>
-                                            <Row>
-                                                <Col xs={8}><span className='fw-bold'>Total Purchase Quantity </span></Col>
-                                                <Col xs={1}><span className='fw-bold'>:</span></Col>
-                                                <Col className='text-start' xs={3}>
-                                                    <span className='text-wrap'> {historyinfo.total_purchase_quantity?.toFixed(2)} </span>
-                                                </Col>
-                                            </Row>
-                                        </li>
-                                        <li className='list-group-item'>
-                                            <Row>
-                                                <Col xs={8}><span className='fw-bold'>Total Purchase Price </span></Col>
-                                                <Col xs={1}><span className='fw-bold'>:</span></Col>
-                                                <Col className='text-start' xs={3}>
-                                                    <span className='text-wrap'> {historyinfo.total_purchase_price?.toFixed(2)} </span>
-                                                </Col>
-                                            </Row>
-                                        </li>
-                                        <li className='list-group-item'>
-                                            <Row>
-                                                <Col xs={8}><span className='fw-bold'>Total Sold Quantity </span></Col>
-                                                <Col xs={1}><span className='fw-bold'>:</span></Col>
-                                                <Col className='text-start' xs={3}>
-                                                    <span className='text-wrap'> {historyinfo.total_sales_quantity?.toFixed(2)} </span>
-                                                </Col>
-                                            </Row>
-                                        </li>
-                                        <li className='list-group-item'>
-                                            <Row>
-                                                <Col xs={8}><span className='fw-bold'>Total Sold Price </span></Col>
-                                                <Col xs={1}><span className='fw-bold'>:</span></Col>
-                                                <Col className='text-start' xs={3}>
-                                                    <span className='text-wrap'> {historyinfo.total_sales_price?.toFixed(2)} </span>
-                                                </Col>
-                                            </Row>
-                                        </li>
-                                    </ul>
-                                </Col>
-                            </Row>
-                        </Card.Body>
-                    </Card>
+                <Col>
+                    <div className="card crm-widget">
+                        <div className="card-body p-0">
+                            <div className="row row-cols-xxl-4 row-cols-md-2 row-cols-1 g-0">
+                                <div className="col">
+                                    <div className="py-4 px-3">
+                                        <h5 className="text-muted text-uppercase fs-13">Total Transactions</h5>
+                                        <div className="d-flex align-items-center">
+                                            <div className="flex-shrink-0 avatar-sm">
+                                                <span className="avatar-title bg-soft-primary text-primary rounded-2 fs-2">
+                                                    <i className="ri-space-ship-line"></i>
+                                                </span>
+                                            </div>
+                                            <div className="flex-grow-1 ms-3">
+                                                <h2 className="mb-0"><span className="text-dark">{historyinfo.total_transactions} Transactions</span></h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col">
+                                    <div className="mt-3 mt-md-0 py-4 px-3">
+                                        <h5 className="text-muted text-uppercase fs-13">Total Purchase</h5>
+                                        <div className="d-flex align-items-center">
+                                            <div className="flex-shrink-0 avatar-sm">
+                                                <span className="avatar-title bg-soft-warning text-warning rounded-2 fs-2">
+                                                    <i className="bx bx-shopping-bag"></i>
+                                                </span>
+                                            </div>
+                                            <div className="flex-grow-1 ms-3 mt-1">
+                                                <h4 className="mb-0"><span className="text-dark" ><i className="bx bx-rupee"></i> {historyinfo.total_purchase_price?.toFixed(2)}</span></h4>
+                                                <p className="mb-0"><span className="text-muted" >Quantity : {historyinfo.total_purchase_quantity?.toFixed(2)}</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col">
+                                    <div className="mt-3 mt-md-0 py-4 px-3 border-right">
+                                        <h5 className="text-muted text-uppercase fs-13">Total Sale</h5>
+                                        <div className="d-flex align-items-center">
+                                            <div className="flex-shrink-0 avatar-sm">
+                                                <span className="avatar-title bg-soft-info text-info rounded-2 fs-2">
+                                                    <i className="ri-pulse-line"></i>
+                                                </span>
+                                            </div>
+                                            <div className="flex-grow-1 ms-3 mt-1">
+                                                <h4 className="mb-0"><span className="text-dark" ><i className="bx bx-rupee"></i> {historyinfo.total_sales_price?.toFixed(2)}</span></h4>
+                                                <p className="mb-0"><span className="text-muted" >Quantity : {historyinfo.total_sales_quantity?.toFixed(2)}</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col">
+                                    <div className="mt-3 mt-lg-0 py-4 px-2">
+                                        <h5 className="text-muted text-uppercase fs-13">Total Profit<i className="ri-arrow-up-circle-line text-success fs-18 float-end align-middle"></i></h5>
+                                        <div className="d-flex align-items-center">
+                                            <div className="flex-shrink-0 avatar-sm">
+                                                <span className="avatar-title bg-soft-success text-success rounded-2 fs-2">
+                                                    <i className="bx bx-rupee"></i>
+                                                </span>
+                                            </div>
+                                            <div className="flex-grow-1 ms-3">
+                                                <h2 className="mb-0"><span className="text-dark">{
+                                                    (((historyinfo.total_sales_price-historyinfo.total_purchase_price)/historyinfo.total_purchase_price)*100)?.toFixed(2)
+                                                }</span>%</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </Col>
-                <Col md={12} lg={8} >
+            </Row>
+            <Row>
+                <Col xs={12}>
                     <Card>
-                        <Card.Header>
-                            <Card.Title>  
-                                <Row>
-                                    <Col xs={6} lg={6} className='text-start'>Filters</Col>
+                        <Card.Header className="p-2 border-0">
+                            <Card.Title className="m-0">  
+                                <Row className="px-2">
+                                    <Col xs={6} lg={6} className='text-start d-flex align-items-center'>Filters</Col>
                                     <Col xs={6} lg={6} className='text-end'>
-                                        <button className="btn btn-primary btn-sm btn-end"  onClick={() => setOpenFilter(!openfilter)}><i className="bx bx-dots-vertical-rounded"></i></button>
+                                        <button className="btn btn-soft-secondary btn-sm btn-end"  onClick={() => setOpenFilter(!openfilter)}>
+                                            {openfilter?<i className="ri-arrow-up-s-line"></i>:<i className="ri-arrow-down-s-line"></i>}
+                                        </button>
                                     </Col>
                                 </Row>
                             </Card.Title>
                         </Card.Header>
                         <Collapse in={openfilter}>
-                            <Card.Body>
-                                <form id='filters_form'>
+                            <form id='filters_form' onSubmit={e=>{e.preventDefault();setTransactionHistory(e.target)}}>
+                                <hr />
+                                <Card.Body>
                                     <div className="row g-3">
                                         <div className='col-6'>
                                             <label htmlFor="item_id" className="form-label">Item<span className='text-danger'>*</span></label>
-                                            {/* <CustomSelect /> */}
-                                            <select onChange={setTransactionHistory} id="item_id" name='item_id' className='form-control' >
-                                                <option value="" selected>All</option>
-                                                {itemData.length ? itemData.map((item, idx) => (<option key={idx} value={item.id}>{item.name}</option>)) : (<option disabled >No Data Found</option>)}
-                                            </select>
+                                            <CustomSelect 
+                                                name="item_id" 
+                                                isSearchable 
+                                                defaultValue={{value:'',label:'All'}}
+                                                options={[{value:'',label:'All'},...itemData.map(i=>({value:i.id,label:i.name}))]} 
+                                            />
                                         </div>
                                         <div className="col-6">
                                             <label htmlFor="transaction_status" className="form-label">Status</label>
-                                            {/* <CustomSelect 
+                                            <CustomSelect 
                                                 name='status'
+                                                isSearchable
                                                 defaultValue={{value:'',label:'All'}}
                                                 options={[{value:'',label:'All'},{value:'purchased',label:'Purchased'},{value:'sold',label:'Sold'}]} 
-                                                onChange={setTransactionHistory} 
-                                            /> */}
-                                            <select onChange={setTransactionHistory} id="transaction_status" name='status' className='form-control'>
-                                                <option selected value=''>All</option>
-                                                <option value='purchased'>Purchased</option>
-                                                <option value='sold'>Sold</option>
-                                            </select>
+                                            />
                                         </div>
                                         <div className="col-4 mb-2">
                                             <label htmlFor="loading_point" className="form-label">loading point</label>
-                                            {/* client_type sender */}
-                                            <select onChange={setTransactionHistory} id="loading_point" name="loading_point" className='form-control' >
-                                                <option value="" selected>All</option>
-                                                {clientData.length ? clientData.map((user, idx) => (user.client_type == "sender" ? <option key={idx} value={user.id}>{user.name}</option> : '')) : <option value="">No Data Found</option>}
-                                            </select>
+                                            <CustomSelect 
+                                                isSearchable 
+                                                name="loading_point" 
+                                                defaultValue={{value:'',label:'All'}}
+                                                options={[{value:'',label:'All'},...clientData.filter(c=>c.client_type=="sender").map(c=>({value:c.id,label:c.name}))]} 
+                                            />
                                         </div>
 
                                         <div className="col-4 mb-2">
                                             <label htmlFor="vehicle_id" className="form-label">Vehicle (loading)</label>
-                                            <select onChange={setTransactionHistory} id="vehicle_id" name='vehicle_id' className='form-control'  >
-                                                <option value="" selected>All</option>
-                                                {vehicleData.length ? vehicleData.map((item, idx) => (<option key={idx} value={item.id}>{item.type}</option>)) : (<option disabled >No data Found</option>)}
-                                            </select>
+                                            <CustomSelect
+                                                isSearchable
+                                                name="vehicle_id"
+                                                defaultValue={{value:'',label:'All'}}
+                                                options={[{value:'',label:'All'},...vehicleData.map(v=>({value:v.id,label:v.type}))]}
+                                            />
                                         </div>
                                         <div className="col-4 mb-2">
                                             <label htmlFor="driver_id" className="form-label">Driver (loading)</label>
-                                            <select onChange={setTransactionHistory} id="driver_id" name='driver_id' className='form-control' >
-                                                <option value="" selected>All</option>
-                                                {UserData.length ? UserData.map((user, idx) => (user.role_id === 2 ? <option key={idx} value={user.id}>{user.first_name} {user.last_name}</option> : '')) : (<option disabled >No data Found</option>)}
-                                            </select>
+                                            <CustomSelect 
+                                                isSearchable
+                                                name="driver_id"
+                                                defaultValue={{value:'',label:'All'}}
+                                                options={[{value:'',label:'All'},...UserData.filter(u=>u.role_id === 2).map(u=>({value:u.id,label:`${u.first_name} ${u.last_name}`}))]}
+                                            />
                                         </div>
 
                                         <div className="col-4 mb-2">
                                             <label htmlFor="unloading_point" className="form-label">Unloading point</label>
-                                            <select onChange={setTransactionHistory} id="unloading_point" name="unloading_point" className='form-control' >
-                                                <option value="" selected>All</option>
-                                                {clientData.length ? clientData.map((user, idx) => (user.client_type == "receiver" ? <option key={idx} value={user.id}>{user.name}</option> : '')) : <option value="">No Data Found</option>}
-                                            </select>
+                                            <CustomSelect 
+                                                isSearchable 
+                                                name="unloading_point" 
+                                                defaultValue={{value:'',label:'All'}}
+                                                options={[{value:'',label:'All'},...clientData.filter(c=>c.client_type=="receiver").map(c=>({value:c.id,label:c.name}))]} 
+                                            />
                                         </div>
                                         <div className="col-4 mb-2">
                                             <label htmlFor="unloading_vehicle_id" className="form-label">Vehicle (unloading)</label>
-                                            <select onChange={setTransactionHistory} id="unloading_vehicle_id" name='unloading_vehicle_id' className='form-control'  >
-                                                <option value="" selected>All</option>
-                                                {vehicleData.length ? vehicleData.map((item, idx) => (<option key={idx} value={item.id}>{item.type}</option>)) : (<option disabled >No data Found</option>)}
-                                            </select>
+                                            <CustomSelect
+                                                isSearchable
+                                                name="unloading_vehicle_id"
+                                                defaultValue={{value:'',label:'All'}}
+                                                options={[{value:'',label:'All'},...vehicleData.map(v=>({value:v.id,label:v.type}))]}
+                                            />
                                         </div>
                                         <div className="col-4 mb-2">
                                             <label htmlFor="unloading_driver_id" className="form-label">Driver (unloading)</label>
-                                            <select onChange={setTransactionHistory} id="unloading_driver_id" name='unloading_driver_id' className='form-control' >
-                                                <option value="" selected>All</option>
-                                                {UserData.length ? UserData.map((user, idx) => (user.role_id === 2 ? <option key={idx} value={user.id}>{user.first_name} {user.last_name}</option> : '')) : (<option disabled >No data Found</option>)}
-                                            </select>
+                                            <CustomSelect 
+                                                isSearchable
+                                                name="unloading_driver_id"
+                                                defaultValue={{value:'',label:'All'}}
+                                                options={[{value:'',label:'All'},...UserData.filter(u=>u.role_id === 2).map(u=>({value:u.id,label:`${u.first_name} ${u.last_name}`}))]}
+                                            />
                                         </div>
-                                        
-                                        
                                     </div>
-                                </form>
-                            </Card.Body>
+                                </Card.Body>
+                                <Card.Footer>
+                                    <Row>
+                                        <Col className="mb-2 d-flex align-items-center justify-content-end">
+                                            <Button type="submit" className="btn btn-info">
+                                                <i className="ri-filter-2-fill me-2"/> Apply
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                </Card.Footer>
+                            </form>
                         </Collapse>
                     </Card>
                 </Col>
-                <Col>
+                <Col xs={12}>
                     <Card>
                         <Card.Header className="d-flex align-item-center justify-content-between">
                             <Card.Title className="d-flex align-items-center">Transaction History</Card.Title>
