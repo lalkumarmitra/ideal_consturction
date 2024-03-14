@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { swal } from '../../../helper/swal';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { client, item, staff, transaction, vehicles } from '../../../helper/api_url';
-import { NewClientModal, NewStaffModal, NewVehicleModal } from '../../../components/common/modal';
 import CustomSelect from '../../../components/CustomSelect';
 function NewTransactionModal({data,listData,setListData}) {
     const dispatch = useDispatch();

@@ -1,4 +1,6 @@
 
+import PurchaseHistory from "../pages/admin/Transaction/PurchaseHistory"
+import SalesHistory from "../pages/admin/Transaction/SalesHistory"
 import Transaction from "../pages/admin/Transaction/Transaction"
 import TransactionHistory from "../pages/admin/Transaction/TransactionHistory"
 import Clients from "../pages/admin/clients/Clients"
@@ -23,7 +25,11 @@ export const authenticatedRoutes = [
     {type:'menu',label:'Vehicles',path:'/vehicles',element:<Vehicles />,icon:'ri-truck-line',users:['admin','staff'],children:[]},
     {type:'menu',label:'Help And Support',path:'/help-and-support',element:<Issues />,icon:' ri-customer-service-2-fill',users:['admin','staff'],children:[]},
 
-    {type:'module',label:'Transaction History',path:'/transaction/history',element:<TransactionHistory />,icon:'ri-history-line',users:['admin','staff'],children:[]},
+    {type:'module',label:'Transaction History',icon:'ri-history-line',users:['admin','staff'],children:[
+        {label:'All History',path:'/transaction/history',element:<TransactionHistory/>,users:['admin']},
+        {label:'Purchase History',path:'/transaction/purchase/history',element:<PurchaseHistory/>,users:['admin']},
+        {label:'Sale History',path:'/transaction/sale/history',element:<SalesHistory/>,users:['admin']},
+    ]},
 
     // {type:'setting',label:'Setting',icon:'bx bx-cog',users:['admin','staff'],children:[
     //     {label:'Roles',path:'/roles',element:<Home/>,users:['admin']},

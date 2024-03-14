@@ -8,6 +8,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { formatDate } from "../../../helper/formatDate";
 import CustomSelect from "../../../components/CustomSelect";
+import ViewTransaction from "./ViewTransaction";
 
 
 function TransactionHistory() {
@@ -21,6 +22,7 @@ function TransactionHistory() {
     const [openfilter, setOpenFilter] = useState(true);
     const [fromDate,setFromDate] = useState();
     const [toDate,setToDate] = useState();
+    // const [viewModalStatus,setViewModalStatus] = useState(false);
     
     const handleButtonClickUnderConstruction = () => swal.warning('Under construction','This Feature is comming Soon');
     const setTransactionHistory = (target) =>{
@@ -54,17 +56,19 @@ function TransactionHistory() {
     const columns = useMemo(() => [
         { Header: "Item/Product", accessor: "item.name" },
         { Header: "Loading Point", accessor: "loading_point.name" },
+        { Header: "Rate (Purchase)", accessor: "purchase_rate",HeaderClass: 'text-center',DataClass: 'text-center', },
+        { Header: "Quantity (Purchase)", accessor: "purchase_quantity",HeaderClass: 'text-center',DataClass: 'text-center', },
         {
-            Header: "Purchase Price",
-            HeaderClass: 'text-center',
-            DataClass: 'text-center',
+            Header: "Purchase Price",HeaderClass: 'text-center',DataClass: 'text-center',
             Cell: (cell) => {
                 const row = cell.row.original;
                 const purchase_price = row.purchase_rate * row.purchase_quantity;
-                return `${row.purchase_rate} X ${row.purchase_quantity} = ${purchase_price.toFixed(2)}`;
+                return (<span><i className="bx bx-rupee"></i>{purchase_price.toFixed(2)}</span>);
             }
         },
         { Header: "UnLoading Point", accessor: "unloading_point.name" },
+        { Header: "Rate (Sale)", accessor: "sales_rate",HeaderClass: 'text-center',DataClass: 'text-center', },
+        { Header: "Quantity (Sale)", accessor: "sales_quantity",HeaderClass: 'text-center',DataClass: 'text-center', },
         {
             Header: "Sale Price",
             HeaderClass: 'text-center',
@@ -73,10 +77,11 @@ function TransactionHistory() {
                 const row = cell.row.original;
                 const sales_price = row.sales_rate * row.sales_quantity;
                 if (row.status === 'sold')
-                    return `${row.sales_rate} X ${row.sales_quantity} = ${sales_price.toFixed(2)}`;
+                    return (<span><i className="bx bx-rupee"></i>{sales_price.toFixed(2)}</span>);
                 return "-";
             }
         },
+        { Header: "Challan No", accessor: "unloading_challan" },
         {
             Header: "Action",
             HeaderClass: 'text-center',
@@ -85,9 +90,7 @@ function TransactionHistory() {
                 const row = cell.row.original;
                 return (
                     <div className="">
-                        <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-success me-1" >
-                            <i className="ri-eye-fill" />  
-                        </Button>
+                        <ViewTransaction transaction={row} />
                         <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-info me-1" >
                             <i className="ri-pencil-fill" />  
                         </Button>

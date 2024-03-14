@@ -9,6 +9,7 @@ import AddSales from './AddSales';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 import { setPreloader } from '../../../features/Ui/uiSlice';
+import ViewTransaction from './ViewTransaction';
 
 function Transaction() {
     const dispatch = useDispatch();
@@ -80,9 +81,7 @@ function Transaction() {
                 const row = cell.row.original;
                 return (
                     <div>
-                        <Button onClick={handleTransactionView} className="btn btn-sm btn-soft-info ms-1" >
-                            <i className="ri-eye-fill" />  
-                        </Button>
+                        <ViewTransaction transaction={row} />
                         <Button onClick={handleTransactionEdit} className="btn btn-sm btn-soft-success ms-1" >
                             <i className="ri-pencil-fill" />  
                         </Button>

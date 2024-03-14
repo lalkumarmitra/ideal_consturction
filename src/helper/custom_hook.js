@@ -50,7 +50,6 @@ export const usePageInitialtor = (apiCallerObject) =>{
   const setCapturedImageToInput = (file,fileInput,setUserProfile) => {
     const dataURL = window.URL.createObjectURL(file);
     setUserProfile(dataURL)
-    // var fileInput = document.getElementById('avatarInput');
     fetch(dataURL).then(response => response.blob()).then(blob => {
             var newFile = new File([blob], 'file.png', { type: 'image/png' });
             var fileList = new DataTransfer();

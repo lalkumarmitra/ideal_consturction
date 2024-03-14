@@ -3,6 +3,11 @@ export const formatDate = (inputDate) => {
     const formattedDate = new Date(inputDate).toLocaleDateString('en-US', options);
     return formattedDate;
 };
+export const formatDateYMD = (inputDate) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const formattedDate = new Date(inputDate).toLocaleDateString('en-CA', options);
+    return formattedDate;
+};
 
 
 export const isDate1BeforeOrEqual=(dateString1, dateString2)=> {

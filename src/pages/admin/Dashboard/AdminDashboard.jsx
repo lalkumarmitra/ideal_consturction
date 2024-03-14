@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import BreadCrumb from '../../../components/common/BreadCrumb';
 import { Card, CardBody, CardHeader, Col, Row, Button } from "react-bootstrap";
 import { dashboard } from '../../../helper/api_url';
+import { useSelector } from 'react-redux';
 // import { Pie } from 'react-chartjs-2';
 
 function AdminDashboard() {
@@ -9,6 +10,7 @@ function AdminDashboard() {
     useEffect(()=>{
         dashboard.header().then(res=>setHeaderData(res.data)).catch(e=>console.log(e));
     },[]);
+    const userData = useSelector(state=>state.auth._user);
   return (
     <>
         <BreadCrumb title="Dashboard" prevPage="Home" prevPath="/dashboard" />
@@ -16,8 +18,8 @@ function AdminDashboard() {
             <div className="col-12">
                 <div className="d-flex align-items-lg-center flex-lg-row flex-column">
                     <div className="flex-grow-1">
-                        <h4 className="fs-16 mb-1">Good Morning, Admin!</h4>
-                        <p className="text-muted mb-0">Here's what's happening with your store today.</p>
+                        <h4 className="fs-16 mb-1">Good Morning, {userData.first_name} {userData.last_name}!</h4>
+                        <p className="text-muted mb-0">Here's what's happening with your Business today.</p>
                     </div>
                     <div className="mt-3 mt-lg-0">
                         <form action="javascript:void(0);">
@@ -106,15 +108,6 @@ function AdminDashboard() {
                         </div>
                     </div>
                 </div>
-            </Col>
-        </Row>
-        <Row>
-            <Col>
-                <Card>
-                    <Card.Body>
-                        {/* <Pie options="" data="" /> */}
-                    </Card.Body>
-                </Card>
             </Col>
         </Row>
     </>
