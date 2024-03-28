@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
 import { swal } from '../../../helper/swal';
@@ -12,14 +12,22 @@ function NewTransactionModal({ listData, setListData }) {
     const handleClose = () => setStatus(!status);
     const [itemData, setItemData] = useState([]);
     const [vehicleData, setvehicleData] = useState([]);
-    const [UserData, setUserData] = useState([]);
-    const [clientData, setClientData] = useState([]);
     const [unloadingPoints, setUnloadingPoints] = useState([]);
     const [loadingPoints, setLoadingPoints] = useState([]);
-    const [loadingVehicleId,setLoadingVehicleId] = useState();
     const [unloadingVehicleId,setUnloadingVehicleId] = useState();
+    const [clientData, setClientData] = useState([]);
+    const [loadingVehicleId,setLoadingVehicleId] = useState();
+    const [UserData, setUserData] = useState([]);
     const [loadingDriverId,setLoadingDriverId] = useState();
     const [unloadingDriverId,setUnloadingDriverId] = useState();
+    const getCurrentDate = () => {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); 
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    const currentDate = useRef(getCurrentDate());
     useEffect(() => {
         if (status) {
             item.list().then(r => setItemData(r.data[Object.keys(r.data)[0]])).catch(err => console.log(err.response ? err.response.data.message : err.message))
@@ -92,10 +100,10 @@ function NewTransactionModal({ listData, setListData }) {
                                 <hr />
                                 <input type="hidden" name="purchase_paid_amount" defaultValue="0" />
                                 <input type="hidden" name="sales_received_amount" defaultValue="0" />
-                                <div className="col-6">
+                                <div className="col-12">
                                     <div>
                                         <label htmlFor="purchase_date" className="form-label">Purchase Date</label>
-                                        <input type="date" className="form-control" name='purchase_date' id='purchase_date' />
+                                        <input type="date" className="form-control" name='purchase_date' defaultValue={currentDate.current} id='purchase_date' />
                                     </div>
                                 </div>
                                 <div className="col-6">
@@ -104,12 +112,13 @@ function NewTransactionModal({ listData, setListData }) {
                                         <CustomSelect isSearchable options={itemData?.map(i=>({value:i.id,label:i.name}))} elementId="item_id" name="item_id" onChange={handlegetId} />
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                <input type="hidden" name="purchase_rate" defaultValue="0" />
+                                {/* <div className="col-6">
                                     <div>
                                         <label htmlFor="product_rate" className="form-label">Rate</label>
                                         <input type="number" className="form-control" id='product_rate' name="purchase_rate" defaultValue="" />
                                     </div>
-                                </div>
+                                </div> */}
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="quantity" className="form-label">Quantity</label>
@@ -135,7 +144,8 @@ function NewTransactionModal({ listData, setListData }) {
                                         <NewVehicleModal listData={vehicleData} setListData={setvehicleData}   add={true} />
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                <input type="hidden" name="driver_id" defaultValue="102" />
+                                {/* <div className="col-6">
                                     <div>
                                         <label htmlFor="driver_id" className="form-label">Driver</label>
                                         <CustomSelect 
@@ -146,19 +156,20 @@ function NewTransactionModal({ listData, setListData }) {
                                             options={UserData?.map(u=>({value:u.id,label:`${u.first_name} ${u.last_name}`}))} 
                                         />
                                     </div>
-                                </div>
-                                <div className='col-2'>
+                                </div> */}
+                                
+                                {/* <div className='col-2'>
                                     <div>
                                         <label htmlFor="add_new_location_point">Add</label>
                                         <NewStaffModal listData={UserData} setListData={setUserData} add={true}  />
                                     </div>
-                                </div>
-                                <div className="col-4">
+                                </div> */}
+                                {/* <div className="col-4">
                                     <div>
                                         <label htmlFor="do_number" className="form-label">Do Number</label>
                                         <input type="number" className="form-control" id='do_number' name="do_number" />
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <div className="col-10">
                                     <div>
@@ -182,18 +193,19 @@ function NewTransactionModal({ listData, setListData }) {
                                     <h6 className='text-center'>Sales</h6>
                                 </div>
                                 <hr />
-                                <div className="col-6">
+                                <div className="col-12">
                                     <div>
                                         <label htmlFor="sales_date" className="form-label">Sales Date</label>
                                         <input type="date"  className="form-control" name='sales_date' id='sales_date' />
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                <input type="hidden" name="sales_rate" defaultValue="102" />
+                                {/* <div className="col-6">
                                     <div>
                                         <label htmlFor="sales_rate" className="form-label">Sales Rate</label>
                                         <input type="number" className="form-control" name='sales_rate' defaultValue="" id='sales_rate' />
                                     </div>
-                                </div>
+                                </div> */}
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="sales_quantity" className="form-label">Sales Quantitiy</label>
@@ -226,7 +238,8 @@ function NewTransactionModal({ listData, setListData }) {
                                         <NewVehicleModal add={true} />
                                     </div>
                                 </div>
-                                <div className="col-10">
+                                <input type="hidden" name="unloading_driver_id" defaultValue="102" />
+                                {/* <div className="col-10">
                                     <div>
                                         <label htmlFor="unloading_driver_id" className="form-label">Driver</label>
                                         <CustomSelect 
@@ -244,7 +257,7 @@ function NewTransactionModal({ listData, setListData }) {
                                         <label htmlFor="unloading_driver_id_label">Add</label>
                                         <NewStaffModal add={true}  />
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <div className="col-10">
                                     <div>
