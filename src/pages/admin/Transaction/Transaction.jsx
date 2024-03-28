@@ -48,12 +48,14 @@ function Transaction() {
     const handleTransactionEdit = () => swal.warning('Under construction','This Feature is comming Soon');
     const handleTransactionView = () => swal.warning('Under construction','This Feature is comming Soon');
     const columns = useMemo(()=>[
-        {Header: "Item/Product",accessor: "item.name"},
+        {Header: "Item/Product",accessor: "item.name",show:false},
         {Header: "Loading Point",accessor: "loading_point.name"},
         {
             Header:"Purchase Price",
+            accessor:"purchase_price",
             HeaderClass:'text-center',
             DataClass:'text-center',
+            isVisible:false,
             Cell:(cell)=>{
                 const row = cell.row.original;
                 const purchase_price = row.purchase_rate * row.purchase_quantity;
@@ -63,6 +65,7 @@ function Transaction() {
         {Header: "UnLoading Point",accessor: "unloading_point.name"}, 
         {
             Header:"Sale Price",
+            accessor:"sale_price",
             HeaderClass:'text-center',
             DataClass:'text-center',
             Cell:(cell)=>{
@@ -75,13 +78,14 @@ function Transaction() {
         },
         {
             Header: "Action",
+            accessor:'action',
             HeaderClass:'text-center',
             DataClass:'text-center',
             Cell:(cell)=>{
                 const row = cell.row.original;
                 return (
                     <div>
-                        <ViewTransaction transaction={row} />
+                        {/* <ViewTransaction transaction={row} /> */}
                         <Button onClick={handleTransactionEdit} className="btn btn-sm btn-soft-success ms-1" >
                             <i className="ri-pencil-fill" />  
                         </Button>
@@ -94,6 +98,7 @@ function Transaction() {
         },
         {
             Header:'List',
+            accessor:'none',
             HeaderClass:'d-none',
             DataClass:'d-none',
             list:(row)=>{
@@ -134,7 +139,7 @@ function Transaction() {
                             <NewTransactionModal listData={listData} setListData={setListData} />
                         </CardHeader>
                         <CardBody className="">
-                            <TableResponsive isLoading={dataLoading}  columns={columns} data={listData}  />
+                            <TableResponsive showColumnsFilter  isLoading={dataLoading}  columns={columns} data={listData}  />
                         </CardBody>
                     </Card>
                 </Col>

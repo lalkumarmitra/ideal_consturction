@@ -19,7 +19,7 @@ function SalesHistory() {
     const [fromDate,setFromDate] = useState(formatDateYMD(today.setMonth(today.getMonth() - 2)));
     const [filters,setFilters] = useState({
         item_id: "",
-        status: "",
+        status: "sold",
         loading_point: "",
         vehicle_id: "",
         driver_id: "",
@@ -91,8 +91,20 @@ function SalesHistory() {
         },
     ]);
     const generatePdf = () =>{
+        let count = 1;
         const doc = new jsPDF('p','mm','a4');
-        let tableHeadings=['Sales Date','Product','Unloading Point','Challan','Loading point','Quantity','Rate','Amount'];
+        let tableHeadings=[
+            {content:'SL',styles:{halign:'center'}},
+            {content:'Sales Date',styles:{halign:'center'}},
+            {content:'Product/Item',styles:{halign:'center'}},
+            {content:'Unloading Point',styles:{halign:'center'}},
+            {content:'Vehicle',styles:{halign:'center'}},
+            {content:'Challan',styles:{halign:'center'}},
+            {content:'Loading point',styles:{halign:'center'}},
+            {content:'Quantity',styles:{halign:'center'}},
+            {content:'Rate',styles:{halign:'center'}},
+            {content:'Amount',styles:{halign:'right'}},
+        ];
         doc.autoTable({
             head: [
                 [{ content: "IDEAL Construction : Transaction Sale information", colSpan: tableHeadings.length, styles: { halign: 'center' } }],
@@ -102,7 +114,7 @@ function SalesHistory() {
             theme: 'plain',
         });
         if (filters.item_id){
-            tableHeadings = tableHeadings.filter(heading => heading !== 'Product');
+            tableHeadings = tableHeadings.filter(heading => heading.content !== 'Product/Item');
             doc.autoTable({
                 head: [
                     [{ content: itemData.filter(i=>i.id===filters.item_id)[0].name, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
@@ -112,7 +124,7 @@ function SalesHistory() {
             });
         }
         if(filters.unloading_point) {
-            tableHeadings = tableHeadings.filter(heading => heading !== 'Unloading Point');
+            tableHeadings = tableHeadings.filter(heading => heading.content !== 'Unloading Point');
             doc.autoTable({
                 head: [
                     [{ content: clientData.filter(i=>i.id===filters.unloading_point)[0].name, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
@@ -124,11 +136,16 @@ function SalesHistory() {
         doc.autoTable({
             head:[tableHeadings],
             body:tableData.reverse().map(d=>{
-                let row = [{ content:formatDate(d.sales_date),styles: { halign: 'center' }}];
+                let row = [{ content:count++,styles: { halign: 'center' }},{ content:formatDate(d.sales_date),styles: { halign: 'center' }}];
                 if (!filters.item_id) row.push({ content:d.item.name,styles: { halign: 'center' } })
-                if (!filters.unloading_point) row.push(d.unloading_point.name)
-                row.push(d.unloading_challan?d.unloading_challan:'-')
-                row.push(d.loading_point.name,d.sales_quantity,`${d.sales_rate}`)
+                if (!filters.unloading_point) row.push({ content:d.unloading_point.name,styles: { halign: 'center' } })
+                row.push({ content:d.unloading_vehichle.number,styles: { halign: 'center' } })
+                row.push(d.unloading_challan?{ content:d.unloading_challan,styles: { halign: 'center' } }:{ content:'-',styles: { halign: 'center' } })
+                row.push(
+                    { content:d.loading_point.name,styles: { halign: 'center' } },
+                    { content:d.sales_quantity,styles: { halign: 'center' } },
+                    { content:d.sales_rate,styles: { halign: 'center' } }
+                )
                 row.push({ content:d.sales_price?.toFixed(2),styles: { halign: 'right' } })
                 return row
             }),
@@ -206,7 +223,7 @@ function SalesHistory() {
                                 </Col>
                             </Row>
                             <hr />
-                            <TableResponsive isLoading={dataLoading}  columns={columns} data={tableData} />
+                            <TableResponsive showColumnsFilter isLoading={dataLoading}  columns={columns} data={tableData} />
                         </CardBody>
                     </Card>
                 </Col>

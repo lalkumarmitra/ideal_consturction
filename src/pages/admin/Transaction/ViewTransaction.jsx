@@ -31,13 +31,13 @@ function ViewTransaction({transaction}) {
                         <li class="list-group-item">
                             <Row>
                                 <Col>Purchase Rate</Col>
-                                <Col><i className="bx bx-rupee"></i> {transaction?.purchase_rate?.toFixed(2)}</Col>
+                                <Col><i className="bx bx-rupee"></i> {transaction?.purchase_rate}</Col>
                             </Row>
                         </li>
                         <li class="list-group-item">
                             <Row>
                                 <Col>Purchase Quantity</Col>
-                                <Col>{transaction?.purchase_quantity?.toFixed(2)}</Col>
+                                <Col>{transaction?.purchase_quantity}</Col>
                             </Row>
                         </li>
                         <li class="list-group-item">

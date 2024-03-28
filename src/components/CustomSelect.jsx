@@ -2,7 +2,7 @@ import React from 'react'
 import Select from 'react-select'
 
 function CustomSelect(props) {
-    const {options,name,defaultValue,value,elementId="",isSearchable=false,onChange=()=>{}} = props;
+    const {options,name,defaultValue,value,elementId="",isSearchable=false,onChange=()=>{},isMulti=false} = props;
     const customTheme = theme =>  ({
         ...theme,
         borderRadius: '0.25rem',
@@ -23,7 +23,7 @@ function CustomSelect(props) {
                 ...baseStyles,
                 outline: state.isFocused ? 0:0,
             })}
-        } onChange={e=>onChange(e)} id={elementId} value={value} defaultValue={defaultValue} theme={t=>customTheme(t)} isSearchable={isSearchable} options={options} name={name} />
+        } onChange={e=>onChange(e)} id={elementId} isMulti={isMulti} value={value} defaultValue={defaultValue} theme={t=>customTheme(t)} isSearchable={isSearchable} options={options} name={name} />
     )
 }
 

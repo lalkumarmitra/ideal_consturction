@@ -93,7 +93,19 @@ function PurchaseHistory() {
     ]);
     const generatePdf = () =>{
         const doc = new jsPDF('p','mm','a4');
-        let tableHeadings=['Purchase Date','Product','Loading Point','Do Number','Unloading point','Quantity','Rate','Amount'];
+        let count = 1;
+        let tableHeadings=[
+            {content:'SL',styles:{halign:'center'}},
+            {content:'Purchase Date',styles:{halign:'center'}},
+            {content:'Product/Item',styles:{halign:'center'}},
+            {content:'Loading Point',styles:{halign:'center'}},
+            {content:'Vehicle',styles:{halign:'center'}},
+            {content:'Do Number',styles:{halign:'center'}},
+            {content:'Unoading point',styles:{halign:'center'}},
+            {content:'Quantity',styles:{halign:'center'}},
+            {content:'Rate',styles:{halign:'center'}},
+            {content:'Amount',styles:{halign:'right'}},
+        ];
         doc.autoTable({
             head: [
                 [{ content: "IDEAL Construction : Transaction Purchase information", colSpan: tableHeadings.length, styles: { halign: 'center' } }],
@@ -103,7 +115,7 @@ function PurchaseHistory() {
             theme: 'plain',
         });
         if (filters.item_id){
-            tableHeadings = tableHeadings.filter(heading => heading !== 'Product');
+            tableHeadings = tableHeadings.filter(heading => heading.content !== 'Product/Item');
             doc.autoTable({
                 head: [
                     [{ content: itemData.filter(i=>i.id===filters.item_id)[0].name, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
@@ -113,7 +125,7 @@ function PurchaseHistory() {
             });
         }
         if(filters.loading_point) {
-            tableHeadings = tableHeadings.filter(heading => heading !== 'Loading Point');
+            tableHeadings = tableHeadings.filter(heading => heading.content !== 'Loading Point');
             doc.autoTable({
                 head: [
                     [{ content: clientData.filter(i=>i.id===filters.loading_point)[0].name, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
@@ -125,11 +137,18 @@ function PurchaseHistory() {
         doc.autoTable({
             head:[tableHeadings],
             body:tableData.reverse().map(d=>{
-                let row = [{ content:formatDate(d.purchase_date),styles: { halign: 'center' }}];
+
+                let row = [{ content:count++,styles: { halign: 'center' }},{ content:formatDate(d.purchase_date),styles: { halign: 'center' }}];
                 if (!filters.item_id) row.push({ content:d.item.name,styles: { halign: 'center' } })
-                if (!filters.loading_point) row.push(d.loading_point.name)
-                row.push(d.do_no?d.do_no:{ content: '-',styles: { halign: 'center' }})
-                row.push(d.unloading_point.name,d.purchase_quantity,`${d.purchase_rate}`)
+                if (!filters.loading_point) row.push({ content:d.loading_point.name,styles: { halign: 'center' } })
+                row.push({ content:d.loading_vehicle.number,styles: { halign: 'center' } })
+                row.push(d.do_no?{ content:d.do_no,styles: { halign: 'center' } }:{ content:'-',styles: { halign: 'center' } })
+
+                row.push(
+                    { content:d.unloading_point.name,styles: { halign: 'center' } },
+                    { content:d.purchase_quantity,styles: { halign: 'center' } },
+                    { content:d.purchase_rate,styles: { halign: 'center' } }
+                )
                 row.push({ content:d.purchase_price?.toFixed(2),styles: { halign: 'right' } })
                 return row
             }),
