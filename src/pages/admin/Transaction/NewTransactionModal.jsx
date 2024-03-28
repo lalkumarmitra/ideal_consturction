@@ -42,11 +42,7 @@ function NewTransactionModal({ listData, setListData }) {
             setLoadingPoints(clientData.filter(c=>c.client_type === "sender"));
         }
     },[clientData])
-    const handlegetId = (e) => { 
-        const currentItem = itemData.filter(i=>i.id===e.value)[0];
-        document.getElementById('product_rate').value = currentItem.rate;
-        document.getElementById('sales_rate').value = currentItem.rate;
-    };
+    
     const handleSubmit = e => {
         dispatch(setPreloader({ loader: true, message: 'Creating new Transtion please wait' }))
         e.preventDefault();
@@ -109,7 +105,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="item_id" className="form-label">Product / Item</label>
-                                        <CustomSelect isSearchable options={itemData?.map(i=>({value:i.id,label:i.name}))} elementId="item_id" name="item_id" onChange={handlegetId} />
+                                        <CustomSelect isSearchable options={itemData?.map(i=>({value:i.id,label:i.name}))} elementId="item_id" name="item_id" />
                                     </div>
                                 </div>
                                 <input type="hidden" name="purchase_rate" defaultValue="0" />
