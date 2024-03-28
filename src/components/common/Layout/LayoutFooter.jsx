@@ -10,7 +10,7 @@ function LayoutFooter() {
           </div>
           <div className="col-sm-6">
             <div className="text-sm-end d-none d-sm-block">
-              Design & Develop by Themesbrand
+              Design & Develop by <a href="http://www.lalkumarmitra.web.app/" className="badge badge-soft-danger">Lal Kumar Mitra and Team</a>
             </div>
           </div>
         </div>

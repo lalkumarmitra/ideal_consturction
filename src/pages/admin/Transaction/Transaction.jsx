@@ -9,12 +9,17 @@ import AddSales from './AddSales';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 import { setPreloader } from '../../../features/Ui/uiSlice';
+import ViewTransaction from './ViewTransaction';
 
 function Transaction() {
     const dispatch = useDispatch();
     const [listData,setListData] = useState([]);
+    const [dataLoading,setDataLoading] = useState(true);
     useEffect(()=>{
-        transaction.list().then(res=>setListData(res.data.transaction)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
+        setDataLoading(true);
+        transaction.list().then(res=>setListData(res.data.transaction))
+        .catch(err=>swal.error(err.response?err.response.data.message:err.message))
+        .finally(()=>setDataLoading(false));
     },[]);
     const handleDelete = itemRow => {
         Swal.fire({
@@ -40,40 +45,50 @@ function Transaction() {
             }
         })
     }
+    const handleTransactionEdit = () => swal.warning('Under construction','This Feature is comming Soon');
+    const handleTransactionView = () => swal.warning('Under construction','This Feature is comming Soon');
     const columns = useMemo(()=>[
-        {Header: "Item/Product",accessor: "item.name"},
+        {Header: "Item/Product",accessor: "item.name",show:false},
         {Header: "Loading Point",accessor: "loading_point.name"},
         {
             Header:"Purchase Price",
+            accessor:"purchase_price",
             HeaderClass:'text-center',
             DataClass:'text-center',
+            isVisible:false,
             Cell:(cell)=>{
                 const row = cell.row.original;
                 const purchase_price = row.purchase_rate * row.purchase_quantity;
-                return `${row.purchase_rate} X ${row.purchase_quantity} = ${purchase_price}`;
+                return `${row.purchase_rate} X ${row.purchase_quantity} = ${purchase_price?.toFixed(2)}`;
             }
         },
         {Header: "UnLoading Point",accessor: "unloading_point.name"}, 
         {
             Header:"Sale Price",
+            accessor:"sale_price",
             HeaderClass:'text-center',
             DataClass:'text-center',
             Cell:(cell)=>{
                 const row = cell.row.original;
                 const sales_price = row.sales_rate * row.sales_quantity;
                 if(row.status === 'sold')
-                return `${row.sales_rate} X ${row.sales_quantity} = ${sales_price}`;
+                return `${row.sales_rate} X ${row.sales_quantity} = ${sales_price?.toFixed(2)}`;
                 return (<AddSales data={row} listData={listData} setListData={setListData} />);
             }
         },
         {
             Header: "Action",
+            accessor:'action',
             HeaderClass:'text-center',
             DataClass:'text-center',
             Cell:(cell)=>{
                 const row = cell.row.original;
                 return (
                     <div>
+                        {/* <ViewTransaction transaction={row} /> */}
+                        <Button onClick={handleTransactionEdit} className="btn btn-sm btn-soft-success ms-1" >
+                            <i className="ri-pencil-fill" />  
+                        </Button>
                         <Button onClick={()=>handleDelete(row)} className="btn btn-sm btn-soft-danger ms-1" >
                             <i className="ri-delete-bin-fill" />  
                         </Button>
@@ -83,6 +98,7 @@ function Transaction() {
         },
         {
             Header:'List',
+            accessor:'none',
             HeaderClass:'d-none',
             DataClass:'d-none',
             list:(row)=>{
@@ -95,8 +111,8 @@ function Transaction() {
                             <a href="#">{row.item.name} </a>
                         </h5>
                         <div className='mt-3'>
-                            <p className='mb-2'>Purchage : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price}</p>
-                            <p className='mb-2'>Sale : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price}</p>
+                            <p className='mb-2'>Purchage : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price?.toFixed(2)}</p>
+                            <p className='mb-2'>Sale : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price?.toFixed(2)}</p>
                             <p className="text-muted mb-0"><b>From :</b> {row.loading_point.name} <b>To :</b> {row.unloading_point?.name}</p>
                         </div>
                     </div>
@@ -123,7 +139,7 @@ function Transaction() {
                             <NewTransactionModal listData={listData} setListData={setListData} />
                         </CardHeader>
                         <CardBody className="">
-                            <TableResponsive columns={columns} data={listData}  />
+                            <TableResponsive showColumnsFilter  isLoading={dataLoading}  columns={columns} data={listData}  />
                         </CardBody>
                     </Card>
                 </Col>

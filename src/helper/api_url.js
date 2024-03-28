@@ -41,5 +41,19 @@ export const transaction = {
 export const role = {
     list:()=>get('/roles')
 }
+export const dashboard = {
+    header:()=>get('/dashboard'),
+}
+
+export const support = {
+    addIssue: data => post(`/issue`, data),
+    list: data => get(`/issues`, data),
+    markProgress: id => get(`/issue/${id}/seen`),
+    markResolved: id => get(`/issue/${id}/resolve`),
+    delete: id => del(`/issue/${id}`),
+    comment: (data) => post('/issue/comment', data),
+    commentlist: (pid) => get(`/issue/${pid}/comments`),
+    Commentdelete: (id) => del(`/issue/comment/${id}`),
+}
 
 export const ASSET_URL='https://idealconstruction.online/application/';

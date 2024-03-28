@@ -14,6 +14,7 @@ import { ViewStaffModal } from './view';
 function Staffs() {
     const dispatch = useDispatch();
     const [userData,setUserData] = useState([]);
+    const [dataLoading,setDataLoading] = useState(true);
     const handleUserStateChange = function(user){
         
         setUserData([...userData.map(u => (u.id === user.id ? { ...u, changing: true } : u))]);
@@ -26,7 +27,9 @@ function Staffs() {
         }).catch(err=>swal.error(err.response?err.response.data.message:err.message));
     }
     useEffect(()=>{
-        staff.list().then(res=>setUserData(res.data.users)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
+        staff.list().then(res=>setUserData(res.data.users))
+        .catch(err=>swal.error(err.response?err.response.data.message:err.message))
+        .finally(()=>setDataLoading(false));
     },[]);
     const columns = useMemo(()=>[
         {
@@ -162,7 +165,7 @@ function Staffs() {
                         <NewStaffModal userData={userData} setUserData={setUserData} />
                     </CardHeader>
                     <CardBody className="">
-                        <TableResponsive columns={columns} data={userData}  />
+                        <TableResponsive isLoading={dataLoading} columns={columns} data={userData}  />
                     </CardBody>
                 </Card>
             </Col>

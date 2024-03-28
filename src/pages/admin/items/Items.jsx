@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import BreadCrumb from "../../../components/common/BreadCrumb";
+import BreadCrumb from "../../../components/common/BreadCrumb"; 
 import { TableResponsive } from "../../../components/common/TableResponsive";
 import { Card, CardBody, CardHeader, Col, Row, Button } from "react-bootstrap";
 import { ASSET_URL, item } from '../../../helper/api_url';
@@ -13,8 +13,11 @@ import { ViewItemModal } from './view';
 function Items() {
     const dispatch = useDispatch();
     const [itemData,setItemData] = useState([]);
+    const [dataLoading,setDataLoading] = useState(true);
     useEffect(()=>{
-        item.list().then(res=>setItemData(res.data.items)).catch(err=>swal.error(err.response?err.response.data.message:err.message));
+        item.list().then(res=>setItemData(res.data.items))
+        .catch(err=>swal.error(err.response?err.response.data.message:err.message))
+        .finally(()=>setDataLoading(false));
     },[])
     const handleItemDelete = itemRow => {
         Swal.fire({
@@ -130,7 +133,7 @@ function Items() {
                             <NewItemModal itemData={itemData} setItemData={setItemData} />
                         </CardHeader>
                         <CardBody className="">
-                            <TableResponsive customPageSize={8} columns={columns} data={itemData}  />
+                            <TableResponsive isLoading={dataLoading} customPageSize={8} columns={columns} data={itemData}  />
                         </CardBody>
                     </Card>
                 </Col>
