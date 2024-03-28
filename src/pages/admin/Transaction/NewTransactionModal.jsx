@@ -21,10 +21,14 @@ function NewTransactionModal({ listData, setListData }) {
             client.list().then(r => setClientData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
         }
     }, [status]);
-    const handlegetId = (e) => { itemData.map((item) => { if (item.id == e.target.value) {
-        document.getElementById('product_rate').value = item.rate;
-        document.getElementById('sales_rate').value = item.rate;
-    } }); };
+    const handlegetId = (e) => {
+        itemData.map((item) => {
+            if (item.id == e.target.value) {
+                document.getElementById('product_rate').value = item.rate;
+                document.getElementById('sales_rate').value = item.rate;
+            }
+        });
+    };
     const handleSubmit = e => {
         dispatch(setPreloader({ loader: true, message: 'Creating new Transtion please wait' }))
         e.preventDefault();
@@ -39,7 +43,7 @@ function NewTransactionModal({ listData, setListData }) {
             swal.error(err.response ? err.response.data.message : err.message)
         })
     }
-    const handlesave=(e)=>{
+    const handlesave = (e) => {
         e.preventDefault();
         document.querySelector("#save").className = "d-none";
         document.querySelector("#purchaseform").className = "d-none";
@@ -47,7 +51,7 @@ function NewTransactionModal({ listData, setListData }) {
         document.querySelector("#submit").className = "btn btn-primary d-block";
         document.querySelector("#prev").disabled = false;
     }
-    const handleprev=(e)=>{
+    const handleprev = (e) => {
         e.preventDefault();
         document.querySelector("#prev").disabled = true;
         document.querySelector("#save").className = "btn btn-primary d-block";
@@ -55,6 +59,8 @@ function NewTransactionModal({ listData, setListData }) {
         document.querySelector("#saleform").className = "d-none";
         document.querySelector("#submit").className = "btn btn-primary d-none";
     }
+
+
     return (
         <>
             <button onClick={handleClose} className='btn btn-soft-success add-btn waves-effect'>
@@ -75,7 +81,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <hr />
                                 <input type="hidden" name="purchase_paid_amount" defaultValue="0" />
                                 <input type="hidden" name="sales_received_amount" defaultValue="0" />
-                                <div className="col-6">
+                                <div className="col-12">
                                     <div>
                                         <label htmlFor="purchase_date" className="form-label">Purchase Date</label>
                                         <input type="date" className="form-control" name='purchase_date' id='purchase_date' />
@@ -90,22 +96,30 @@ function NewTransactionModal({ listData, setListData }) {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                {/* <div className="col-6">
                                     <div>
                                         <label htmlFor="product_rate" className="form-label">Rate</label>
-                                        <input type="number" className="form-control" id='product_rate' name="purchase_rate" defaultValue="" />
+                                        <input type="text" className="form-control" id='product_rate' name="purchase_rate"  />
                                     </div>
-                                </div>
-                                <div className="col-3">
+                                </div> */}
+                                <input type="hidden" name="product_rate" value={0} />
+                                <div className="col-6">
                                     <div>
-                                        <label htmlFor="quantity" className="form-label">Qurantity</label>
-                                        <input type="number" className="form-control" id='quantity' name="purchase_quantity" />
+                                        <label htmlFor="quantity" className="form-label">Quantity</label>
+                                        <input type="text" name="purchase_quantity" className="form-control" id='quantity' required />
                                     </div>
                                 </div>
-                                <div className="col-3">
+                                {/* <div className="col-3">
                                     <div>
                                         <label htmlFor="do_number" className="form-label">Do Number</label>
                                         <input type="number" className="form-control" id='do_number' name="do_number" />
+                                    </div>
+                                </div> */}
+                                <input type="hidden" name="do_number" value={'0'} />
+                                <div className="col-12 mb-2">
+                                    <div>
+                                        <label htmlFor="loading_challan" className="form-label">Challan</label>
+                                        <input type="number" className="form-control" name='loading_challan' id='loading_challan' />
                                     </div>
                                 </div>
 
@@ -124,7 +138,7 @@ function NewTransactionModal({ listData, setListData }) {
                                         <NewVehicleModal add={true} />
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                {/* <div className="col-6">
                                     <div>
                                         <label htmlFor="driver_id" className="form-label">Driver</label>
                                         <select id="driver_id" name='driver_id' className='form-control'>
@@ -132,19 +146,15 @@ function NewTransactionModal({ listData, setListData }) {
                                             {UserData.length ? UserData.map((user, idx) => (<option key={idx} value={user.id}>{user.first_name} {user.last_name}</option>)) : (<option disabled >No data Found</option>)}
                                         </select>
                                     </div>
-                                </div>
-                                <div className='col-2'>
+                                </div> */}
+                                <input type="hidden" name="driver_id" value={120} />
+                                {/* <div className='col-2'>
                                     <div>
                                         <label htmlFor="add_new_location_point">Add</label>
                                         <NewStaffModal add={true}  />
                                     </div>
-                                </div>
-                                <div className="col-4 mb-2">
-                                    <div>
-                                        <label htmlFor="loading_challan" className="form-label">Loading Challan</label>
-                                        <input type="number" className="form-control" name='loading_challan' id='loading_challan' />
-                                    </div>
-                                </div>
+                                </div> */}
+                                
 
                                 <div className="col-10">
                                     <div>
@@ -152,11 +162,11 @@ function NewTransactionModal({ listData, setListData }) {
                                         <select id="loading_point" name="loading_point" className='form-control'>
                                             <option value="">--Select user--</option>
                                             {
-                                                clientData.length? clientData.map((user,idx)=>(
-                                                   user.client_type=="sender"?<option key={idx} value={user.id}>{user.name}</option>:''
-                                                )):<option value="">No Data Found</option>
+                                                clientData.length ? clientData.map((user, idx) => (
+                                                    user.client_type == "sender" ? <option key={idx} value={user.id}>{user.name}</option> : ''
+                                                )) : <option value="">No Data Found</option>
                                             }
-            
+
                                         </select>
                                     </div>
                                 </div>
@@ -191,27 +201,28 @@ function NewTransactionModal({ listData, setListData }) {
                                     <h6 className='text-center'>Sales</h6>
                                 </div>
                                 <hr />
-                                <div className="col-6">
+                                <div className="col-12">
                                     <div>
                                         <label htmlFor="sales_date" className="form-label">Sales Date</label>
                                         <input type="date" className="form-control" name='sales_date' id='sales_date' />
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                {/* <div className="col-6">
                                     <div>
                                         <label htmlFor="sales_rate" className="form-label">Sales Rate</label>
                                         <input type="number" className="form-control" name='sales_rate' defaultValue="" id='sales_rate' />
                                     </div>
-                                </div>
-                                <div className="col-6">
+                                </div> */}
+                                <input type="hidden" name="sales_rate" value={0} />
+                                <div className="col-12">
                                     <div>
                                         <label htmlFor="sales_quantity" className="form-label">Sales Quantitiy</label>
                                         <input type="number" className="form-control" name='sales_quantity' id='sales_quantity' />
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                <div className="col-12">
                                     <div>
-                                        <label htmlFor="unloading_challan" className="form-label">Unloading Challan</label>
+                                        <label htmlFor="unloading_challan" className="form-label">Challan</label>
                                         <input type="number" className="form-control" name='unloading_challan' id='unloading_challan' />
                                     </div>
                                 </div>
@@ -230,7 +241,7 @@ function NewTransactionModal({ listData, setListData }) {
                                         <NewVehicleModal add={true} />
                                     </div>
                                 </div>
-                                <div className="col-10">
+                                {/* <div className="col-10">
                                     <div>
                                         <label htmlFor="unloading_driver_id" className="form-label">Driver</label>
                                         <select id="unloading_driver_id" name='unloading_driver_id' className='form-control' >
@@ -242,19 +253,20 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className='col-2'>
                                     <div>
                                         <label htmlFor="unloading_driver_id_label">Add</label>
-                                        <NewStaffModal add={true}  />
+                                        <NewStaffModal add={true} />
                                     </div>
-                                </div>
+                                </div> */}
+                                <input type="hidden" name="unloading_driver_id" value={120} />
 
                                 <div className="col-10">
                                     <div>
                                         <label htmlFor="unloading_point" className="form-label">UnLoading Point</label>
                                         <select id="unloading_point" name="unloading_point" className='form-control'>
-                                        <option value="">--Select user--</option>
-                                        {
-                                                clientData.length? clientData.map((user,idx)=>(
-                                                   user.client_type=="receiver"?<option key={idx} value={user.id}>{user.name}</option>:''
-                                                )):<option value="">No Data Found</option>
+                                            <option value="">--Select user--</option>
+                                            {
+                                                clientData.length ? clientData.map((user, idx) => (
+                                                    user.client_type == "receiver" ? <option key={idx} value={user.id}>{user.name}</option> : ''
+                                                )) : <option value="">No Data Found</option>
                                             }
                                         </select>
                                     </div>
