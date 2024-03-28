@@ -49,27 +49,14 @@ function SalesHistory() {
     }
     useEffect(()=>{getTransactionHistory();},[filters,fromDate,toDate]);
     const columns = useMemo(()=>[
-        { Header: "Item/Product", accessor: "item.name",HeaderClass: 'text-center',DataClass: filters.item_id? 'text-center bg-soft-warning' :'text-center' },
-        { Header: "Sales Date",HeaderClass: 'text-center',DataClass: 'text-center', Cell:c=>formatDate(c.row.original.sales_date) },
-        { Header: "Unloading Point", accessor: "unloading_point.name",DataClass: filters.unloading_point? 'text-center bg-soft-warning' :'text-center' },
-        { 
-            Header: "Sales Rate",HeaderClass: 'text-center',DataClass: 'text-center',
-            Cell:cell=>(<span><i className="bx bx-rupee"></i>{cell.row.original.sales_rate.toFixed(2)} / {cell.row.original.item.unit}</span>) 
-        },
-        { 
-            Header: "Sales Quantity",HeaderClass: 'text-center',DataClass: 'text-center',
-            Cell:cell=>(cell.row.original.sales_quantity + " " +cell.row.original.item.unit)
-        },
-        {
-            Header: "Sales Price",HeaderClass: 'text-center',DataClass: 'text-center',
-            Cell: (cell) => {
-                const row = cell.row.original;
-                return (<span><i className="bx bx-rupee"></i>{row.sales_price.toFixed(2)}</span>);
-            }
-        },
-        { Header: "Loading Point", accessor: "loading_point.name",DataClass: filters.loading_point? 'text-center bg-soft-warning' :'text-center'},
-        { Header: "Vehicle", accessor: "unloading_vehichle.number",DataClass: filters.unloading_vehicle_id? 'text-center bg-soft-warning' :'text-center'},
-        { Header: "Challan", accessor: "unloading_challan",DataClass: 'text-center'},
+
+        {Header: "Date",accessor: "sales_date",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>formatDate(cell.row.original.sales_date)},
+        {Header: "Vehicle",accessor: "unloading_vehichle.number",HeaderClass:'text-center',DataClass: filters.vehicle_id? 'text-center bg-soft-warning' :'text-center'},
+        {Header: "Challan",accessor: "unloading_challan",HeaderClass:'text-center',DataClass:'text-center'},
+        {Header: "Loading Point",accessor: "loading_point.name",HeaderClass:'text-center',DataClass: filters.loading_point? 'text-center bg-soft-warning' :'text-center'},
+        {Header: "UnLoading Point",accessor: "unloading_point.name",HeaderClass:'text-center',DataClass: filters.unloading_point? 'text-center bg-soft-warning' :'text-center'}, 
+        {Header: "Item/Material",accessor: "item.name",HeaderClass:'text-center',DataClass: filters.item_id? 'text-center bg-soft-warning' :'text-center'},
+        {Header: "Quantity",accessor: "sales_quantity",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>`${cell.row.original.sales_quantity}  ${cell.row.original.item.unit}`},
         {
             Header: "Action",
             HeaderClass: 'text-center',
@@ -95,15 +82,13 @@ function SalesHistory() {
         const doc = new jsPDF('p','mm','a4');
         let tableHeadings=[
             {content:'SL',styles:{halign:'center'}},
-            {content:'Sales Date',styles:{halign:'center'}},
-            {content:'Product/Item',styles:{halign:'center'}},
-            {content:'Unloading Point',styles:{halign:'center'}},
+            {content:'Date',styles:{halign:'center'}},
             {content:'Vehicle',styles:{halign:'center'}},
             {content:'Challan',styles:{halign:'center'}},
             {content:'Loading point',styles:{halign:'center'}},
+            {content:'Unloading Point',styles:{halign:'center'}},
+            {content:'Material',styles:{halign:'center'}},
             {content:'Quantity',styles:{halign:'center'}},
-            {content:'Rate',styles:{halign:'center'}},
-            {content:'Amount',styles:{halign:'right'}},
         ];
         doc.autoTable({
             head: [
@@ -114,7 +99,7 @@ function SalesHistory() {
             theme: 'plain',
         });
         if (filters.item_id){
-            tableHeadings = tableHeadings.filter(heading => heading.content !== 'Product/Item');
+            tableHeadings = tableHeadings.filter(heading => heading.content !== 'Material');
             doc.autoTable({
                 head: [
                     [{ content: itemData.filter(i=>i.id===filters.item_id)[0].name, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
@@ -137,24 +122,17 @@ function SalesHistory() {
             head:[tableHeadings],
             body:tableData.reverse().map(d=>{
                 let row = [{ content:count++,styles: { halign: 'center' }},{ content:formatDate(d.sales_date),styles: { halign: 'center' }}];
-                if (!filters.item_id) row.push({ content:d.item.name,styles: { halign: 'center' } })
-                if (!filters.unloading_point) row.push({ content:d.unloading_point.name,styles: { halign: 'center' } })
                 row.push({ content:d.unloading_vehichle.number,styles: { halign: 'center' } })
                 row.push(d.unloading_challan?{ content:d.unloading_challan,styles: { halign: 'center' } }:{ content:'-',styles: { halign: 'center' } })
-                row.push(
-                    { content:d.loading_point.name,styles: { halign: 'center' } },
-                    { content:d.sales_quantity,styles: { halign: 'center' } },
-                    { content:d.sales_rate,styles: { halign: 'center' } }
-                )
-                row.push({ content:d.sales_price?.toFixed(2),styles: { halign: 'right' } })
+                row.push({ content:d.loading_point.name,styles: { halign: 'center' } });
+                if (!filters.unloading_point) row.push({ content:d.unloading_point.name,styles: { halign: 'center' } })
+                if (!filters.item_id) row.push({ content:d.item.name,styles: { halign: 'center' } })
+                row.push({ content:d.sales_quantity + " (" + d.item.unit + ")" })
                 return row
             }),
             startY:48,
             startX:10,
             theme: 'striped',
-            foot: [
-                [{ content: 'Sub Total',styles: { halign: 'center' }, colSpan: tableHeadings.length-1 },{ content: subTotal.toFixed(2),styles: { halign: 'right' }}],
-            ],
         });
         doc.save('Sales_history.pdf');
     }
@@ -183,42 +161,30 @@ function SalesHistory() {
                             <Row className='mb-3'>
                                 <Col lg={3} xs={6} className='mt-2'>
                                     <label htmlFor="item_id" className="form-label">Item/Product</label>
-                                    <CustomSelect 
-                                        name="item_id" 
-                                        isSearchable 
-                                        defaultValue={{value:'',label:'All'}}
+                                    <CustomSelect onChange={e=>setFilters(f=>({...f,item_id:e.value}))}
+                                        isSearchable name="item_id"  defaultValue={{value:'',label:'All'}}
                                         options={[{value:'',label:'All'},...itemData.map(i=>({value:i.id,label:i.name}))]} 
-                                        onChange={e=>setFilters(f=>({...f,item_id:e.value}))}
                                     />
                                 </Col>
                                 <Col lg={3} xs={6} className='mt-2'>
                                     <label htmlFor="loading_point" className="form-label">Unloading point</label>
-                                    <CustomSelect 
-                                        isSearchable 
-                                        name="loading_point" 
-                                        defaultValue={{value:'',label:'All'}}
+                                    <CustomSelect onChange={e=>setFilters(f=>({...f,unloading_point:e.value}))}
+                                        isSearchable  name="loading_point"  defaultValue={{value:'',label:'All'}}
                                         options={[{value:'',label:'All'},...clientData.filter(c=>c.client_type=="receiver").map(c=>({value:c.id,label:c.name}))]} 
-                                        onChange={e=>setFilters(f=>({...f,unloading_point:e.value}))}
                                     />
                                 </Col>
                                 <Col lg={3} xs={6} className='mt-2'>
                                     <label htmlFor="vehicle_id" className="form-label">Vehicle (unloading)</label>
-                                    <CustomSelect
-                                        isSearchable
-                                        name="vehicle_id"
-                                        defaultValue={{value:'',label:'All'}}
+                                    <CustomSelect onChange={e=>setFilters(f=>({...f,unloading_vehicle_id:e.value}))}
+                                        isSearchable name="vehicle_id" defaultValue={{value:'',label:'All'}}
                                         options={[{value:'',label:'All'},...vehicleData.map(v=>({value:v.id,label:v.type}))]}
-                                        onChange={e=>setFilters(f=>({...f,unloading_vehicle_id:e.value}))}
                                     />
                                 </Col>
                                 <Col lg={3} xs={6} className='mt-2'>
                                     <label htmlFor="unloading_point" className="form-label">Loading point</label>
-                                    <CustomSelect 
-                                        isSearchable 
-                                        name="unloading_point" 
-                                        defaultValue={{value:'',label:'All'}}
+                                    <CustomSelect  onChange={e=>setFilters(f=>({...f,loading_point:e.value}))}
+                                        isSearchable  name="unloading_point"  defaultValue={{value:'',label:'All'}}
                                         options={[{value:'',label:'All'},...clientData.filter(c=>c.client_type=="sender").map(c=>({value:c.id,label:c.name}))]} 
-                                        onChange={e=>setFilters(f=>({...f,loading_point:e.value}))}
                                     />
                                 </Col>
                             </Row>

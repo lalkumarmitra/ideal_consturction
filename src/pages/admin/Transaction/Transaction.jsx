@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import ViewTransaction from './ViewTransaction';
+import { formatDate } from '../../../helper/formatDate';
 
 function Transaction() {
     const dispatch = useDispatch();
@@ -48,34 +49,13 @@ function Transaction() {
     const handleTransactionEdit = () => swal.warning('Under construction','This Feature is comming Soon');
     const handleTransactionView = () => swal.warning('Under construction','This Feature is comming Soon');
     const columns = useMemo(()=>[
-        {Header: "Item/Product",accessor: "item.name",show:false},
-        {Header: "Loading Point",accessor: "loading_point.name"},
-        {
-            Header:"Purchase Price",
-            accessor:"purchase_price",
-            HeaderClass:'text-center',
-            DataClass:'text-center',
-            isVisible:false,
-            Cell:(cell)=>{
-                const row = cell.row.original;
-                const purchase_price = row.purchase_rate * row.purchase_quantity;
-                return `${row.purchase_rate} X ${row.purchase_quantity} = ${purchase_price?.toFixed(2)}`;
-            }
-        },
-        {Header: "UnLoading Point",accessor: "unloading_point.name"}, 
-        {
-            Header:"Sale Price",
-            accessor:"sale_price",
-            HeaderClass:'text-center',
-            DataClass:'text-center',
-            Cell:(cell)=>{
-                const row = cell.row.original;
-                const sales_price = row.sales_rate * row.sales_quantity;
-                if(row.status === 'sold')
-                return `${row.sales_rate} X ${row.sales_quantity} = ${sales_price?.toFixed(2)}`;
-                return (<AddSales data={row} listData={listData} setListData={setListData} />);
-            }
-        },
+        {Header: "Date",accessor: "sales_date",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>formatDate(cell.row.original.sales_date)},
+        {Header: "Vehicle",accessor: "unloading_vehichle.number",HeaderClass:'text-center',DataClass:'text-center'},
+        {Header: "Challan",accessor: "unloading_challan",HeaderClass:'text-center',DataClass:'text-center'},
+        {Header: "Loading Point",accessor: "loading_point.name",HeaderClass:'text-center',DataClass:'text-center'},
+        {Header: "UnLoading Point",accessor: "unloading_point.name",HeaderClass:'text-center',DataClass:'text-center'}, 
+        {Header: "Item/Material",accessor: "item.name",HeaderClass:'text-center',DataClass:'text-center'},
+        {Header: "Quantity",accessor: "sales_quantity",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>`${cell.row.original.sales_quantity}  ${cell.row.original.item.unit}`},
         {
             Header: "Action",
             accessor:'action',

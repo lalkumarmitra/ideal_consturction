@@ -49,28 +49,13 @@ function PurchaseHistory() {
     }
     useEffect(()=>{getTransactionHistory();},[filters,fromDate,toDate]);
     const columns = useMemo(()=>[
-        { Header: "Item/Product", accessor: "item.name",HeaderClass: 'text-center',DataClass: filters.item_id? 'text-center bg-soft-warning' :'text-center' },
-        { Header: "Purchase Date",HeaderClass: 'text-center',DataClass: 'text-center', Cell:c=>formatDate(c.row.original.purchase_date) },
-        { Header: "Loading Point", accessor: "loading_point.name",DataClass: filters.loading_point? 'text-center bg-soft-warning' :'text-center' },
-        { 
-            Header: "Purchase Rate",HeaderClass: 'text-center',DataClass: 'text-center',
-            Cell:cell=>(<span><i className="bx bx-rupee"></i>{cell.row.original.purchase_rate.toFixed(2)} / {cell.row.original.item.unit}</span>) 
-        },
-        { 
-            Header: "Purchase Quantity",HeaderClass: 'text-center',DataClass: 'text-center',
-            Cell:cell=>(cell.row.original.purchase_quantity + " " +cell.row.original.item.unit)
-        },
-        {
-            Header: "Purchase Price",HeaderClass: 'text-center',DataClass: 'text-center',
-            Cell: (cell) => {
-                const row = cell.row.original;
-                const purchase_price = row.purchase_rate * row.purchase_quantity;
-                return (<span><i className="bx bx-rupee"></i>{purchase_price.toFixed(2)}</span>);
-            }
-        },
-        { Header: "UnLoading Point", accessor: "unloading_point.name",DataClass: filters.unloading_point? 'text-center bg-soft-warning' :'text-center'},
-        { Header: "Vehicle", accessor: "loading_vehicle.number",DataClass: filters.vehicle_id? 'text-center bg-soft-warning' :'text-center'},
-        { Header: "Do Number", accessor: "do_no",DataClass: 'text-center'},
+        {Header: "Date",accessor: "sales_date",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>formatDate(cell.row.original.purchase_date)},
+        {Header: "Vehicle",accessor: "loading_vehicle.number",HeaderClass:'text-center',DataClass: filters.vehicle_id? 'text-center bg-soft-warning' :'text-center'},
+        {Header: "Challan",accessor: "unloading_challan",HeaderClass:'text-center',DataClass:'text-center'},
+        {Header: "Loading Point",accessor: "loading_point.name",HeaderClass:'text-center',DataClass: filters.loading_point? 'text-center bg-soft-warning' :'text-center'},
+        {Header: "UnLoading Point",accessor: "unloading_point.name",HeaderClass:'text-center',DataClass: filters.unloading_point? 'text-center bg-soft-warning' :'text-center'}, 
+        {Header: "Item/Material",accessor: "item.name",HeaderClass:'text-center',DataClass: filters.item_id? 'text-center bg-soft-warning' :'text-center'},
+        {Header: "Quantity",accessor: "purchase_quantity",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>`${cell.row.original.sales_quantity}  ${cell.row.original.item.unit}`},
         {
             Header: "Action",
             HeaderClass: 'text-center',
@@ -96,15 +81,13 @@ function PurchaseHistory() {
         let count = 1;
         let tableHeadings=[
             {content:'SL',styles:{halign:'center'}},
-            {content:'Purchase Date',styles:{halign:'center'}},
-            {content:'Product/Item',styles:{halign:'center'}},
-            {content:'Loading Point',styles:{halign:'center'}},
+            {content:'Date',styles:{halign:'center'}},
             {content:'Vehicle',styles:{halign:'center'}},
-            {content:'Do Number',styles:{halign:'center'}},
-            {content:'Unoading point',styles:{halign:'center'}},
+            {content:'D.O. Number',styles:{halign:'center'}},
+            {content:'Loading point',styles:{halign:'center'}},
+            {content:'Unloading Point',styles:{halign:'center'}},
+            {content:'Material',styles:{halign:'center'}},
             {content:'Quantity',styles:{halign:'center'}},
-            {content:'Rate',styles:{halign:'center'}},
-            {content:'Amount',styles:{halign:'right'}},
         ];
         doc.autoTable({
             head: [
@@ -115,7 +98,7 @@ function PurchaseHistory() {
             theme: 'plain',
         });
         if (filters.item_id){
-            tableHeadings = tableHeadings.filter(heading => heading.content !== 'Product/Item');
+            tableHeadings = tableHeadings.filter(heading => heading.content !== 'Material');
             doc.autoTable({
                 head: [
                     [{ content: itemData.filter(i=>i.id===filters.item_id)[0].name, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
@@ -137,27 +120,19 @@ function PurchaseHistory() {
         doc.autoTable({
             head:[tableHeadings],
             body:tableData.reverse().map(d=>{
-
-                let row = [{ content:count++,styles: { halign: 'center' }},{ content:formatDate(d.purchase_date),styles: { halign: 'center' }}];
-                if (!filters.item_id) row.push({ content:d.item.name,styles: { halign: 'center' } })
-                if (!filters.loading_point) row.push({ content:d.loading_point.name,styles: { halign: 'center' } })
+                let row = [{ content:count++,styles: { halign: 'center' }},{ content:formatDate(d.sales_date),styles: { halign: 'center' }}];
                 row.push({ content:d.loading_vehicle.number,styles: { halign: 'center' } })
+                // row.push(d.unloading_challan?{ content:d.unloading_challan,styles: { halign: 'center' } }:{ content:'-',styles: { halign: 'center' } })
                 row.push(d.do_no?{ content:d.do_no,styles: { halign: 'center' } }:{ content:'-',styles: { halign: 'center' } })
-
-                row.push(
-                    { content:d.unloading_point.name,styles: { halign: 'center' } },
-                    { content:d.purchase_quantity,styles: { halign: 'center' } },
-                    { content:d.purchase_rate,styles: { halign: 'center' } }
-                )
-                row.push({ content:d.purchase_price?.toFixed(2),styles: { halign: 'right' } })
+                row.push({ content:d.loading_point.name,styles: { halign: 'center' } });
+                if (!filters.unloading_point) row.push({ content:d.unloading_point.name,styles: { halign: 'center' } })
+                if (!filters.item_id) row.push({ content:d.item.name,styles: { halign: 'center' } })
+                row.push({ content:d.purchase_quantity + " (" + d.item.unit + ")" })
                 return row
             }),
             startY:48,
             startX:10,
             theme: 'striped',
-            foot: [
-                [{ content: 'Sub Total',styles: { halign: 'right' }, colSpan: tableHeadings.length-1 },{ content: subTotal.toFixed(2),styles: { halign: 'right' }}],
-            ],
         });
         doc.save('Purchase_history.pdf');
     }
@@ -214,7 +189,7 @@ function PurchaseHistory() {
                                 </Col>
                             </Row>
                             <hr />
-                            <TableResponsive isLoading={dataLoading}  columns={columns} data={tableData} />
+                            <TableResponsive showColumnsFilter isLoading={dataLoading}  columns={columns} data={tableData} />
                         </CardBody>
                     </Card>
                 </Col>
