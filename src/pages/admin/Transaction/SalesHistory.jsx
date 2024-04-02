@@ -56,7 +56,9 @@ function SalesHistory() {
         {Header: "Loading Point",accessor: "loading_point.name",HeaderClass:'text-center',DataClass: filters.loading_point? 'text-center bg-soft-warning' :'text-center'},
         {Header: "UnLoading Point",accessor: "unloading_point.name",HeaderClass:'text-center',DataClass: filters.unloading_point? 'text-center bg-soft-warning' :'text-center'}, 
         {Header: "Item/Material",accessor: "item.name",HeaderClass:'text-center',DataClass: filters.item_id? 'text-center bg-soft-warning' :'text-center'},
+        {Header: "Sales Rate",accessor: "sales_rate",HeaderClass:'text-center',DataClass:'text-center'},
         {Header: "Quantity",accessor: "sales_quantity",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>`${cell.row.original.sales_quantity}  ${cell.row.original.item.unit}`},
+        {Header: "Sales Price",accessor: "sales_price",HeaderClass:'text-center',DataClass:'text-center', Cell:cell=>cell.row.original.sales_price.toFixed(2)},
         {
             Header: "Action",
             HeaderClass: 'text-center',
@@ -91,7 +93,7 @@ function SalesHistory() {
                             <a href="#">{row.item.name} </a>
                         </h5>
                         <div className='mt-3'>
-                            <p className='mb-2'>Sale : {row.sales_rate} X {row.sales_quantity} = {sales_price?.toFixed(2)}</p>
+                            <p className='mb-2'>Sale : {row.sales_rate} X {row.sales_quantity} ({row.item.unit})= {sales_price?.toFixed(2)}</p>
                             <p className="text-muted mb-0"><b>From :</b> {row.loading_point.name} <b>To :</b> {row.unloading_point?.name}</p>
                         </div>
                     </div>

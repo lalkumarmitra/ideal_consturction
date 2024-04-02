@@ -64,7 +64,7 @@ function Transaction() {
                 const row = cell.row.original;
                 return (
                     <div>
-                        <EditTransaction rowData={cell.row.original} setListData={setListData} />
+                        <EditTransaction rowData={row} setListData={setListData} />
                         <Button onClick={()=>handleDelete(row)} className="btn btn-sm btn-soft-danger ms-1" >
                             <i className="ri-delete-bin-fill" />  
                         </Button>
@@ -88,13 +88,14 @@ function Transaction() {
                         </h5>
                         <div className='mt-3'>
                             <p className='mb-2'>Purchage : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price?.toFixed(2)}</p>
-                            <p className='mb-2'>Sale : {row.purchase_rate} X {row.purchase_quantity} = {purchase_price?.toFixed(2)}</p>
+                            <p className='mb-2'>Sale : {row.sales_rate} X {row.sales_quantity} = {sales_price?.toFixed(2)}</p>
                             <p className="text-muted mb-0"><b>From :</b> {row.loading_point.name} <b>To :</b> {row.unloading_point?.name}</p>
                         </div>
                     </div>
                     <div className="flex-shrink-0">
                         <div>
                             {(row.status === 'sold')?"":(<AddSales data={row} listData={listData} setListData={setListData} />)}
+                            <EditTransaction rowData={row} setListData={setListData} />
                             <button onClick={()=>handleDelete(row)} className="btn btn-sm btn-soft-danger ms-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
                             {/* <button onClick={()=>handleDelete(row)} className="btn btn-sm btn-soft-info ms-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button> */}
                         </div>

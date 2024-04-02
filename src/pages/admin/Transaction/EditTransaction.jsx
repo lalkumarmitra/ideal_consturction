@@ -57,8 +57,8 @@ function EditTransaction({rowData,setListData}) {
 
     return (
         <>
-            <button onClick={handleClose} className='btn btn-sm btn-soft-info add-btn waves-effect'>
-                <i className="ri-pencil-fill align-bottom me-1" />  
+            <button onClick={handleClose} className='btn btn-sm btn-soft-info me-1 waves-effect'>
+                <i className="ri-pencil-fill" />  
             </button>
             <Modal className="fade" centered={true} backdrop="static" show={status} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -66,10 +66,11 @@ function EditTransaction({rowData,setListData}) {
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={e => handleSubmit(e)}>
+                        <input type="hidden" name="transaction_id" value={rowData?.id} />
                         <div className="col-12 mb-2">
                             <div>
                                 <label htmlFor="item_id" className="form-label">Product / Item</label>
-                                <CustomSelect isSearchable defaultValue={{label:rowData.item.name,value:rowData.item.id}} options={itemData?.map(i=>({value:i.id,label:i.name}))} elementId="item_id" name="item_id" />
+                                <CustomSelect isSearchable defaultValue={{label:rowData?.item?.name,value:rowData?.item.id}} options={itemData?.map(i=>({value:i.id,label:i.name}))} elementId="item_id" name="item_id" />
                             </div>
                         </div>
                         <div className='bg-soft-info p-2 mb-2 rounded'><h6 className='m-0 py-1 text-center'>Purchase</h6></div>
@@ -77,20 +78,20 @@ function EditTransaction({rowData,setListData}) {
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="purchase_date" className="form-label">Purchase Date</label>
-                                    <input type="date" className="form-control" name='purchase_date' defaultValue={rowData.purchase_date} id='purchase_date' />
+                                    <input type="date" className="form-control" name='purchase_date' defaultValue={rowData?.purchase_date} id='purchase_date' />
                                 </div>
                             </div>
                            
                             <div className="col-3">
                                 <div>
                                     <label htmlFor="product_rate" className="form-label">Rate</label>
-                                    <input type="number" className="form-control" id='product_rate' name="purchase_rate" defaultValue={rowData.purchase_rate} />
+                                    <input type="number" className="form-control" id='product_rate' name="purchase_rate" defaultValue={rowData?.purchase_rate} />
                                 </div>
                             </div>
                             <div className="col-3">
                                 <div>
                                     <label htmlFor="quantity" className="form-label">Quantity</label>
-                                    <input type="text" className="form-control" id='quantity' required defaultValue={rowData.purchase_quantity} name="purchase_quantity" />
+                                    <input type="text" className="form-control" id='quantity' required defaultValue={rowData?.purchase_quantity} name="purchase_quantity" />
                                 </div>
                             </div>
 
@@ -98,7 +99,7 @@ function EditTransaction({rowData,setListData}) {
                                 <div>
                                     <label htmlFor="vehicle_id" className="form-label">Vehicle</label>
                                     <CustomSelect 
-                                        defaultValue={{label:'vehicle id :'+rowData.vehicle_id,value:rowData.vehicle_id}}
+                                        defaultValue={{label:rowData?.loading_vehicle?.number,value:rowData?.loading_vehicle?.id}}
                                         onChange={e=>{setLoadingVehicleId(e);setUnloadingVehicleId(e)}} 
                                         options={vehicleData?.map(item=>({value:item.id,label:item.type}))} 
                                         elementId="vehicle_id" name='vehicle_id' 
@@ -112,7 +113,7 @@ function EditTransaction({rowData,setListData}) {
                                 <div>
                                     <label htmlFor="loading_point" className="form-label">Loading Point</label>
                                     <CustomSelect 
-                                        defaultValue={{label:rowData.loading_point.name,value:rowData.loading_point.id}}
+                                        defaultValue={{label:rowData?.loading_point?.name,value:rowData?.loading_point?.id}}
                                         elementId="loading_point" 
                                         isSearchable 
                                         options={loadingPoints?.map(c=>({value:c.id,label:c.name}))} 
@@ -126,32 +127,32 @@ function EditTransaction({rowData,setListData}) {
                             <div className="col-12">
                                 <div>
                                     <label htmlFor="sales_date" className="form-label">Sales Date</label>
-                                    <input type="date" defaultValue={rowData.sales_date}  className="form-control" name='sales_date' id='sales_date' />
+                                    <input type="date" defaultValue={rowData?.sales_date}  className="form-control" name='sales_date' id='sales_date' />
                                 </div>
                             </div>
                             <div className="col-3">
                                 <div>
                                     <label htmlFor="sales_rate" className="form-label">Sales Rate</label>
-                                    <input type="number" defaultValue={rowData.sales_rate} className="form-control" name='sales_rate' id='sales_rate' />
+                                    <input type="number" defaultValue={rowData?.sales_rate} className="form-control" name='sales_rate' id='sales_rate' />
                                 </div>
                             </div>
                             <div className="col-3">
                                 <div>
                                     <label htmlFor="sales_quantity" className="form-label">Sales Quantitiy</label>
-                                    <input type="text" defaultValue={rowData.sales_quantity} className="form-control" name='sales_quantity' id='sales_quantity' />
+                                    <input type="text" defaultValue={rowData?.sales_quantity} className="form-control" name='sales_quantity' id='sales_quantity' />
                                 </div>
                             </div>
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="unloading_challan" className="form-label">Unloading Challan</label>
-                                    <input type="number" defaultValue={rowData.unloading_challan} className="form-control" name='unloading_challan' id='unloading_challan' />
+                                    <input type="number" defaultValue={rowData?.unloading_challan} className="form-control" name='unloading_challan' id='unloading_challan' />
                                 </div>
                             </div>
                             <div className="col-6">
                                 <div>
                                     <label htmlFor="unloading_vehicle_id" className="form-label">Vehicle</label>
                                     <CustomSelect 
-                                        defaultValue={{label:rowData.unloading_vehichle.number,value:rowData.unloading_vehichle.id}} 
+                                        defaultValue={{label:rowData?.unloading_vehichle?.number,value:rowData?.unloading_vehichle?.id}} 
                                         onChange={e=>{setUnloadingVehicleId(e)}}
                                         options={vehicleData?.map(item=>({value:item.id,label:item.type}))} 
                                         elementId="unloading_vehicle_id" 
@@ -165,11 +166,10 @@ function EditTransaction({rowData,setListData}) {
                                 <div>
                                     <label htmlFor="unloading_point" className="form-label">UnLoading Point</label>
                                     <CustomSelect 
-                                        defaultValue={{label:rowData.unloading_point.name,value:rowData.unloading_point.id}}
+                                        defaultValue={{label:rowData?.unloading_point?.name,value:rowData?.unloading_point?.id}}
                                         elementId="unloading_point" 
                                         isSearchable 
-                                        options={unloadingPoints?.map(c=>({value:c.id,label:c.name}))} n
-                                        ame="unloading_point" 
+                                        options={unloadingPoints?.map(c=>({value:c.id,label:c.name}))} name="unloading_point" 
                                     />
                                 </div>
                             </div>

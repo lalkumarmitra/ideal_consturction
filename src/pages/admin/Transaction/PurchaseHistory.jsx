@@ -90,7 +90,7 @@ function PurchaseHistory() {
                             <a href="#">{row.item.name} </a>
                         </h5>
                         <div className='mt-3'>
-                            <p className='mb-2'>Purchase : {row.purchase_rate} X {row.purchase_quantity} {row.item.unit} = {purchase_price?.toFixed(2)}</p>
+                            <p className='mb-2'>Purchase : {row.purchase_rate} X {row.purchase_quantity} ({row.item.unit}) = {purchase_price?.toFixed(2)}</p>
                             <p className="text-muted mb-0"><b>From :</b> {row.loading_point.name} <b>To :</b> {row.unloading_point?.name}</p>
                         </div>
                     </div>
