@@ -75,6 +75,34 @@ function PurchaseHistory() {
                 )
             }
         },
+        {
+            Header:'List',
+            accessor:'none',
+            HeaderClass:'d-none',
+            DataClass:'d-none',
+            list:(row)=>{
+                const purchase_price = row.purchase_rate * row.purchase_quantity;
+                const sales_price = row.sales_rate * row.sales_quantity;
+                return (
+                <div className="d-flex">
+                    <div className="flex-grow-1" data-id="1">
+                        <h5 className="fs-13 mb-1">
+                            <a href="#">{row.item.name} </a>
+                        </h5>
+                        <div className='mt-3'>
+                            <p className='mb-2'>Purchase : {row.purchase_rate} X {row.purchase_quantity} {row.item.unit} = {purchase_price?.toFixed(2)}</p>
+                            <p className="text-muted mb-0"><b>From :</b> {row.loading_point.name} <b>To :</b> {row.unloading_point?.name}</p>
+                        </div>
+                    </div>
+                    <div className="flex-shrink-0">
+                        <div>
+                            <button onClick={()=>{}} className="btn btn-sm btn-soft-danger ms-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
+                        </div>
+                    </div>
+                </div>
+                )
+            }
+        }
     ]);
     const generatePdf = () =>{
         const doc = new jsPDF('p','mm','a4');

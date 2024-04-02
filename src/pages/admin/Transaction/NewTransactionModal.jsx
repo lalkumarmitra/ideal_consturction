@@ -195,20 +195,20 @@ function NewTransactionModal({ listData, setListData }) {
                                         <input type="date"  className="form-control" name='sales_date' id='sales_date' />
                                     </div>
                                 </div>
-                                <input type="hidden" name="sales_rate" defaultValue="102" />
-                                {/* <div className="col-6">
+                                {/* <input type="hidden" name="sales_rate" defaultValue="102" /> */}
+                                <div className="col-6">
                                     <div>
                                         <label htmlFor="sales_rate" className="form-label">Sales Rate</label>
                                         <input type="number" className="form-control" name='sales_rate' defaultValue="" id='sales_rate' />
                                     </div>
-                                </div> */}
+                                </div>
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="sales_quantity" className="form-label">Sales Quantitiy</label>
                                         <input type="text" className="form-control" name='sales_quantity' id='sales_quantity' />
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                <div className="col-12">
                                     <div>
                                         <label htmlFor="unloading_challan" className="form-label">Unloading Challan</label>
                                         <input type="number" className="form-control" name='unloading_challan' id='unloading_challan' />

@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import ViewTransaction from './ViewTransaction';
 import { formatDate } from '../../../helper/formatDate';
+import EditTransaction from './EditTransaction';
 
 function Transaction() {
     const dispatch = useDispatch();
@@ -46,8 +47,6 @@ function Transaction() {
             }
         })
     }
-    const handleTransactionEdit = () => swal.warning('Under construction','This Feature is comming Soon');
-    const handleTransactionView = () => swal.warning('Under construction','This Feature is comming Soon');
     const columns = useMemo(()=>[
         {Header: "Date",accessor: "sales_date",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>formatDate(cell.row.original.sales_date)},
         {Header: "Vehicle",accessor: "unloading_vehichle.number",HeaderClass:'text-center',DataClass:'text-center'},
@@ -65,10 +64,7 @@ function Transaction() {
                 const row = cell.row.original;
                 return (
                     <div>
-                        {/* <ViewTransaction transaction={row} /> */}
-                        <Button onClick={handleTransactionEdit} className="btn btn-sm btn-soft-success ms-1" >
-                            <i className="ri-pencil-fill" />  
-                        </Button>
+                        <EditTransaction rowData={cell.row.original} setListData={setListData} />
                         <Button onClick={()=>handleDelete(row)} className="btn btn-sm btn-soft-danger ms-1" >
                             <i className="ri-delete-bin-fill" />  
                         </Button>

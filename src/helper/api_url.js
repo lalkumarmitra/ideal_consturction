@@ -36,7 +36,8 @@ export const transaction = {
     addsell:data=>post('/transaction/sell',data),
     list:()=>get('/transactions'),
     delete:(id)=>del('/transaction/'+id),
-    history:filters=>post('/transaction/history',filters)
+    history:filters=>post('/transaction/history',filters),
+    update:data=>post('/transaction-update',data)
 }
 export const role = {
     list:()=>get('/roles')
