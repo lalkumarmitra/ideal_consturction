@@ -122,7 +122,7 @@ function SalesHistory() {
             {content:'Material',styles:{halign:'center'}},
             {content:'Quantity',styles:{halign:'center'}},
             {content:'Rate',styles:{halign:'center'}},
-            {content:'Price',styles:{halign:'center'}},
+            {content:'Price',styles:{halign:'right'}},
         ];
         doc.autoTable({
             head: [
@@ -139,7 +139,7 @@ function SalesHistory() {
                 head: [
                     [{ content: item_name_in_filter, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
                 ],
-                startY: 40,
+                startY: 42,
                 theme: 'grid',
             });
         }
@@ -170,7 +170,7 @@ function SalesHistory() {
                 return row
             }),
            
-            startY:48,
+            startY:50,
             startX:10,
             theme: 'striped',
         });
@@ -181,7 +181,7 @@ function SalesHistory() {
                     {content:total_sales_price.toFixed(2),styles: { halign: 'right' }}
                 ]
             ],
-            theme: 'striped',
+            theme: 'grid',
         });
         doc.save(`Sales_history_${item_name_in_filter}_${unloading_point_in_filter}_(${fromDate})_(${toDate}).pdf`);
     }
