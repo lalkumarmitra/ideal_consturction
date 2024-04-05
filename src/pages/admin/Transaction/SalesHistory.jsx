@@ -9,6 +9,7 @@ import { formatDate, formatDateYMD } from '../../../helper/formatDate';
 import ViewTransaction from './ViewTransaction';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import EditTransaction from './EditTransaction';
 
 function SalesHistory() {
     const today = new Date();
@@ -58,7 +59,7 @@ function SalesHistory() {
         {Header: "Item/Material",accessor: "item.name",HeaderClass:'text-center',DataClass: filters.item_id? 'text-center bg-soft-warning' :'text-center'},
         {Header: "Sales Rate",accessor: "sales_rate",HeaderClass:'text-center',DataClass:'text-center'},
         {Header: "Quantity",accessor: "sales_quantity",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>`${cell.row.original.sales_quantity}  ${cell.row.original.item.unit}`},
-        {Header: "Sales Price",accessor: "sales_price",HeaderClass:'text-center',DataClass:'text-center', Cell:cell=>cell.row.original.sales_price.toFixed(2)},
+        {Header: "Sales Price",accessor: "sales_price",HeaderClass:'text-center',DataClass:'text-center', Cell:cell=>cell.row.original.sales_price?.toFixed(2)},
         {
             Header: "Action",
             HeaderClass: 'text-center',
@@ -68,9 +69,7 @@ function SalesHistory() {
                 return (
                     <div className="">
                         <ViewTransaction transaction={row} />
-                        <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-info me-1" >
-                            <i className="ri-pencil-fill" />  
-                        </Button>
+                        <EditTransaction rowData={row} setListData={setTableData} />
                         <Button onClick={handleButtonClickUnderConstruction} className="btn btn-sm btn-soft-warning me-1" >
                             <i className=" ri-file-list-3-fill" />  
                         </Button>

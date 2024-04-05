@@ -45,6 +45,7 @@ function EditTransaction({rowData,setListData}) {
         e.preventDefault();
         const formData = new FormData(e.target);
         transaction.update(formData).then(res => {
+            // res.data.transaction.sales_price = res.data.transaction.sales_rate * res.data.transaction.sales_quantity;
             setListData(state=>state.map(i=> i.id == res.data.transaction.id? res.data.transaction:i))
             dispatch(setPreloader({ loader: false, message: '' }))
             handleClose();
