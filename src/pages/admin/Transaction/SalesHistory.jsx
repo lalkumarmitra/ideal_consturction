@@ -108,16 +108,21 @@ function SalesHistory() {
     ]);
     const generatePdf = () =>{
         let count = 1;
+        let total_sales_price= 0;
+        let item_name_in_filter = "";
+        let unloading_point_in_filter = "";
         const doc = new jsPDF('p','mm','a4');
         let tableHeadings=[
             {content:'SL',styles:{halign:'center'}},
             {content:'Date',styles:{halign:'center'}},
             {content:'Vehicle',styles:{halign:'center'}},
             {content:'Challan',styles:{halign:'center'}},
-            {content:'Loading point',styles:{halign:'center'}},
+            // {content:'Loading point',styles:{halign:'center'}},
             {content:'Unloading Point',styles:{halign:'center'}},
             {content:'Material',styles:{halign:'center'}},
             {content:'Quantity',styles:{halign:'center'}},
+            {content:'Rate',styles:{halign:'center'}},
+            {content:'Price',styles:{halign:'center'}},
         ];
         doc.autoTable({
             head: [
@@ -128,20 +133,22 @@ function SalesHistory() {
             theme: 'plain',
         });
         if (filters.item_id){
+            item_name_in_filter = itemData.filter(i=>i.id===filters.item_id)[0].name;
             tableHeadings = tableHeadings.filter(heading => heading.content !== 'Material');
             doc.autoTable({
                 head: [
-                    [{ content: itemData.filter(i=>i.id===filters.item_id)[0].name, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
+                    [{ content: item_name_in_filter, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
                 ],
                 startY: 40,
                 theme: 'grid',
             });
         }
         if(filters.unloading_point) {
+            unloading_point_in_filter = clientData.filter(i=>i.id===filters.unloading_point)[0].name;
             tableHeadings = tableHeadings.filter(heading => heading.content !== 'Unloading Point');
             doc.autoTable({
                 head: [
-                    [{ content: clientData.filter(i=>i.id===filters.unloading_point)[0].name, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
+                    [{ content: unloading_point_in_filter, colSpan: tableHeadings.length, styles: { halign: 'center' } }]
                 ],
                 startY: 34,
                 theme: 'grid',
@@ -150,20 +157,33 @@ function SalesHistory() {
         doc.autoTable({
             head:[tableHeadings],
             body:tableData.reverse().map(d=>{
+                total_sales_price+=d.sales_price;
                 let row = [{ content:count++,styles: { halign: 'center' }},{ content:formatDate(d.sales_date),styles: { halign: 'center' }}];
                 row.push({ content:d.unloading_vehichle.number,styles: { halign: 'center' } })
                 row.push(d.unloading_challan?{ content:d.unloading_challan,styles: { halign: 'center' } }:{ content:'-',styles: { halign: 'center' } })
-                row.push({ content:d.loading_point.name,styles: { halign: 'center' } });
-                if (!filters.unloading_point) row.push({ content:d.unloading_point.name,styles: { halign: 'center' } })
+                // row.push({ content:d.loading_point.name,styles: { halign: 'center' } });
+                if (!filters.unloading_point) row.push({ content:d.unloading_point?.name,styles: { halign: 'center' } })
                 if (!filters.item_id) row.push({ content:d.item.name,styles: { halign: 'center' } })
-                row.push({ content:d.sales_quantity + " (" + d.item.unit + ")" })
+                row.push({ content:d.sales_quantity + " (" + d.item.unit + ")",styles: { halign: 'center' }  })
+                row.push({ content:d.sales_rate + " (" + d.item.unit + ")",styles: { halign: 'center' }  })
+                row.push({ content:d.sales_price.toFixed(2), styles: { halign: 'right' } })
                 return row
             }),
+           
             startY:48,
             startX:10,
             theme: 'striped',
         });
-        doc.save('Sales_history.pdf');
+        doc.autoTable({
+            foot:[
+                [
+                    {content:'Total',colSpan: tableHeadings.length-1, styles: { halign: 'right' }},
+                    {content:total_sales_price.toFixed(2),styles: { halign: 'right' }}
+                ]
+            ],
+            theme: 'striped',
+        });
+        doc.save(`Sales_history_${item_name_in_filter}_${unloading_point_in_filter}_(${fromDate})_(${toDate}).pdf`);
     }
     return (
         <>
