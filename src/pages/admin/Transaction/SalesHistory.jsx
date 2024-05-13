@@ -9,6 +9,7 @@ import { formatDate, formatDateYMD } from '../../../helper/formatDate';
 import ViewTransaction from './ViewTransaction';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { CSVLink } from "react-csv"
 import EditTransaction from './EditTransaction';
 
 function SalesHistory() {
@@ -18,6 +19,7 @@ function SalesHistory() {
     const [subTotal,setSubTotal] = useState(0)
     const [toDate,setToDate] = useState(formatDateYMD(today));
     const [fromDate,setFromDate] = useState(formatDateYMD(today.setMonth(today.getMonth() - 2)));
+    const [csvData,setCsvData] = useState([]);
     const [filters,setFilters] = useState({
         item_id: "",
         status: "sold",
@@ -27,10 +29,21 @@ function SalesHistory() {
         unloading_point: "",
         unloading_vehicle_id: "",
         unloading_driver_id: "",
-    })
+    });
     const [itemData, setItemData] = useState([]);
     const [clientData, setClientData] = useState([]);
     const [vehicleData, setvehicleData] = useState([]);
+    const headers = [
+        { label: "SL", key: "sl" },
+        {label:'Date',key:"date"},
+        {label:'Vehicle',key:"vehicle"},
+        {label:'Challan',key:"challan"},
+        {label:'Unloading Point',key:"unloading_point"},
+        {label:'Material',key:"material"},
+        {label:'Quantity',key:"quantity"},
+        {label:'Rate',key:"rate"},
+        {label:'Price',key:"price"},
+      ];
     useEffect(() => {
         item.list().then(r => setItemData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
         client.list().then(r => setClientData(r.data[Object.keys(r.data)[0]])).catch(err => swal.error(err.response ? err.response.data.message : err.message))
@@ -46,6 +59,17 @@ function SalesHistory() {
         transaction.history(formData).then(r=>{
             setTableData(r.data.transactions)
             setSubTotal(r.data.total_sales_price)
+            setCsvData(r?.data?.transactions?.map((i,index)=>({
+                sl:index,
+                date:formatDate(i.sales_date),
+                vehicle:i.unloading_vehichle.number,
+                challan:i.unloading_challan,
+                unloading_point:i.unloading_point?.name,
+                material:i.item.name,
+                quantity:i.sales_quantity,
+                rate:i.sales_rate,
+                price:i.sales_price.toFixed(2),
+            })));
         }).catch(e=>console.error(e)).finally(()=>setDataLoading(false));
     }
     useEffect(()=>{getTransactionHistory();},[filters,fromDate,toDate]);
@@ -201,7 +225,10 @@ function SalesHistory() {
                                     <input className='form-control' type='date' value={toDate} onChange={e=>setToDate(e.target.value)} />
                                 </Col>
                                 <Col xs={12} lg={4} className='mt-lg-0 mt-3 d-flex align-items-center justify-content-end '>
-                                    <Button onClick={handleButtonClickUnderConstruction} className="btn btn-warning me-1" ><i className=" ri-file-excel-line" /></Button>
+                                    {csvData && (
+                                    <CSVLink className="btn me-3 btn-warning"  data={csvData} headers={headers}>
+                                          <i className=" ri-file-excel-2-line align-middle me-1"></i>
+                                    </CSVLink>)}
                                     <Button onClick={generatePdf} className="btn btn-success me-1" ><i className=" bx bxs-file-pdf" /></Button>
                                 </Col>
                             </Row>

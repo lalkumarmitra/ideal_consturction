@@ -1,11 +1,24 @@
-export const formatDate = (inputDate) => {
-    const options = { day: 'numeric', month: 'short', year: 'numeric' };
-    const formattedDate = new Date(inputDate).toLocaleDateString('en-US', options);
-    return formattedDate;
-};
+// export const formatDate = (inputDate) => {
+//     const options = { day: 'numeric', month: 'short', year: 'numeric' };
+//     const formattedDate = new Date(inputDate).toLocaleDateString('en-US', options);
+//     return formattedDate;
+// };
 export const formatDateYMD = (inputDate) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const formattedDate = new Date(inputDate).toLocaleDateString('en-CA', options);
+    return formattedDate;
+};
+
+export const formatDate = (inputDate, format = 'DD-MM-YYYY', delimiter = '-') => {
+    const date = new Date(inputDate);
+    const day = String(date.getDate()).padStart(2, '0'); 
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const year = date.getFullYear();
+    let formattedDate = format
+        .replace('DD', day)
+        .replace('MM', month)
+        .replace('YYYY', year);
+    formattedDate = formattedDate.split('-').join(delimiter);
     return formattedDate;
 };
 
