@@ -109,12 +109,6 @@ function NewTransactionModal({ listData, setListData }) {
                                     </div>
                                 </div>
                                 <input type="hidden" name="purchase_rate" defaultValue="0" />
-                                {/* <div className="col-6">
-                                    <div>
-                                        <label htmlFor="product_rate" className="form-label">Rate</label>
-                                        <input type="number" className="form-control" id='product_rate' name="purchase_rate" defaultValue="" />
-                                    </div>
-                                </div> */}
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="quantity" className="form-label">Quantity</label>
@@ -141,31 +135,6 @@ function NewTransactionModal({ listData, setListData }) {
                                     </div>
                                 </div>
                                 <input type="hidden" name="driver_id" defaultValue="102" />
-                                {/* <div className="col-6">
-                                    <div>
-                                        <label htmlFor="driver_id" className="form-label">Driver</label>
-                                        <CustomSelect 
-                                            onChange={e=>{setLoadingDriverId(e);setUnloadingDriverId(e)}} 
-                                            isSearchable 
-                                            name='driver_id' 
-                                            elementId="driver_id" 
-                                            options={UserData?.map(u=>({value:u.id,label:`${u.first_name} ${u.last_name}`}))} 
-                                        />
-                                    </div>
-                                </div> */}
-                                
-                                {/* <div className='col-2'>
-                                    <div>
-                                        <label htmlFor="add_new_location_point">Add</label>
-                                        <NewStaffModal listData={UserData} setListData={setUserData} add={true}  />
-                                    </div>
-                                </div> */}
-                                {/* <div className="col-4">
-                                    <div>
-                                        <label htmlFor="do_number" className="form-label">Do Number</label>
-                                        <input type="number" className="form-control" id='do_number' name="do_number" />
-                                    </div>
-                                </div> */}
 
                                 <div className="col-10">
                                     <div>
@@ -199,7 +168,7 @@ function NewTransactionModal({ listData, setListData }) {
                                 <div className="col-6">
                                     <div>
                                         <label htmlFor="sales_rate" className="form-label">Sales Rate</label>
-                                        <input type="number" className="form-control" name='sales_rate' defaultValue="" id='sales_rate' />
+                                        <input type="number" step={0.001} className="form-control" name='sales_rate' defaultValue="" id='sales_rate' />
                                     </div>
                                 </div>
                                 <div className="col-6">

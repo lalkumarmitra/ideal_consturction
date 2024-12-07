@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_URL = "https://idealconstruction.online/application/api";
+export const API_URL = "https://api.idealconstruction.online/api";
 
 const axiosApi = axios.create({
   baseURL: API_URL,

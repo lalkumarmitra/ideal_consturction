@@ -57,4 +57,4 @@ export const support = {
     Commentdelete: (id) => del(`/issue/comment/${id}`),
 }
 
-export const ASSET_URL='https://idealconstruction.online/application/';
+export const ASSET_URL='https://api.idealconstruction.online/';

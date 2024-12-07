@@ -10,7 +10,7 @@ const validate =  (dispatch,authenticate,setPreloader) => {
     const t = localStorage.getItem('_token');
     if(t){
         axios({ 
-            url: "https://idealconstruction.online/application/api/validate", 
+            url: "https://api.idealconstruction.online/api/validate", 
             method: "GET",
             headers: { Accept: "application/json", Authorization: 'Bearer '+t },
         })

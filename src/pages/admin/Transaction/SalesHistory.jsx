@@ -68,13 +68,12 @@ function SalesHistory() {
                 material:i.item.name,
                 quantity:i.sales_quantity,
                 rate:i.sales_rate,
-                price:i.sales_price.toFixed(2),
+                price:i.sales_price?.toFixed(2),
             })));
         }).catch(e=>console.error(e)).finally(()=>setDataLoading(false));
     }
     useEffect(()=>{getTransactionHistory();},[filters,fromDate,toDate]);
     const columns = useMemo(()=>[
-
         {Header: "Date",accessor: "sales_date",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>formatDate(cell.row.original.sales_date)},
         {Header: "Vehicle",accessor: "unloading_vehichle.number",HeaderClass:'text-center',DataClass: filters.vehicle_id? 'text-center bg-soft-warning' :'text-center'},
         {Header: "Challan",accessor: "unloading_challan",HeaderClass:'text-center',DataClass:'text-center'},
@@ -82,7 +81,7 @@ function SalesHistory() {
         {Header: "UnLoading Point",accessor: "unloading_point.name",HeaderClass:'text-center',DataClass: filters.unloading_point? 'text-center bg-soft-warning' :'text-center'}, 
         {Header: "Item/Material",accessor: "item.name",HeaderClass:'text-center',DataClass: filters.item_id? 'text-center bg-soft-warning' :'text-center'},
         {Header: "Sales Rate",accessor: "sales_rate",HeaderClass:'text-center',DataClass:'text-center'},
-        {Header: "Quantity",accessor: "sales_quantity",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>`${cell.row.original.sales_quantity}  ${cell.row.original.item.unit}`},
+        {Header: "Quantity",accessor: "sales_quantity",HeaderClass:'text-center',DataClass:'text-center',Cell:cell=>`${parseFloat(cell.row.original.sales_quantity)?.toFixed(3)}  ${cell.row.original.item.unit}`},
         {Header: "Sales Price",accessor: "sales_price",HeaderClass:'text-center',DataClass:'text-center', Cell:cell=>cell.row.original.sales_price?.toFixed(2)},
         {
             Header: "Action",

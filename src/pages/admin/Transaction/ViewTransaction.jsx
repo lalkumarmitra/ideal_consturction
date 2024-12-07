@@ -70,13 +70,13 @@ function ViewTransaction({transaction}) {
                         <li class="list-group-item">
                             <Row>
                                 <Col>Sales Rate</Col>
-                                <Col><i className="bx bx-rupee"></i> {transaction?.sales_rate?.toFixed(2)}</Col>
+                                <Col><i className="bx bx-rupee"></i> {parseFloat(transaction?.sales_rate)?.toFixed(2)}</Col>
                             </Row>
                         </li>
                         <li class="list-group-item">
                             <Row>
                                 <Col>Sales Quantity</Col>
-                                <Col>{transaction?.sales_quantity?.toFixed(2)}</Col>
+                                <Col>{parseFloat(transaction?.sales_quantity)?.toFixed(2)}</Col>
                             </Row>
                         </li>
                         <li class="list-group-item">
