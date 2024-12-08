@@ -189,7 +189,7 @@ function SalesHistory() {
                 if (!filters.item_id) row.push({ content:d.item.name,styles: { halign: 'center' } })
                 row.push({ content:d.sales_quantity + " (" + d.item.unit + ")",styles: { halign: 'center' }  })
                 row.push({ content:d.sales_rate + " (" + d.item.unit + ")",styles: { halign: 'center' }  })
-                row.push({ content:d.sales_price.toFixed(2), styles: { halign: 'right' } })
+                row.push({ content:d.sales_price?.toFixed(2), styles: { halign: 'right' } })
                 return row
             }),
            
