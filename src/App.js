@@ -14,6 +14,9 @@ import { setLayout, changeSideBar, updateScreenSize } from "./features/Layout/la
 import Preloader from "./components/Preloader";
 import { AuthMiddleWare, GuestMiddleware } from "./routes/routes";
 
+import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
+
+const queryClient = new QueryClient()
 
 const layoutChanger = s => {
   localStorage.setItem('layoutConfig',JSON.stringify(s))
@@ -56,6 +59,7 @@ function App() {
   const loader = useSelector(state=>state.ui);
   return (
     <>
+    <QueryClientProvider client={queryClient}>
       {loader.loader?(<Preloader title={loader.message} />):null}
       <BrowserRouter>
         <Routes>
@@ -70,6 +74,7 @@ function App() {
           <Route path="*" element={<AuthLayout><Error404/></AuthLayout>} />
         </Routes>
       </BrowserRouter>
+      </QueryClientProvider>
     </>
   );
 }

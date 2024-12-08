@@ -4,45 +4,46 @@ import { TableResponsive } from "../../../components/common/TableResponsive";
 import { Card, CardBody, CardHeader, Col, Row, Button } from "react-bootstrap";
 import { ASSET_URL, item } from '../../../helper/api_url';
 import Swal from 'sweetalert2';
-import { NewItemModal } from '../../../components/common/modal';
 import { useDispatch } from 'react-redux';
 import { setPreloader } from '../../../features/Ui/uiSlice';
 import { swal } from '../../../helper/swal';
 import { UpdateItemModal } from './update';
 import { ViewItemModal } from './view';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { CreateItemModel } from './CreateItemModel';
 function Items() {
+    const queryClient = useQueryClient();
     const dispatch = useDispatch();
-    const [itemData,setItemData] = useState([]);
-    const [dataLoading,setDataLoading] = useState(true);
-    useEffect(()=>{
-        item.list().then(res=>setItemData(res.data.items))
-        .catch(err=>swal.error(err.response?err.response.data.message:err.message))
-        .finally(()=>setDataLoading(false));
-    },[])
-    const handleItemDelete = itemRow => {
+    const { data: items = [], isLoading, isError, error } = useQuery({
+        queryKey: ['items'],
+        queryFn: () => item.list(),
+        staleTime: 20 * 60 * 1000,
+        gcTime: 20 * 60 * 1000,
+        select: (data) => data.data.items
+    });
+    useEffect(() => {
+        if (isError) swal.error(error.response ? error.response.data.message : error.message)
+    }, [isError, error])
+    const handleDelete = (id) => {
         Swal.fire({
-            title: "Are you sure ?",
-            text:" You want to delete this Item/Product : " + itemRow.name,
-            icon:'warning',
-            showDenyButton: true,
-            confirmButtonText: "Delete",
-            denyButtonText: `No`
-        }).then((result)=>{
+            title: 'Are you sure?', text: "You won't be able to revert this!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33',
+        }).then((result) => {
             if (result.isConfirmed) {
-                dispatch(setPreloader({loader:true,message:'Deleting Item please wait'}))
-                item.delete(itemRow.id)
-                .then(res=>{
-                    setItemData([...itemData.filter(i=>i.id!=itemRow.id)])
-                    dispatch(setPreloader({loader:false,message:""}))
-                    swal.success(res.data.message);
-                })
-                .catch(err=>{
-                    dispatch(setPreloader({loader:false,message:""}))
-                    swal.error(err.response ? err.response.data.message : err.message);
-                })
+                dispatch(setPreloader({ loader: true, message: 'Please wait ... ' }));
+                item.delete(id).then(() => {
+                    queryClient.setQueryData(['items'], (oldData) => {
+                        console.log(oldData)
+                        if (!oldData || !oldData.data || !oldData.data.items) {
+                            return oldData;
+                        }
+                        return { ...oldData, data: { ...oldData.data, items: oldData.data.items.filter((i) => i.id !== id), }, };
+                    });
+                }).catch((err) => {
+                    Swal.fire({ title: 'Error', text: err.response ? err.response.data.message : err.message, icon: 'error', });
+                }).finally(() => { dispatch(setPreloader({ loader: false, message: "" })); });
             }
-        })
-    }
+        });
+    };
     const columns = useMemo(()=>[
         {
             Header: "Name",
@@ -81,8 +82,8 @@ function Items() {
               return ( 
                 <div className="">
                    <ViewItemModal data={row} />
-                    <UpdateItemModal data={row} itemData={itemData} setItemData={setItemData} />
-                    <Button onClick={()=>handleItemDelete(cell.row.original)} className="btn btn-sm btn-soft-danger me-1" >
+                    {/* <UpdateItemModal data={row} itemData={itemData} setItemData={setItemData} /> */}
+                    <Button onClick={()=>handleDelete(row?.id)} className="btn btn-sm btn-soft-danger me-1" >
                         <i className="ri-delete-bin-fill" />  
                     </Button>
                 </div>
@@ -113,15 +114,15 @@ function Items() {
                     </div>
                     <div className="flex-shrink-0">
                         <div>
-                            <UpdateItemModal data={row} itemData={itemData} setItemData={setItemData} />
-                            <button onClick={()=>handleItemDelete(row)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
+                            {/* <UpdateItemModal data={row} itemData={itemData} setItemData={setItemData} /> */}
+                            <button onClick={()=>handleDelete(row?.id)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
                         </div>
                     </div>
                 </div>
                 )
             }
         }
-    ])
+    ],[items])
     return (
         <>
             <BreadCrumb title="Items" prevPage="Home" prevPath="/dashboard" />
@@ -130,10 +131,10 @@ function Items() {
                     <Card>
                         <CardHeader className="d-flex align-items-center justify-content-between">
                             <h5 className="card-title mb-0">Item List</h5>
-                            <NewItemModal itemData={itemData} setItemData={setItemData} />
+                            <CreateItemModel className="btn btn-soft-success" />
                         </CardHeader>
                         <CardBody className="">
-                            <TableResponsive isLoading={dataLoading} customPageSize={8} columns={columns} data={itemData}  />
+                            <TableResponsive isLoading={isLoading} customPageSize={8} columns={columns} data={items}  />
                         </CardBody>
                     </Card>
                 </Col>

@@ -14,7 +14,6 @@ export function ViewStaffModal(data) {
                     <i className="ri-eye-fill" />
                 </button>
             )}
-
             <Modal className="fade" centered={true} show={status} onHide={toggleModal}>
                 <Modal.Header closeButton>
                     <Modal.Title><h5>View {data.data.first_name} Details</h5></Modal.Title>
@@ -29,8 +28,8 @@ export function ViewStaffModal(data) {
                                         <Col xs={4}><span className='fw-bold'>Staff Name </span></Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
                                         <Col className='text-start' xs={6}>
-                                            <span className='text-wrap'> {data.data.first_name} {data.last_name} </span>
-                                            {(data.data.role.name !== null) ? (<span className='badge badge-soft-success px-1 ms-1'>{data.data.role.name}</span>) : ''}
+                                            <span className='text-wrap'> {data.data?.first_name} {data?.last_name} </span>
+                                            {(data.data.role?.name !== null) ? (<span className='badge badge-soft-success px-1 ms-1'>{data.data.role?.name}</span>) : ''}
                                         </Col>
                                     </Row>
                                 </li>
@@ -39,7 +38,7 @@ export function ViewStaffModal(data) {
                                         <Col xs={4}><span className='fw-bold'>Type </span> </Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
                                         <Col className='text-start' xs={6}>
-                                            <span className='text-nowrap'> {data.data.role.name} </span>
+                                            <span className='text-nowrap'> {data.data?.role?.name} </span>
                                         </Col>
                                     </Row>
                                 </li>
@@ -48,7 +47,7 @@ export function ViewStaffModal(data) {
                                         <Col xs={4}><span className='fw-bold'>Gender </span> </Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
                                         <Col className='text-start' xs={6}>
-                                            <span className='text-nowrap'> {data.data.gender} </span>
+                                            <span className='text-nowrap'> {data?.data?.gender} </span>
                                         </Col>
                                     </Row>
                                 </li>
@@ -57,7 +56,7 @@ export function ViewStaffModal(data) {
                                         <Col xs={4}><span className='fw-bold'>Email </span> </Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
                                         <Col className='text-start' xs={6} style={{ overflowWrap: 'break-word',fontSize:'12px' }}>
-                                            <span className='text-nowrap'> {data.data.email} </span>
+                                            <span className='text-nowrap'> {data?.data?.email} </span>
                                         </Col>
                                     </Row>
                                 </li>
@@ -66,7 +65,7 @@ export function ViewStaffModal(data) {
                                         <Col xs={4}><span className='fw-bold'>Phone </span> </Col>
                                         <Col xs={2}><span className='fw-bold'>:</span></Col>
                                         <Col className='text-start' xs={6}>
-                                            <span className='text-wrap'> {data.data.phone} </span>
+                                            <span className='text-wrap'> {data?.data?.phone} </span>
                                         </Col>
                                     </Row>
                                 </li>
@@ -76,7 +75,7 @@ export function ViewStaffModal(data) {
                 </Modal.Body>
                 <Modal.Footer>
                     <div className='w-100 d-flex align-items-center justify-content-between px-2'>
-                        <a href={`tel:${data.data.phone}`} className="btn btn-soft-info" >
+                        <a href={`tel:${data?.data?.phone}`} className="btn btn-soft-info" >
                             <i className='bx bx-phone-outgoing' />
                         </a>
                         {/* <Link to='/' className="btn btn-sm btn-outline-success">View Detailed Profile</Link> */}

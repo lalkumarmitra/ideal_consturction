@@ -10,7 +10,7 @@ export const staff={
     update: data =>post("/user/update",data),
     list: () =>get("/users/type/staff"),
     delete: (id) =>del(`/user/${id}/destroy`),
-    changeStatus: data=>post(`/user/set-status`,data)
+    changeStatus: data=>get(`/user/set-status`,data)
 }
 export const item = {
     add:data=>post("/item",data),
