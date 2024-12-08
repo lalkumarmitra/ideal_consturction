@@ -154,7 +154,7 @@ function PurchaseHistory() {
                 row.push(d.do_no?{ content:d.do_no,styles: { halign: 'center' } }:{ content:'-',styles: { halign: 'center' } })
                 row.push({ content:d.loading_point.name,styles: { halign: 'center' } });
                 if (!filters.unloading_point) row.push({ content:d.unloading_point.name,styles: { halign: 'center' } })
-                if (!filters.item_id) row.push({ content:d.item.name,styles: { halign: 'center' } })
+                if (!filters.item_id) row.push({ content:d.item?.name,styles: { halign: 'center' } })
                 row.push({ content:d.purchase_quantity + " (" + d.item.unit + ")" })
                 return row
             }),
