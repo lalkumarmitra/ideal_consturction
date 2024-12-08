@@ -11,16 +11,42 @@ import { swal } from '../../../helper/swal';
 import { Switch } from 'antd';
 import { UpdateVehicleModal } from './update';
 import { ViewVehicleModal } from './view';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { CreateVehiclesModel } from './CreateVehiclesModel';
 
 function Vehicles() {
+    const queryClient = useQueryClient();
     const dispatch = useDispatch();
-    const [listData,setListData] = useState([]);
-    const [dataLoading,setDataLoading] = useState(true);
-    useEffect(()=>{
-        setDataLoading(true);
-        vehicles.list().then(res=>setListData(res.data.vehicles))
-        .catch(err=>swal.error(err.response?err.response.data.message:err.message));
-    },[]);
+    const { data: vehiclesdata = [], isLoading, isError, error } = useQuery({
+        queryKey: ['vehicles'],
+        queryFn: () => vehicles.list(),
+        staleTime: 20 * 60 * 1000,
+        gcTime: 20 * 60 * 1000,
+        select: (data) => data.data.vehicles
+    });
+    useEffect(() => {
+        if (isError) swal.error(error.response ? error.response.data.message : error.message)
+    }, [isError, error])
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: 'Are you sure?', text: "You won't be able to revert this!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(setPreloader({ loader: true, message: 'Please wait ... ' }));
+                vehicles.delete(id).then(() => {
+                    queryClient.setQueryData(['vehicles'], (oldData) => {
+                        if (!oldData || !oldData.data || !oldData.data.vehicles) {
+                            return oldData;
+                        }
+                        return { ...oldData, data: { ...oldData.data, vehicles: oldData.data.vehicles.filter((i) => i.id !== id), }, };
+                    });
+                }).catch((err) => {
+                    Swal.fire({ title: 'Error', text: err.response ? err.response.data.message : err.message, icon: 'error', });
+                }).finally(() => { dispatch(setPreloader({ loader: false, message: "" })); });
+            }
+        });
+    };
+
     const columns = useMemo(()=>[
         {
             Header: "Number",
@@ -59,8 +85,8 @@ function Vehicles() {
               return ( 
                 <div className="">
                    <ViewVehicleModal data={row} />
-                    <UpdateVehicleModal data={row} listData={listData} setListData={setListData} />
-                    <Button onClick={()=>handleListDataDelete(cell.row.original)} className="btn btn-sm btn-soft-danger me-1" >
+                    {/* <UpdateVehicleModal data={row} listData={listData} setListData={setListData} /> */}
+                    <Button onClick={()=>handleDelete(row.id)} className="btn btn-sm btn-soft-danger me-1" >
                         <i className="ri-delete-bin-fill" />  
                     </Button>
                 </div>
@@ -88,39 +114,17 @@ function Vehicles() {
                                 checked={row.status == 'active'} 
                                 onChange={()=>{}}
                             />
-                            <UpdateVehicleModal data={row} listData={listData} setListData={setListData} />
-                            <button onClick={()=>handleListDataDelete(row)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
+
+                            {/* <UpdateVehicleModal data={row} listData={listData} setListData={setListData} /> */}
+                            <button onClick={()=>handleDelete(row.id)} className="btn btn-sm btn-soft-danger me-1" data-id="1"> <i className="ri-delete-bin-fill"></i> </button>
                         </div>
                     </div>
                 </div>
                 )
             }
           }
-    ]);
-    const handleListDataDelete = (vehichle) =>{
-        Swal.fire({
-            title: "Are you sure ?",
-            text:" You want to delete this User : " + vehichle.number,
-            icon:'warning',
-            showDenyButton: true,
-            confirmButtonText: "Delete",
-            denyButtonText: `No`
-        }).then((result)=>{
-            if (result.isConfirmed) {
-                dispatch(setPreloader({loader:true,message:'Deleting vehicle please wait'}))
-                vehicles.delete(vehichle.id)
-                .then(res=>{
-                    setListData([...listData.filter(ld=>ld.id!=vehichle.id)])
-                    dispatch(setPreloader({loader:false,message:""}))
-                    swal.success(res.data.message);
-                })
-                .catch(err=>{
-                    dispatch(setPreloader({loader:false,message:""}))
-                    swal.error(err.response ? err.response.data.message : err.message);
-                })
-            }
-        })
-    }
+    ],[vehiclesdata]);
+ 
     return (
     <>
         <BreadCrumb title="Vehicles" prevPage="Home" prevPath="/dashboard" />
@@ -129,10 +133,10 @@ function Vehicles() {
                 <Card>
                     <CardHeader className="d-flex align-items-center justify-content-between">
                         <h5 className="card-title mb-0">Vehicle List</h5>
-                        <NewVehicleModal listData={listData} setListData={setListData}/>
+                        <CreateVehiclesModel className="btn btn-soft-success"/>
                     </CardHeader>
                     <CardBody className="">
-                        <TableResponsive isLoading={dataLoading} columns={columns} data={listData}  />
+                        <TableResponsive isLoading={isLoading} columns={columns} data={vehiclesdata}  />
                     </CardBody>
                 </Card>
             </Col>

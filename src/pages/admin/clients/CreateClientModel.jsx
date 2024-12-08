@@ -10,7 +10,7 @@ export function CreateClientModel({ className }) {
     const mutation = useMutation({
         mutationFn: (formData) => client.add(formData),
         onSuccess: (res) => {
-            queryClient.setQueryData(['items'], (oldData) => {
+            queryClient.setQueryData(['clients'], (oldData) => {
                 if (!oldData || !oldData.data || !oldData.data.clients) {
                     return { ...oldData, data: { ...oldData?.data, clients: [res.data.client], }, };
                 }
